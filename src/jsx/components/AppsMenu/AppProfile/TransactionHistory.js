@@ -1,0 +1,147 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Badge, Card, Col, Table } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import moment from "moment";
+import { baseURL } from "../../../../Strings/Strings";
+
+function TransactionHistory() {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    // const postData = {
+    //   email,
+    //   password,
+    // };
+    let usr = localStorage.getItem("user");
+    usr = JSON.parse(usr);
+    axios.get(`${baseURL}deposit_requests?user_id=${usr?.id}`).then((res) => {
+      console.log(res, "res");
+      setData(res.data.DepositRequests);
+    });
+  }, []);
+  return (
+    <div>
+      <Col lg={12}>
+        <Card>
+          <Card.Header>
+            <Card.Title>Transaction History</Card.Title>
+          </Card.Header>
+          <Card.Body>
+            <Table responsive striped>
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Date Time</th>
+                  <th>Status</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((req, ind) => {
+                  return (
+                    <tr>
+                      <td>
+                        <Link to="/table-bootstrap-basic">{ind + 1}</Link>
+                      </td>
+
+                      <td>
+                        <span className="text-muted">
+                          {req?.request_status == "Pending"
+                            ? ""
+                            : moment(req?.updated_at).format(
+                                "YYYY-MM-DD hh:mm a"
+                              )}
+                        </span>
+                      </td>
+                      <td>
+                        <Badge variant="warning light" style={{ width: 80 }}>
+                          {req?.request_status}
+                        </Badge>
+                      </td>
+                      <td>$ {req?.amount}</td>
+                    </tr>
+                  );
+                })}
+                {/* <tr>
+                  <td>
+                    <Link to="/table-bootstrap-basic">Buy Order</Link>
+                  </td>
+
+                  <td>
+                    <span className="text-muted">Oct 16, 2017</span>
+                  </td>
+                  <td>
+                    <Badge variant="warning light" style={{ width: 80 }}>
+                      Pending
+                    </Badge>
+                  </td>
+                  <td>$45.00</td>
+                </tr>
+                 <tr>
+                  <td>
+                    <Link to="/table-bootstrap-basic">Sell Order</Link>
+                  </td>
+
+                  <td>
+                    <span className="text-muted">Oct 12, 2017</span>
+                  </td>
+                  <td>
+                    <Badge variant="success light" style={{ width: 80 }}>
+                      Successful
+                    </Badge>
+                  </td>
+                  <td>$245.30</td>
+                </tr>
+                <tr>
+                  <td>
+                    <Link to="/table-bootstrap-basic">Buy Order</Link>
+                  </td>
+                  <td>
+                    <span className="text-muted">May 18, 2017</span>
+                  </td>
+                  <td>
+                    <Badge variant="danger light" style={{ width: 80 }}>
+                      Canceled
+                    </Badge>
+                  </td>
+                  <td>$38.00</td>
+                </tr>
+                <tr>
+                  <td>
+                    <Link to="/table-bootstrap-basic">Sell Order</Link>
+                  </td>
+
+                  <td>
+                    <span className="text-muted">Apr 28, 2017</span>
+                  </td>
+                  <td>
+                    <Badge variant="success light" style={{ width: 80 }}>
+                      Successful
+                    </Badge>
+                  </td>
+                  <td>$77.99</td>
+                </tr>
+                <tr>
+                  <td>
+                    <Link to="/table-bootstrap-basic">Buy Order</Link>
+                  </td>
+                  <td>
+                    <span className="text-muted">May 18, 2017</span>
+                  </td>
+                  <td>
+                    <Badge variant="danger light" style={{ width: 80 }}>
+                      Canceled
+                    </Badge>
+                  </td>
+                  <td>$38.00</td>
+                </tr> */}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
+      </Col>
+    </div>
+  );
+}
+
+export default TransactionHistory;
