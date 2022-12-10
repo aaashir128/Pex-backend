@@ -67,10 +67,10 @@ function ManageCoins() {
     };
     axios
       .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929&start=1&limit=25&convert=USD",
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
         {
           headers: {
-            "x-apikey": "8e525801-7772-4973-80c7-984e113b3929",
+            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           },
@@ -84,6 +84,27 @@ function ManageCoins() {
         localStorage.setItem("perData", JSON.stringify(res.data.data));
         setCoinData(res.data.data);
         // }, 500);
+      });
+  };
+  const disableHandler = () => {};
+
+  const createMarketList = async (name) => {
+    // const user = localStorage.getItem("user");
+    // console.log("USer", user);
+    // const parseUSer = JSON.parse(user);
+    // console.log("PArse USer", parseUSer.id);
+    // console.log("Coin", data.name);
+
+    await axios
+      .post("http://localhost:4000/api/marketList", {
+        user_id: 1,
+        coin_name: name,
+      })
+      .then((res) => {
+        console.log("Successfully Add Coin", res);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -252,17 +273,34 @@ function ManageCoins() {
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                 <Dropdown.Item
-                                // onClick={() =>
-                                //   changeStatus(req?.id, "Approved")
-                                // }
+                                  // onClick={() =>
+                                  //   changeStatus(req?.id, "Approved")
+                                  // }
+                                  onClick={() => {
+                                    axios.delete(
+                                      `http://localhost:4000/api/admin/watchList/${data.name}`
+                                    );
+                                  }}
                                 >
                                   Enable
                                 </Dropdown.Item>
                                 <Dropdown.Item
-                                // onClick={() => {
-                                //   setActiveId(req?.id);
-                                //   setModalCentered(true);
-                                // }}
+                                  // onClick={() => {
+                                  //   setActiveId(req?.id);
+                                  //   setModalCentered(true);
+                                  // }}
+                                  onClick={() => {
+                                    axios
+                                      .post(
+                                        "http://localhost:4000/api/admin/watchList",
+                                        {
+                                          coin_name: data.name,
+                                        }
+                                      )
+                                      .then((res) => {
+                                        console.log("Successfully listed Coin");
+                                      });
+                                  }}
                                 >
                                   Disable
                                 </Dropdown.Item>

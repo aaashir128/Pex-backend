@@ -2,8 +2,22 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PageTitle from "../../layouts/PageTitle";
-import { Button, Card, Col, Dropdown, Modal, Nav, Tab } from "react-bootstrap";
-import { baseURL, createTradeAPI, tradeAPI } from "../../../Strings/Strings";
+import {
+  Button,
+  Card,
+  Col,
+  Dropdown,
+  Modal,
+  Nav,
+  Row,
+  Tab,
+} from "react-bootstrap";
+import {
+  baseURL,
+  createTradeAPI,
+  createTradeHistoryAPI,
+  tradeAPI,
+} from "../../../Strings/Strings";
 import { themePrimary } from "../../../css/color";
 
 const sort = 10;
@@ -38,6 +52,7 @@ function Portfolio(props) {
   const [isUnits, setIsUnits] = useState(false);
   const [partialTrade, setPartialTrade] = useState(false);
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
+  const [colorCheck, setColorCheck] = useState(null);
 
   let usr = localStorage.getItem("user");
   usr = JSON.parse(usr);
@@ -81,11 +96,30 @@ function Portfolio(props) {
     });
   };
   const closeTrade = () => {
+    let profitLoss = sameCoin
+      ? (
+          ((sameCoin[0] - sameCoin[2]?.crypto_purchase_price) *
+            sameCoin[2]?.trade) /
+          sameCoin[2]?.crypto_purchase_price
+        ).toFixed(2)
+      : 0;
+
+    let amount = 0;
+    if (partialTrade) {
+      amount = buyAmount.amount;
+      profitLoss = (buyAmount.amount / sameCoin[2]?.trade) * profitLoss;
+    } else {
+      amount = sameCoin ? sameCoin[2]?.trade : 0;
+    }
     const tradeData = {
-      id: closeId,
-      status: "Close",
+      trade_id: closeId,
+      status: partialTrade ? "Close" : "Open",
+      amount: amount,
+      profit: profitLoss > 0 ? profitLoss : 0,
+      loss: profitLoss < 0 ? profitLoss : 0,
+      closed_price: sameCoin[0],
     };
-    axios.put(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
+    axios.post(`${baseURL}${createTradeHistoryAPI}`, tradeData).then((res) => {
       console.log(res, "res");
       if (res?.data?.status) {
         getTrades();
@@ -99,13 +133,13 @@ function Portfolio(props) {
       setBuyAmount({
         ...buyAmount,
         units: (buyAmount.units += 1),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: buyAmount.units * sameCoin?.data.quote.USD.price,
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: (buyAmount.amount += 1000),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: buyAmount.amount / sameCoin?.data.quote.USD.price,
       });
     }
   };
@@ -115,7 +149,7 @@ function Portfolio(props) {
         setBuyAmount({
           ...buyAmount,
           units: (buyAmount.units -= 1),
-          amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+          amount: buyAmount.units * sameCoin?.data.quote.USD.price,
         });
       }
     } else {
@@ -123,7 +157,7 @@ function Portfolio(props) {
         setBuyAmount({
           ...buyAmount,
           amount: (buyAmount.amount -= 1000),
-          units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+          units: buyAmount.amount / sameCoin?.data.quote.USD.price,
         });
       }
     }
@@ -134,13 +168,13 @@ function Portfolio(props) {
       setBuyAmount({
         ...buyAmount,
         units: Number(e.target.value),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: Number(e.target.value),
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: Number(e.target.value),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: Number(e.target.value),
       });
     }
   };
@@ -165,10 +199,10 @@ function Portfolio(props) {
     };
     axios
       .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929&start=1&limit=25&convert=USD",
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
         {
           headers: {
-            "x-apikey": "8e525801-7772-4973-80c7-984e113b3929",
+            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           },
@@ -185,19 +219,63 @@ function Portfolio(props) {
       });
   };
 
+  // const filterByReference = (arr1, arr2) => {
+  //   let res = [];
+  //   res = arr1.filter((el) => {
+  //     return arr2.find((element) => {
+  //       return element.crypto_name === el.slug;
+  //     });
+  //   });
+  //   return res;
+  // };
+  // console.log("filterArray", filterByReference(APIData, coinData));
+
+  var cvalue = function calculateProfitOrLoss(name, price) {
+    console.log("coinName", name);
+    let filter = APIData.filter((item) => item.slug == name);
+    // console.log("filterArray", filter[0]?.quote.USD.price);
+    // if (filter[0]?.quote.USD.price - price < 0) {
+    //   setColorCheck(true);
+    // }
+    // if (filter[0]?.quote.USD.price - price > 0) {
+    //   setColorCheck(false);
+    // }
+
+    return (filter[0]?.quote.USD.price - price).toFixed(2);
+  };
+
+  const getCoinData = (name, img, data) => {
+    console.log("cName", name);
+    let filter = APIData.filter((item) => item.slug == name);
+    console.log("cName filter", filter);
+    setSameCoin([filter[0]?.quote.USD.price, img, data]);
+  };
+
   useEffect(() => {
     // let filter = APIData.filter(
     //   // (data, i) => data.slug == coinData[i]?.crypto_name
     //   (data, i) => data.slug == coinData.filter((d) => d.crypto_name)
     //   // (data, i) => console.log(i)
     // );
-    var filter = APIData.filter(function (item) {
-      return coinData.find((i) => item.slug === i.crypto_name);
-    });
+
+    // let res = [];
+    // res = APIData.filter((el) => {
+    //   return !coinData.find((element) => {
+    //     return element.slug === el.crypto_name;
+    //   });
+    // });
+    // return setSameCoin(res);
+
+    // console.log(filterByReference(arr1, arr2));
+
+    // var filter = APIData.filter(function (item) {
+    //   return coinData.find((i) => item.slug === i.crypto_name);
+    // });
+
     // let filter = APIData.filter((item) => {
     //   item.slug == coinData.filter((i) => i.crypto_name);
     // });
-    setSameCoin(filter);
+    // setSameCoin(filter);
     console.log("APIData", APIData);
     console.log("sameCoin", sameCoin);
     console.log("coinData", coinData);
@@ -205,13 +283,16 @@ function Portfolio(props) {
   }, [APIData, coinData]);
 
   useEffect(() => {
-    console.log("selectedCoin", selectedCoin);
-  }, [selectedCoin]);
+    console.log("sameCoin", sameCoin);
+    var i = 2;
+    console.log("Negative check", Math.sign(i));
+  }, [sameCoin]);
 
   return (
     <>
       <PageTitle activeMenu="Portfolio" motherMenu="Home" />
 
+      {/* <div className="d-flex justify-between"> */}
       <div className="col-12">
         <div className="card">
           <div className="card-body">
@@ -380,19 +461,37 @@ function Portfolio(props) {
                               </Button>
                             )}
                           </td>
+
                           <td
                             className={`${
-                              sameCoin[ind]?.quote?.USD?.price -
-                                data?.crypto_purchase_price >
-                              0
-                                ? "text-success mb-0 "
-                                : "text-danger mb-0"
+                              Math.sign(
+                                cvalue(
+                                  data?.crypto_name,
+                                  data?.crypto_purchase_price
+                                )
+                              ) === 1
+                                ? "text-success"
+                                : "text-danger"
                             }`}
+
+                            // className={`${
+                            //   (sameCoin[ind]?.quote?.USD?.price -
+                            //     data?.crypto_purchase_price) *
+                            //     (data?.trade / data?.crypto_purchase_price) >
+                            //   0
+                            //     ? "text-success mb-0 "
+                            //     : "text-danger mb-0"
+                            // }`}
                           >
-                            {(
-                              sameCoin[ind]?.quote?.USD?.price -
+                            {cvalue(
+                              data?.crypto_name,
                               data?.crypto_purchase_price
-                            ).toFixed(2)}
+                            )}
+                            {/* {(
+                              (sameCoin[ind]?.quote?.USD?.price -
+                                data?.crypto_purchase_price) *
+                              (data?.trade / data?.crypto_purchase_price)
+                            ).toFixed(2)} */}
                           </td>
                           <td>
                             {data?.status === "Open" ? (
@@ -400,6 +499,7 @@ function Portfolio(props) {
                                 className="me-2"
                                 variant="outline-danger"
                                 onClick={() => {
+                                  getCoinData(data?.crypto_name, coinImg, data);
                                   setModalTradeClose(true);
                                   setCloseId(data?.id);
                                   setSelectedCoin([
@@ -534,7 +634,7 @@ function Portfolio(props) {
         <Modal className="fade" show={modalTradeClose} centered>
           <Modal.Header style={{ backgroundColor: themePrimary }}>
             <Modal.Title className="text-white text-uppercase">
-              {selectedCoin && selectedCoin[2]?.crypto_name}
+              {sameCoin && sameCoin[2]?.crypto_name}
             </Modal.Title>
             <Button
               onClick={() => setModalTradeClose(false)}
@@ -545,30 +645,26 @@ function Portfolio(props) {
           <Modal.Body>
             <div className="d-flex flex-column">
               <div className="d-flex mb-4">
-                <img
-                  src={selectedCoin && selectedCoin[1]}
-                  width="40"
-                  height="40"
-                />
+                <img src={sameCoin && sameCoin[1]} width="40" height="40" />
                 <div className="mx-2">
                   <div className=" d-flex">
                     <p className="mb-0 ">BUY </p>
                     <h5 className="mb-0 px-1 text-uppercase">
-                      {selectedCoin && selectedCoin[2]?.crypto_name}
+                      {sameCoin && sameCoin[2]?.crypto_name}
                     </h5>
                   </div>
                   <div className="d-flex align-items-center">
                     <h3 className="mb-0">
-                      ${selectedCoin && selectedCoin[0].toFixed(2)}
+                      ${sameCoin && sameCoin[0]?.toFixed(2)}
                     </h3>
                     <small
                       className={`${
-                        selectedCoin && selectedCoin[3] > 0
+                        sameCoin && sameCoin[3] > 0
                           ? "text-success mb-0 px-1"
                           : "text-danger mb-0 px-1"
                       }`}
                     >
-                      {selectedCoin && selectedCoin[3].toFixed(2)}%
+                      {sameCoin && sameCoin[3]?.toFixed(2)}%
                     </small>
                   </div>
                 </div>
@@ -581,13 +677,13 @@ function Portfolio(props) {
                       <h4 className="mb-0">AMOUNT</h4>
                       <div>
                         <h3 className="mb-0">
-                          ${selectedCoin && selectedCoin[2]?.trade}
+                          ${sameCoin && sameCoin[2]?.trade}
                         </h3>
                         <p className="mb-0 d-flex justify-content-end">
-                          {selectedCoin &&
+                          {sameCoin &&
                             (
-                              selectedCoin[2]?.trade /
-                              selectedCoin[2]?.crypto_purchase_price
+                              sameCoin[2]?.trade /
+                              sameCoin[2]?.crypto_purchase_price
                             ).toFixed(2)}{" "}
                           UNITS
                         </p>
@@ -597,20 +693,24 @@ function Portfolio(props) {
                       <h4 className="mb-0">CURRENT P/L</h4>
                       <h3
                         className={`${
-                          selectedCoin &&
-                          selectedCoin[0] -
-                            selectedCoin[2]?.crypto_purchase_price >
-                            0
+                          sameCoin &&
+                          sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
                             ? "text-success mb-0"
                             : "text-danger mb-0"
                         }`}
                       >
                         $
-                        {selectedCoin &&
+                        {sameCoin &&
                           (
-                            selectedCoin[0] -
-                            selectedCoin[2]?.crypto_purchase_price
+                            sameCoin[0] - sameCoin[2]?.crypto_purchase_price
                           ).toFixed(2)}
+                        {/* {sameCoin &&
+                          (
+                            ((sameCoin[0] -
+                              sameCoin[2]?.crypto_purchase_price) *
+                              sameCoin[2]?.trade) /
+                            sameCoin[2]?.crypto_purchase_price
+                          ).toFixed(2)} */}
                       </h3>
                     </div>
 
@@ -619,12 +719,11 @@ function Portfolio(props) {
                       <h4 className="mb-0">TOTAL</h4>
                       <h3 className="mb-0">
                         $
-                        {selectedCoin &&
+                        {sameCoin &&
                           (
-                            Number(selectedCoin[2]?.trade) +
+                            Number(sameCoin[2]?.trade) +
                             Number(
-                              selectedCoin[0] -
-                                selectedCoin[2]?.crypto_purchase_price
+                              sameCoin[0] - sameCoin[2]?.crypto_purchase_price
                             )
                           ).toFixed(2)}
                       </h3>
@@ -683,7 +782,7 @@ function Portfolio(props) {
                   </Button>
                 </div>
 
-                <div style={{ flex: 0.2 }}>
+                {/* <div style={{ flex: 0.2 }}>
                   <div
                     role="button"
                     className="p-2 mb-3 bg-light rounded d-flex align-items-center justify-content-around"
@@ -692,7 +791,7 @@ function Portfolio(props) {
                     <i class="fas fa-exchange-alt"></i>
                     <h4 className="mb-0">{!isUnits ? "UNITS" : "AMOUNT"}</h4>
                   </div>
-                </div>
+                </div> */}
               </div>
             )}
           </Modal.Body>
@@ -885,6 +984,58 @@ function Portfolio(props) {
           </Modal.Footer>
         </Modal> */}
       </div>
+
+      {/* <div className="position-absolute bottom-0"> */}
+
+      <Card>
+        <Row className="p-4 ">
+          <Col lg={3} className="">
+            <div className="text-center">
+              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                $16,000
+              </h4>
+              <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                Cash Available
+              </p>
+              {/* <h5 className=" display-4">+</h5> */}
+            </div>
+          </Col>
+          <Col lg={3} className="">
+            <div className="text-center">
+              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                $46,000
+              </h4>
+              <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                Total Invested
+              </p>
+              {/* <h5 className=" display-4">+</h5> */}
+            </div>
+          </Col>
+          <Col lg={3} className="">
+            <div className="text-center">
+              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                -$1600
+              </h4>
+              <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                Profit/Loss
+              </p>
+              {/* <h5 className=" display-4">=</h5> */}
+            </div>
+          </Col>
+          <Col lg={3} className="">
+            <div className="text-center">
+              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                $100,000
+              </h4>
+              <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                Portfolio Value
+              </p>
+            </div>
+          </Col>
+        </Row>
+      </Card>
+      {/* </div> */}
+      {/* </div> */}
     </>
   );
 }

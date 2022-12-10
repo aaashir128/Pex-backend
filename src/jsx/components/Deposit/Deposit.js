@@ -19,6 +19,7 @@ function Deposit(props) {
       const postData = {
         user_id: usr?.id,
         amount: parseFloat(amount),
+        type: "Deposit",
       };
       axios.post(`${baseURL}api/deposit_request`, postData).then((res) => {
         console.log(res, "res");

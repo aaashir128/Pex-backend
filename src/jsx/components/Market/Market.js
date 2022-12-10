@@ -5,6 +5,9 @@ import { Button, Card, Col, Dropdown, Modal, Nav, Tab } from "react-bootstrap";
 import axios from "axios";
 import { baseURL, createTradeAPI, tradeAPI } from "../../../Strings/Strings";
 import PageTitle from "../../layouts/PageTitle";
+import { themePrimary } from "../../../css/color";
+// import { json } from "stream/consumers";
+
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 
 const sort = 10;
@@ -142,13 +145,27 @@ function Market(props) {
         if (res?.data?.status) {
           // props.history.push("/portfolio");
           props?.history?.push("/portfolio");
-          window.location.replace("/portfolio");
+          // window.location.replace("/portfolio");
         }
       });
     }
   };
 
+  // const getUSerData = () => {
+  //   console.log("Get USer Data");
+  //   axios
+  //     .get("http://localhost:4000/api/marketList")
+  //     .then((res) => {
+  //       console.log("Data Res", res.data);
+  //       // setFilterCoins(res.data.watchList);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Err", err);
+  //     });
+  // };
+
   useEffect(() => {
+    // getUSerData();
     fetchData();
     const id = setInterval(() => {
       let aa = localStorage.getItem("perData");
@@ -161,32 +178,57 @@ function Market(props) {
     return () => clearInterval(id);
   }, []);
   const fetchData = async () => {
-    const config = {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    };
-    axios
-      .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929&start=1&limit=25&convert=USD",
-        {
-          headers: {
-            "x-apikey": "8e525801-7772-4973-80c7-984e113b3929",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-          },
-        }
-      )
-      .then((res) => {
-        let result = res.data.data;
-        let newArray = [];
-        // perCoin - data.quote.USD.price,
-        // setTimeout(() => {
-        localStorage.setItem("perData", JSON.stringify(res.data.data));
-        setCoinData(res.data.data);
-        // }, 500);
-      });
+    axios.get("http://localhost:4000/api/admin/watchList").then((data) => {
+      console.log(data.data?.watchList);
+      var result = data.data?.watchList;
+
+      const config = {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      };
+      axios
+        .get(
+          "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+          {
+            headers: {
+              "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods":
+                "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+            },
+          }
+        )
+        .then((res) => {
+          // let result = res.data.data;
+          // let newArray = [];
+          // perCoin - data.quote.USD.price,
+          // setTimeout(() => {
+          localStorage.setItem("perData", JSON.stringify(res.data.data));
+          // setCoinData(res.data.data);
+
+          var filter = res.data.data.filter(function (item) {
+            return !result.find((i) => item?.name == i?.coin_name);
+          });
+          console.log("Result", result);
+          // var filter = res.data.data
+          //   .filter((data, i) => data?.name == result.coin_name)
+          //   .map((filteredPerson) => {
+          //     console.log("Data NAme", data.name);
+          //     console.log("Result NAme", result.coin_name);
+          //     return filteredPerson;
+          //   });
+
+          setCoinData(filter);
+          console.log("Filterrrrrr", filter);
+
+          // }, 500);
+        });
+    });
   };
+
+  const addToWatchList = (name) => {};
+  const removeFromWatchList = () => {};
 
   return (
     <>
@@ -269,14 +311,14 @@ function Market(props) {
                       >
                         Invest
                       </th>
-                      <th
+                      {/* <th
                         className="sorting"
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
                       >
                         Status
-                      </th>
+                      </th> */}
                       <th
                         className="sorting"
                         tabIndex={0}
@@ -324,18 +366,46 @@ function Market(props) {
                             )}{" "}
                           </td>
                           <td className="text-center">
-                            {change === "1h"
-                              ? parseFloat(
+                            {change === "1h" ? (
+                              <p
+                                className={`${
+                                  data.quote.USD.percent_change_1h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(
                                   data.quote.USD.percent_change_1h
-                                ).toFixed(2)
-                              : change === "7d"
-                              ? parseFloat(
+                                ).toFixed(2)}
+                                %
+                              </p>
+                            ) : change === "7d" ? (
+                              <p
+                                className={`${
+                                  data.quote.USD.percent_change_7d < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(
                                   data.quote.USD.percent_change_7d
-                                ).toFixed(2)
-                              : parseFloat(
+                                ).toFixed(2)}
+                                %
+                              </p>
+                            ) : (
+                              <p
+                                className={`${
+                                  data.quote.USD.percent_change_24h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(
                                   data.quote.USD.percent_change_24h
                                 ).toFixed(2)}
-                            %
+                                %
+                              </p>
+                            )}
                           </td>
 
                           <td>
@@ -356,36 +426,62 @@ function Market(props) {
                               Buy Now
                             </button>
                           </td>
-                          <td>
+                          {/* <td>
                             <div className="d-flex align-items-center">
                               <i className="fa fa-circle text-success me-1"></i>
                               Listed
                             </div>
-                          </td>
+                          </td> */}
                           <td className="">
                             <Dropdown>
                               <Dropdown.Toggle
-                                variant="success"
+                                variant="primary"
                                 className="light sharp i-false"
                               >
                                 {svg1}
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                 <Dropdown.Item
-                                // onClick={() =>
-                                //   changeStatus(req?.id, "Approved")
-                                // }
+                                  // onClick={() =>
+                                  //   changeStatus(req?.id, "Approved")
+                                  // }
+                                  onClick={async () => {
+                                    const user = localStorage.getItem("user");
+                                    console.log("USer", user);
+                                    const parseUSer = JSON.parse(user);
+                                    console.log("PArse USer", parseUSer.id);
+                                    console.log("Coin", data.name);
+
+                                    await axios
+                                      .post(
+                                        "http://localhost:4000/api/watchList",
+                                        {
+                                          user_id: parseUSer.id,
+                                          coin_name: data.name,
+                                        }
+                                      )
+                                      .then((res) => {
+                                        console.log(
+                                          "Successfully Add Coin",
+                                          res
+                                        );
+                                      })
+                                      .catch((err) => {
+                                        console.log(err);
+                                      });
+                                  }}
                                 >
                                   Add To WatchList
                                 </Dropdown.Item>
-                                <Dropdown.Item
-                                // onClick={() => {
-                                //   setActiveId(req?.id);
-                                //   setModalCentered(true);
-                                // }}
+                                {/* <Dropdown.Item
+                                  // onClick={() => {
+                                  //   setActiveId(req?.id);
+                                  //   setModalCentered(true);
+                                  // }}
+                                  onClick={removeFromWatchList}
                                 >
                                   Remove From WatchList
-                                </Dropdown.Item>
+                                </Dropdown.Item> */}
                               </Dropdown.Menu>
                             </Dropdown>
                           </td>
@@ -452,8 +548,10 @@ function Market(props) {
           </div>
 
           <Modal className="fade" show={modalCentered} centered>
-            <Modal.Header>
-              <Modal.Title>Buy {selectedCoin?.data.name}</Modal.Title>
+            <Modal.Header style={{ backgroundColor: themePrimary }}>
+              <Modal.Title className="text-white text-uppercase">
+                Buy {selectedCoin?.data.name}
+              </Modal.Title>
               <Button
                 onClick={() => setModalCentered(false)}
                 variant=""

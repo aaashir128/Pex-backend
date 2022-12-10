@@ -6,7 +6,8 @@ class ApexPie4 extends React.Component {
     super(props);
 
     this.state = {
-      series: [42, 47, 52, 58],
+      // series: [42, 47, 52, 58],
+      series: [100, 47, 52],
 
       options: {
         chart: {
@@ -16,7 +17,8 @@ class ApexPie4 extends React.Component {
             enabled: true,
           },
         },
-        labels: ["VIP", "Reguler", "Exclusive", "Economic"],
+        // labels: ["Total", "Active", "Inactive", "Economic"],
+        labels: ["Total", "Active", "Inactive"],
         fill: {
           opacity: 1,
           colors: ["#709fba", "#ff5c00", "#00a15d", "#3693ff"],

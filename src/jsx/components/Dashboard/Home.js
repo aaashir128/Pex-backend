@@ -107,7 +107,7 @@ const Home = (props) => {
                           Portfolio Value
                         </span>
                         <h2 className="fs-30 font-w700 mb-3">
-                          $ {data?.balance?.toFixed(2)}
+                          $ {data?.balance}
                         </h2>
                         <Button className="btn btn-primary mb-0 ms-0 px-4">
                           Portfolio
@@ -117,7 +117,7 @@ const Home = (props) => {
                     <br />
                     <div className="col-xl-12">
                       <div className="card-body pt-0">
-                        <ProjectSlider />
+                        <ProjectSlider {...data} />
                       </div>
                     </div>
                   </div>

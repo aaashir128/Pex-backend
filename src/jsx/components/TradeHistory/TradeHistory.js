@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PageTitle from "../../layouts/PageTitle";
+// import icon from "../../../icons/coins/";
 import { Button, Dropdown } from "react-bootstrap";
 import { baseURL, tradeAPI, tradeHistoryAPI } from "../../../Strings/Strings";
 import moment from "moment";
@@ -42,9 +43,9 @@ function TradeHistory(props) {
   useEffect(() => {
     axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
       console.log(res, "res");
-      let userTradeHistory = res.data.tradeHistory.filter(
-        (item) => item.active_trade.user_id == usr?.id
-      );
+      let userTradeHistory = res.data.tradeHistory
+        .reverse()
+        .filter((item) => item.active_trade.user_id == usr?.id);
       setHistoryData(userTradeHistory);
     });
   }, []);
@@ -84,7 +85,7 @@ function TradeHistory(props) {
                         rowSpan={1}
                         colSpan={1}
                       >
-                        Units
+                        Crypto Price
                       </th>
 
                       <th
@@ -115,7 +116,7 @@ function TradeHistory(props) {
                   </thead>
                   <tbody>
                     {[...historyData].map((data, ind) => {
-                      //   let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
+                      let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -125,22 +126,26 @@ function TradeHistory(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              {/* <img src={coinImg} width="40" height="40" /> */}
+                              <img src={coinImg} width="40" height="40" />
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
-                                  Buy {data?.active_trade?.crypto_name}
+                                 {data?.active_trade?.crypto_name}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td>0.61</td>
+                          <td>{data.amount}</td>
 
                           <td>{data.closed_price}</td>
 
                           <td>{data.profit > 0 ? data.profit : data.loss}</td>
-                          <td>{moment(data?.active_trade?.invested_date).format("YYYY-MM-DD")}</td>
                           <td>
-                            {moment(data.created_at).format("YYYY-MM-DD")}
+                            {moment(data?.active_trade?.invested_date).format(
+                              "YYYY-MM-DD hh:mm a"
+                            )}
+                          </td>
+                          <td>
+                            {moment(data.created_at).format("YYYY-MM-DD hh:mm a")}
                           </td>
                         </tr>
                       );

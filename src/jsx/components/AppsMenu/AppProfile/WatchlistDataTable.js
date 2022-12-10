@@ -6,7 +6,9 @@ import { Button, Card, Col, Dropdown, Modal, Nav, Tab } from "react-bootstrap";
 // import coins from "../../../../icons/coins"
 import axios from "axios";
 import { baseURL, createTradeAPI, tradeAPI } from "../../../../Strings/Strings";
+import set from "date-fns/esm/set";
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
+import { ToastContainer, toast } from "react-toastify";
 
 const sort = 10;
 let perArr = [];
@@ -34,11 +36,15 @@ function WatchlistDataTable(props) {
   const [profitEnd, setProfitEnd] = useState(0);
   const [lossEnd, setLossEnd] = useState(0);
   const [modalCentered, setModalCentered] = useState(false);
+  const [modalCentered2, setModalCentered2] = useState(false);
+  const [deleteCoinName, setDeleteCoinName] = useState(null);
+  const [deleteCoinId, setDeleteCoinId] = useState(null);
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [isUnits, setIsUnits] = useState(false);
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
   const [slAmount, setSlAmount] = useState(0);
   const [tpAmount, setTpAmount] = useState(0);
+  const [filterCoins, setFilterCoins] = useState([]);
   let usr = localStorage.getItem("user");
   usr = JSON.parse(usr);
   // console.log("user", usr);
@@ -133,13 +139,36 @@ function WatchlistDataTable(props) {
         if (res?.data?.status) {
           // props.history.push("/portfolio");
           props?.history?.push("/portfolio");
-          window.location.replace("/portfolio");
+          // window.location.replace("/portfolio");
+        } else {
+          toast.error("❌ Invalid Amount, " + res?.data?.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         }
       });
     }
   };
+  const getUSerData = () => {
+    console.log("Get USer Data");
+    axios
+      .get("http://localhost:4000/api/watchList")
+      .then((res) => {
+        console.log("Data Res", res.data.watchList);
+        setFilterCoins(res.data.watchList);
+      })
+      .catch((err) => {
+        console.log("Err", err);
+      });
+  };
 
   useEffect(() => {
+    getUSerData();
     fetchData();
     const id = setInterval(() => {
       let aa = localStorage.getItem("perData");
@@ -152,30 +181,87 @@ function WatchlistDataTable(props) {
     return () => clearInterval(id);
   }, []);
   const fetchData = async () => {
-    const config = {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    };
     axios
-      .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929&start=1&limit=25&convert=USD",
-        {
+      .get("http://localhost:4000/api/watchList")
+      .then((res) => {
+        console.log("Data Res", res.data.watchList);
+        var resultt = res.data.watchList;
+        // let result;
+        // let filtered = result.filter(
+        //   (data) => data?.name == res.data.watchList?.coin_name
+        // );
+        // console.log("Filteres", filtered);
+
+        // console.log("Watchlist", res.data.watchList?.coin_name);
+        // setFilterCoins(filtered);
+
+        const config = {
           headers: {
-            "x-apikey": "8e525801-7772-4973-80c7-984e113b3929",
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           },
-        }
+        };
+        axios
+          .get(
+            "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+            {
+              headers: {
+                "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods":
+                  "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+              },
+            }
+          )
+          .then((res) => {
+            let result = res.data.data;
+            let newArray = [];
+            // perCoin - data.quote.USD.price,
+            // setTimeout(() => {
+            localStorage.setItem("perData", JSON.stringify(res.data.data));
+
+            // let filtered = res.data.data.filter(
+            //   (data, i) => data?.name == resultt[i]?.coin_name
+            // );
+            // console.log("Filtered", filtered);
+            // setFilterCoins(filtered);
+            // if (resultt.length > 0) {
+            var filter = res.data.data.filter(function (item) {
+              return resultt.find((i) => item?.name === i?.coin_name);
+            });
+            console.log("Filterrrrrr", filter);
+            // var filtered = res.data.data.filter(
+            //   (data, i) => data.name === filterCoins.coin_name
+            // );
+            // console.log("Coin Namw", );
+            // var filter = res.data.data.filter(function (item) {
+            //   return filterCoins.find((i) => item.name === i.coin_name);
+            // });
+            // console.log("Filter", filtered);
+
+            // console.log("Filtered", res);
+
+            // setCoinData(filtered);
+            setCoinData(filter);
+            // }, 500);
+            // }
+          });
+      })
+      .catch((err) => {
+        console.log("Err", err);
+      });
+  };
+  const deleteCoinHandler = () => {
+    let api = axios
+      .delete(
+        `http://localhost:4000/api/watchList/${deleteCoinId}/${deleteCoinName}`
       )
       .then((res) => {
-        let result = res.data.data;
-        let newArray = [];
-        // perCoin - data.quote.USD.price,
-        // setTimeout(() => {
-        localStorage.setItem("perData", JSON.stringify(res.data.data));
-        setCoinData(res.data.data);
-        // }, 500);
+        console.log("Successfully Deleted", res);
+        setModalCentered2(false);
+        // console.log(err);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -185,6 +271,17 @@ function WatchlistDataTable(props) {
 
   return (
     <div className="col-12">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="card">
         <div className="card-body">
           <div className="table-responsive">
@@ -306,6 +403,14 @@ function WatchlistDataTable(props) {
                     >
                       Invest
                     </th>
+                    <th
+                      className="sorting"
+                      tabIndex={0}
+                      rowSpan={1}
+                      colSpan={1}
+                    >
+                      Remove Coin
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -375,6 +480,27 @@ function WatchlistDataTable(props) {
                             }}
                           >
                             Buy Now
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            class="btn btn-danger"
+                            style={{
+                              color: "white",
+                              padding: "5px 10px",
+                              borderRadius: "7px",
+                            }}
+                            onClick={() => {
+                              setModalCentered2(true);
+                              setDeleteCoinName(data.name);
+                              let usr = localStorage.getItem("user");
+                              let parseUser = JSON.parse(usr);
+                              console.log("ID", parseUser.id);
+                              setDeleteCoinId(parseUser.id);
+                            }}
+                          >
+                            Remove
                           </button>
                         </td>
                       </tr>
@@ -642,6 +768,31 @@ function WatchlistDataTable(props) {
               style={{ width: "200px" }}
             >
               Open Trade
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal className="fade" show={modalCentered2} centered>
+          <Modal.Header>
+            <Modal.Title>Remove Coin from Watchlist</Modal.Title>
+            <Button
+              onClick={() => setModalCentered2(false)}
+              variant=""
+              className="btn-close"
+            ></Button>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure want to remove this coin from WatchList?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={() => setModalCentered2(false)}
+              variant="danger light"
+            >
+              No
+            </Button>
+            <Button variant="primary" onClick={deleteCoinHandler}>
+              Yes
             </Button>
           </Modal.Footer>
         </Modal>

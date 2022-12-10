@@ -413,7 +413,7 @@ const SideBar = () => {
           </li>
 
           <li className={`${pages.includes(path) ? "mm-active" : ""}`}>
-            <Link to="widget-basic" className="ai-icon">
+            <Link to="transaction-history" className="ai-icon">
               <i className="fas fa-history"></i>
               <span className="nav-text">Transaction History</span>
             </Link>

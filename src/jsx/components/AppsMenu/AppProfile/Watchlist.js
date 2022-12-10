@@ -11,6 +11,7 @@ function Watchlist() {
   const [coinsData, setCoinsData] = useState([]);
 
   useEffect(() => {
+    // getUSerData();
     fetchData();
   }, []);
   const fetchData = async () => {
@@ -21,10 +22,10 @@ function Watchlist() {
     };
     axios
       .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929&start=1&limit=25&convert=USD",
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
         {
           headers: {
-            "x-apikey": "8e525801-7772-4973-80c7-984e113b3929",
+            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           },
@@ -41,13 +42,14 @@ function Watchlist() {
     // console.log("Fetch daat");
     const res = await axios
       .get(
-        // "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=8e525801-7772-4973-80c7-984e113b3929"
+        // "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065"
         "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
       )
       .then((data) => {
         console.log("Pics", data);
       });
   };
+
   return (
     <Fragment>
       {/* $(coinsData).ready( function () {$("#myTable").DataTable()} ); */}

@@ -3032,7 +3032,7 @@ fieldset:disabled .btn {
 .btn-primary.active,
 .show > .btn-primary.dropdown-toggle {
   color: #000;
-  background-color: #33b47d;
+  background-color: #1097fd;
   border-color: #1097fd;
 }
 .btn-check:checked + .btn-primary:focus,
@@ -43410,7 +43410,7 @@ html[dir="rtl"]
   --primary-light: #00d47a;
   --primary-hover: #1699fd;
   --primary-dark: #1699fd;
-  --rgba-primary-1: rgba(0, 161, 93, 0.1);
+  --rgba-primary-1: #3dabff48;
   --rgba-primary-2: rgba(0, 161, 93, 0.2);
   --rgba-primary-3: rgba(0, 161, 93, 0.3);
   --rgba-primary-4: rgba(0, 161, 93, 0.4);

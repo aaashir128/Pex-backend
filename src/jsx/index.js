@@ -119,7 +119,6 @@ import Error503 from "./pages/Error503";
 import Setting from "./layouts/Setting";
 import { ThemeContext } from "../context/ThemeContext";
 import AdminDashboard from "./components/Dashboard/AdminDashboard";
-import DepositRequest from "./components/Dashboard/DepositRequest";
 import DepositHistory from "./components/Dashboard/DepositHistory";
 import Withdrawl from "./components/Withdrawl/Withdrawl";
 import Portfolio from "./components/Portfolio/Portfolio";
@@ -132,6 +131,9 @@ import ProfitLossManagement from "./components/AdminScreen/ProfitLossManagement"
 import CommissionSettings from "./components/AdminScreen/CommissionSettings";
 import ManageCoins from "./components/AdminScreen/ManageCoins";
 import Market from "./components/Market/Market";
+import DepositRequest from "./components/AdminScreen/DepositRequest";
+import WithdrawalRequests from "./components/AdminScreen/WithdrawalRequests";
+import TransactionHistoryScreen from "./components/Transaction history Screen/TransactionHistoryScreen";
 
 const Markup = () => {
   let { coin } = useParams();
@@ -140,8 +142,8 @@ const Markup = () => {
     /// Admin Pages
     { url: "user-management", component: UserManagement },
     { url: "manage-coins", component: ManageCoins },
-    // { url: "deposit-requests", component: UserManagement },
-    // { url: "withdrawal-requests", component: UserManagement },
+    { url: "deposit-requests", component: DepositRequest },
+    { url: "withdrawal-requests", component: WithdrawalRequests },
     { url: "pl-management", component: ProfitLossManagement },
     { url: "commission-settings", component: CommissionSettings },
 
@@ -158,6 +160,7 @@ const Markup = () => {
     { url: "deposit", component: Deposit },
     { url: "withdrawl", component: Withdrawl },
     { url: "trade-history", component: TradeHistory },
+    { url: "transaction-history", component: TransactionHistoryScreen },
 
     ///Portfolio
     { url: "portfolio", component: Portfolio },
@@ -176,7 +179,6 @@ const Markup = () => {
     /// Apps
     { url: "app-profile", component: AppProfile },
     { url: "admin-dashboard", component: AdminDashboard },
-    { url: "deposit-requests", component: DepositRequest },
     { url: "deposit-history", component: DepositHistory },
     { url: "email-compose", component: Compose },
     { url: "email-inbox", component: Inbox },
@@ -296,7 +298,7 @@ const Markup = () => {
             </Switch>
           </div>
         </div>
-        {!pagePath && <Footer />}
+        {/* {!pagePath && <Footer />} */}
       </div>
       {/* <Setting /> */}
       <ScrollToTop />

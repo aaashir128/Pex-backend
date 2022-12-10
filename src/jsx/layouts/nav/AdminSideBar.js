@@ -89,7 +89,7 @@ const AdminSideBar = () => {
       <PerfectScrollbar className="dlabnav-scroll">
         <MM className="metismenu" id="menu">
           <li className={`${deshBoard.includes(path) ? "mm-active" : ""}`}>
-            <Link className="ai-icon " to="#">
+            <Link className="ai-icon " to="admin-dashboard">
               <i className="fas fa-home"></i>
 
               <span className="nav-text">Dashboard </span>
