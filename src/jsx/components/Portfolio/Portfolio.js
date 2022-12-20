@@ -371,7 +371,7 @@ function Portfolio(props) {
                   </thead>
                   <tbody>
                     {[...coinData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
+                      // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -388,7 +388,7 @@ function Portfolio(props) {
                                 )
                               }
                             >
-                              <img src={coinImg} width="40" height="40" />
+                              {/* <img src={coinImg} width="40" height="40" /> */}
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
                                   Buy {data.crypto_name}
@@ -412,7 +412,8 @@ function Portfolio(props) {
                                 onClick={() => {
                                   setModalTradeEdit(true);
                                   setCloseId(data?.id);
-                                  setSelectedCoin({ coinImg, data });
+                                  // setSelectedCoin({ coinImg, data });
+                                  setSelectedCoin({ data });
                                 }}
                               >
                                 ...
@@ -424,7 +425,8 @@ function Portfolio(props) {
                                 onClick={() => {
                                   setModalTradeEdit(true);
                                   setCloseId(data?.id);
-                                  setSelectedCoin({ coinImg, data });
+                                  // setSelectedCoin({ coinImg, data });
+                                  setSelectedCoin({ data });
                                 }}
                               >
                                 {data.trade_loss_end}
@@ -439,7 +441,8 @@ function Portfolio(props) {
                                 onClick={() => {
                                   setModalTradeEdit(true);
                                   setCloseId(data?.id);
-                                  setSelectedCoin({ coinImg, data });
+                                  // setSelectedCoin({ coinImg, data });
+                                  setSelectedCoin({ data });
                                 }}
                               >
                                 ...
@@ -451,7 +454,8 @@ function Portfolio(props) {
                                 onClick={() => {
                                   setModalTradeEdit(true);
                                   setCloseId(data?.id);
-                                  setSelectedCoin({ coinImg, data });
+                                  // setSelectedCoin({ coinImg, data });
+                                  setSelectedCoin({ data });
                                 }}
                               >
                                 {data.trade_profit_end}
@@ -496,12 +500,13 @@ function Portfolio(props) {
                                 className="me-2"
                                 variant="outline-danger"
                                 onClick={() => {
-                                  getCoinData(data?.crypto_name, coinImg, data);
+                                  // getCoinData(data?.crypto_name, coinImg, data);
+                                  getCoinData(data?.crypto_name, data);
                                   setModalTradeClose(true);
                                   setCloseId(data?.id);
                                   setSelectedCoin([
                                     sameCoin[ind]?.quote?.USD?.price,
-                                    coinImg,
+                                    // coinImg,
                                     data,
                                     sameCoin[ind]?.quote?.USD
                                       ?.percent_change_24h,

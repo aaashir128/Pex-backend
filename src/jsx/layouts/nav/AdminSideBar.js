@@ -7,7 +7,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { Link } from "react-router-dom";
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import { ThemeContext } from "../../../context/ThemeContext";
-import watchListIcon from "../../../icons/sidebar/watchlist.png";
+// import watchListIcon from "../../../icons/sidebar/watchlist.png";
 
 class MM extends Component {
   componentDidMount() {

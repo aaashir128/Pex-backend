@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import syk from "../../../icons/stocks/syk.svg";
-import pen from "../../../icons/stocks/pen.svg";
-import isrg from "../../../icons/stocks/isrg.svg";
-import dxcm from "../../../icons/stocks/dxcm.svg";
-import abt from "../../../icons/stocks/abt.svg";
+// import syk from "../../../icons/stocks/syk.svg";
+// import pen from "../../../icons/stocks/pen.svg";
+// import isrg from "../../../icons/stocks/isrg.svg";
+// import dxcm from "../../../icons/stocks/dxcm.svg";
+// import abt from "../../../icons/stocks/abt.svg";
 
 import { Link } from "react-router-dom";
 
@@ -150,7 +150,7 @@ function StocksTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={syk} width="40" height="40" />
+                        {/* <img src={syk} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">SYK</p>
                           <p className="mb-0">Syk Corp</p>
@@ -226,7 +226,7 @@ function StocksTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={pen} width="40" height="40" />
+                        {/* <img src={pen} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">PEN</p>
                           <p className="mb-0">Penumbra Inc</p>
@@ -280,7 +280,7 @@ function StocksTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={isrg} width="40" height="40" />
+                        {/* <img src={isrg} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">ISRG</p>
                           <p className="mb-0">ISRG Corp</p>
@@ -334,7 +334,7 @@ function StocksTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={dxcm} width="40" height="40" />
+                        {/* <img src={dxcm} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">DXCM</p>
                           <p className="mb-0">DXCM Inc</p>
@@ -387,7 +387,7 @@ function StocksTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={abt} width="40" height="40" />
+                        {/* <img src={abt} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">ABT</p>
                           <p className="mb-0">Abbot Lab</p>

@@ -116,7 +116,7 @@ function TradeHistory(props) {
                   </thead>
                   <tbody>
                     {[...historyData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
+                      // let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -126,7 +126,7 @@ function TradeHistory(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              <img src={coinImg} width="40" height="40" />
+                              {/* <img src={coinImg} width="40" height="40" /> */}
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
                                   {data?.active_trade?.crypto_name}

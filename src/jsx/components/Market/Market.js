@@ -306,7 +306,7 @@ function Market(props) {
                   </thead>
                   <tbody>
                     {[...perCoinData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data.slug}.png`);
+                      // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
                       let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -316,7 +316,7 @@ function Market(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              <img src={coinImg} width="40" height="40" />
+                              {/* <img src={coinImg} width="40" height="40" /> */}
                               <div className="mx-2 ">
                                 <p className="mb-0">{data.name}</p>
                                 <p className="mb-0">{data.symbol}</p>
@@ -395,7 +395,8 @@ function Market(props) {
                               }}
                               onClick={() => {
                                 setModalCentered(true);
-                                setSelectedCoin({ coinImg, data });
+                                // setSelectedCoin({ coinImg, data });
+                                setSelectedCoin({ data });
                               }}
                             >
                               Buy Now

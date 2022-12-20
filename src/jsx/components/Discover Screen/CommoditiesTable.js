@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import goldImg from "../../../icons/commodities/gold.svg";
-import natgas from "../../../icons/commodities/natgas.svg";
-import oil from "../../../icons/commodities/oil.svg";
-import platinum from "../../../icons/commodities/platinum.png";
-import sugar from "../../../icons/commodities/sugar.svg";
-import silver from "../../../icons/commodities/silver.svg";
+// import goldImg from "../../../icons/commodities/gold.svg";
+// import natgas from "../../../icons/commodities/natgas.svg";
+// import oil from "../../../icons/commodities/oil.svg";
+// import platinum from "../../../icons/commodities/platinum.png";
+// import sugar from "../../../icons/commodities/sugar.svg";
+// import silver from "../../../icons/commodities/silver.svg";
 import { Link } from "react-router-dom";
 
 const svg1 = (
@@ -150,7 +150,7 @@ function CommoditiesTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={goldImg} width="40" height="40" />
+                        {/* <img src={goldImg} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">GOLD</p>
                         </div>
@@ -225,7 +225,7 @@ function CommoditiesTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={oil} width="40" height="40" />
+                        {/* <img src={oil} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">OIL</p>
                         </div>
@@ -278,7 +278,7 @@ function CommoditiesTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={sugar} width="40" height="40" />
+                        {/* <img src={sugar} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">SUGAR</p>
                         </div>
@@ -331,7 +331,7 @@ function CommoditiesTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={silver} width="40" height="40" />
+                        {/* <img src={silver} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">SILVER</p>
                         </div>
@@ -383,7 +383,7 @@ function CommoditiesTable() {
                   <tr role="row" className="even market-trbg">
                     <td className="sorting_1">
                       <div className="d-flex align-items-center">
-                        <img src={platinum} width="40" height="40" />
+                        {/* <img src={platinum} width="40" height="40" /> */}
                         <div className="mx-2 ">
                           <p className="mb-0">PLATINUM</p>
                         </div>
