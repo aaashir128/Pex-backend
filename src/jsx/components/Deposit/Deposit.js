@@ -16,23 +16,23 @@ function Deposit(props) {
       let usr = await localStorage.getItem("user");
       usr = JSON.parse(usr);
 
-      const postData = {
-        user_id: usr?.id,
-        amount: parseFloat(amount),
-        type: "Deposit",
-      };
-      axios.post(`${baseURL}api/deposit_request`, postData).then((res) => {
-        console.log(res, "res");
-        toast.success("✔️ Deposit Request Initiated!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        props.history.push("/dashboard");
-      });
+      // const postData = {
+      //   user_id: usr?.id,
+      //   amount: parseFloat(amount),
+      //   type: "Deposit",
+      // };
+      // axios.post(`${baseURL}api/deposit_request`, postData).then((res) => {
+      //   console.log(res, "res");
+      //   toast.success("✔️ Deposit Request Initiated!", {
+      //     position: "top-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //   });
+      //   props.history.push("/dashboard");
+      // });
     } else {
       toast.error("❌ Invalid Amount", {
         position: "top-right",

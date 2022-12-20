@@ -38,12 +38,12 @@ function Breakdown() {
     setEnd((activePag.current + 1) * sort);
   };
 
-  useEffect(() => {
-    axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
-      console.log(res, "res");
-      setCoinData(res.data.ActiveTradeRequests);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
+  //     console.log(res, "res");
+  //     setCoinData(res.data.ActiveTradeRequests);
+  //   });
+  // }, []);
 
   return (
     <>

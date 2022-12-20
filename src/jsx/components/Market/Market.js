@@ -132,22 +132,20 @@ function Market(props) {
 
   const createTrade = () => {
     if (buyAmount.amount > 0 || buyAmount.units > 0) {
-      const tradeData = {
-        crypto_name: selectedCoin?.data.slug,
-        crypto_purchase_price: selectedCoin?.data.quote.USD.price,
-        investment: buyAmount.amount,
-        trade_profit_end: profitEnd,
-        trade_loss_end: lossEnd,
-        user_id: 1,
-      };
-      axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
-        console.log(res, "res");
-        if (res?.data?.status) {
-          // props.history.push("/portfolio");
-          props?.history?.push("/portfolio");
-          // window.location.replace("/portfolio");
-        }
-      });
+      // const tradeData = {
+      //   crypto_name: selectedCoin?.data.slug,
+      //   crypto_purchase_price: selectedCoin?.data.quote.USD.price,
+      //   investment: buyAmount.amount,
+      //   trade_profit_end: profitEnd,
+      //   trade_loss_end: lossEnd,
+      //   user_id: 1,
+      // };
+      // axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
+      //   console.log(res, "res");
+      //   if (res?.data?.status) {
+      //     props?.history?.push("/portfolio");
+      //   }
+      // });
     }
   };
 
@@ -165,8 +163,6 @@ function Market(props) {
   // };
 
   useEffect(() => {
-    // getUSerData();
-    fetchData();
     const id = setInterval(() => {
       let aa = localStorage.getItem("perData");
       aa = aa && JSON.parse(aa);
@@ -178,55 +174,34 @@ function Market(props) {
     return () => clearInterval(id);
   }, []);
   const fetchData = async () => {
-    axios.get("http://localhost:4000/api/admin/watchList").then((data) => {
-      console.log(data.data?.watchList);
-      var result = data.data?.watchList;
+    axios
+      .get(
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+        {
+          headers: {
+            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+          },
+        }
+      )
+      .then((res) => {
+        localStorage.setItem("perData", JSON.stringify(res.data.data));
+        setCoinData(res.data.data);
 
-      const config = {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        },
-      };
-      axios
-        .get(
-          "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
-          {
-            headers: {
-              "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods":
-                "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-            },
-          }
-        )
-        .then((res) => {
-          // let result = res.data.data;
-          // let newArray = [];
-          // perCoin - data.quote.USD.price,
-          // setTimeout(() => {
-          localStorage.setItem("perData", JSON.stringify(res.data.data));
-          // setCoinData(res.data.data);
+        // var filter = res.data.data.filter(function (item) {
+        //   return !result.find((i) => item?.name == i?.coin_name);
+        // });
+        // console.log("Result", result);
 
-          var filter = res.data.data.filter(function (item) {
-            return !result.find((i) => item?.name == i?.coin_name);
-          });
-          console.log("Result", result);
-          // var filter = res.data.data
-          //   .filter((data, i) => data?.name == result.coin_name)
-          //   .map((filteredPerson) => {
-          //     console.log("Data NAme", data.name);
-          //     console.log("Result NAme", result.coin_name);
-          //     return filteredPerson;
-          //   });
+        // setCoinData(filter);
+        // console.log("Filterrrrrr", filter);
 
-          setCoinData(filter);
-          console.log("Filterrrrrr", filter);
-
-          // }, 500);
-        });
-    });
+        // }, 500);
+      });
   };
 
+  console.log("coinData", coinData);
   const addToWatchList = (name) => {};
   const removeFromWatchList = () => {};
 
@@ -330,7 +305,7 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData].map((data, ind) => {
+                    {[...perCoinData].map((data, ind) => {
                       let coinImg = require(`../../../icons/coins/${data.slug}.png`);
                       let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (

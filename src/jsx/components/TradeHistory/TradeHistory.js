@@ -40,15 +40,15 @@ function TradeHistory(props) {
     // settest(i);
   };
 
-  useEffect(() => {
-    axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
-      console.log(res, "res");
-      let userTradeHistory = res.data.tradeHistory
-        .reverse()
-        .filter((item) => item.active_trade.user_id == usr?.id);
-      setHistoryData(userTradeHistory);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
+  //     console.log(res, "res");
+  //     let userTradeHistory = res.data.tradeHistory
+  //       .reverse()
+  //       .filter((item) => item.active_trade.user_id == usr?.id);
+  //     setHistoryData(userTradeHistory);
+  //   });
+  // }, []);
 
   return (
     <>
@@ -129,7 +129,7 @@ function TradeHistory(props) {
                               <img src={coinImg} width="40" height="40" />
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
-                                 {data?.active_trade?.crypto_name}
+                                  {data?.active_trade?.crypto_name}
                                 </p>
                               </div>
                             </div>
@@ -145,7 +145,9 @@ function TradeHistory(props) {
                             )}
                           </td>
                           <td>
-                            {moment(data.created_at).format("YYYY-MM-DD hh:mm a")}
+                            {moment(data.created_at).format(
+                              "YYYY-MM-DD hh:mm a"
+                            )}
                           </td>
                         </tr>
                       );

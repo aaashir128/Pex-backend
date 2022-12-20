@@ -125,50 +125,36 @@ function WatchlistDataTable(props) {
   };
 
   const createTrade = () => {
-    if (buyAmount.amount > 0 || buyAmount.units > 0) {
-      const tradeData = {
-        crypto_name: selectedCoin?.data.slug,
-        crypto_purchase_price: selectedCoin?.data.quote.USD.price,
-        investment: buyAmount.amount,
-        trade_profit_end: profitEnd,
-        trade_loss_end: lossEnd,
-        user_id: 1,
-      };
-      axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
-        console.log(res, "res");
-        if (res?.data?.status) {
-          // props.history.push("/portfolio");
-          props?.history?.push("/portfolio");
-          // window.location.replace("/portfolio");
-        } else {
-          toast.error("❌ Invalid Amount, " + res?.data?.message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-        }
-      });
-    }
-  };
-  const getUSerData = () => {
-    console.log("Get USer Data");
-    axios
-      .get("http://localhost:4000/api/watchList")
-      .then((res) => {
-        console.log("Data Res", res.data.watchList);
-        setFilterCoins(res.data.watchList);
-      })
-      .catch((err) => {
-        console.log("Err", err);
-      });
+    // if (buyAmount.amount > 0 || buyAmount.units > 0) {
+    //   // const tradeData = {
+    //   //   crypto_name: selectedCoin?.data.slug,
+    //   //   crypto_purchase_price: selectedCoin?.data.quote.USD.price,
+    //   //   investment: buyAmount.amount,
+    //   //   trade_profit_end: profitEnd,
+    //   //   trade_loss_end: lossEnd,
+    //   //   user_id: 1,
+    //   // };
+    //   axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
+    //     console.log(res, "res");
+    //     if (res?.data?.status) {
+    //       props?.history?.push("/portfolio");
+    //     } else {
+    //       toast.error("❌ Invalid Amount, " + res?.data?.message, {
+    //         position: "top-right",
+    //         autoClose: 5000,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //       });
+    //     }
+    //   });
+    // }
   };
 
   useEffect(() => {
-    getUSerData();
+    // getUSerData();
     fetchData();
     const id = setInterval(() => {
       let aa = localStorage.getItem("perData");
@@ -182,92 +168,34 @@ function WatchlistDataTable(props) {
   }, []);
   const fetchData = async () => {
     axios
-      .get("http://localhost:4000/api/watchList")
-      .then((res) => {
-        console.log("Data Res", res.data.watchList);
-        var resultt = res.data.watchList;
-        // let result;
-        // let filtered = result.filter(
-        //   (data) => data?.name == res.data.watchList?.coin_name
-        // );
-        // console.log("Filteres", filtered);
-
-        // console.log("Watchlist", res.data.watchList?.coin_name);
-        // setFilterCoins(filtered);
-
-        const config = {
+      .get(
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+        {
           headers: {
+            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
             "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           },
-        };
-        axios
-          .get(
-            "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
-            {
-              headers: {
-                "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods":
-                  "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-              },
-            }
-          )
-          .then((res) => {
-            let result = res.data.data;
-            let newArray = [];
-            // perCoin - data.quote.USD.price,
-            // setTimeout(() => {
-            localStorage.setItem("perData", JSON.stringify(res.data.data));
+        }
+      )
+      .then((res) => {
+        let result = res.data.data;
+        let newArray = [];
 
-            // let filtered = res.data.data.filter(
-            //   (data, i) => data?.name == resultt[i]?.coin_name
-            // );
-            // console.log("Filtered", filtered);
-            // setFilterCoins(filtered);
-            // if (resultt.length > 0) {
-            var filter = res.data.data.filter(function (item) {
-              return resultt.find((i) => item?.name === i?.coin_name);
-            });
-            console.log("Filterrrrrr", filter);
-            // var filtered = res.data.data.filter(
-            //   (data, i) => data.name === filterCoins.coin_name
-            // );
-            // console.log("Coin Namw", );
-            // var filter = res.data.data.filter(function (item) {
-            //   return filterCoins.find((i) => item.name === i.coin_name);
-            // });
-            // console.log("Filter", filtered);
+        localStorage.setItem("perData", JSON.stringify(res.data.data));
 
-            // console.log("Filtered", res);
+        // var filter = res.data.data.filter(function (item) {
+        //   return resultt.find((i) => item?.name === i?.coin_name);
+        // });
+        // console.log("Filterrrrrr", filter);
 
-            // setCoinData(filtered);
-            setCoinData(filter);
-            // }, 500);
-            // }
-          });
+        // setCoinData(filter);
       })
       .catch((err) => {
         console.log("Err", err);
       });
   };
-  const deleteCoinHandler = () => {
-    let api = axios
-      .delete(
-        `http://localhost:4000/api/watchList/${deleteCoinId}/${deleteCoinName}`
-      )
-      .then((res) => {
-        console.log("Successfully Deleted", res);
-        setModalCentered2(false);
-        // console.log(err);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    console.log("selectedCoin", selectedCoin);
-  }, [selectedCoin]);
+  const deleteCoinHandler = () => {};
 
   return (
     <div className="col-12">

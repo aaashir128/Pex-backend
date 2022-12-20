@@ -91,6 +91,7 @@ const SideBar = () => {
     deposit = ["deposit"],
     portfolio = ["portfolio"],
     withdrawl = ["withdrawl"],
+    discover = ["discover"],
     email = ["email-compose", "email-inbox", "email-read"],
     shop = [
       "ecom-product-grid",
@@ -416,6 +417,13 @@ const SideBar = () => {
             <Link to="transaction-history" className="ai-icon">
               <i className="fas fa-history"></i>
               <span className="nav-text">Transaction History</span>
+            </Link>
+          </li>
+
+          <li className={`${discover.includes(path) ? "mm-active" : ""}`}>
+            <Link to="discover" className="ai-icon">
+              <i className="far fa-compass"></i>
+              <span className="nav-text">Discover</span>
             </Link>
           </li>
           {/* end li for watchlist */}

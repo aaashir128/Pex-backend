@@ -8,12 +8,12 @@ import PageTitle from "../../layouts/PageTitle";
 function DepositHistory() {
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.DepositRequests);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseURL}${depositRequests}`).then((res) => {
+  //     console.log(res, "res");
+  //     setData(res.data.DepositRequests);
+  //   });
+  // }, []);
   return (
     <div>
       <PageTitle motherMenu="Admin" activeMenu="Deposit History" />

@@ -11,20 +11,20 @@ const ProjectSlider = (props) => {
   useEffect(() => {
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
-    axios.get(`${baseURL}api/wallet/${usr?.id}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.wallet);
-    });
+    // axios.get(`${baseURL}api/wallet/${usr?.id}`).then((res) => {
+    //   console.log(res, "res");
+    //   setData(res.data.wallet);
+    // });
 
-    axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
-      console.log(res, "res");
-      var TotalInvested = res.data.ActiveTradeRequests.reduce(
-        (accumulator, item) => accumulator + parseFloat(item.trade),
-        0
-      );
+    // axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
+    //   console.log(res, "res");
+    //   var TotalInvested = res.data.ActiveTradeRequests.reduce(
+    //     (accumulator, item) => accumulator + parseFloat(item.trade),
+    //     0
+    //   );
 
-      setInvest(TotalInvested);
-    });
+    //   setInvest(TotalInvested);
+    // });
   }, [props.history]);
   const settings = {
     dots: false,

@@ -11,28 +11,27 @@ function Withdrawl(props) {
     e.preventDefault();
 
     if (amount > 0) {
-      let usr = await localStorage.getItem("user");
-      usr = JSON.parse(usr);
-
-      const postData = {
-        user_id: usr?.id,
-        amount: parseFloat(amount),
-        type: "Withdraw",
-      };
-      axios
-        .post(`http://localhost:4000/api/deposit_request`, postData)
-        .then((res) => {
-          console.log(res, "res");
-          toast.success("✔️ Withdraw Request Initiated!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
-          props.history.push("/dashboard");
-        });
+      // let usr = await localStorage.getItem("user");
+      // usr = JSON.parse(usr);
+      // const postData = {
+      //   user_id: usr?.id,
+      //   amount: parseFloat(amount),
+      //   type: "Withdraw",
+      // };
+      // axios
+      //   .post(`http://localhost:4000/api/deposit_request`, postData)
+      //   .then((res) => {
+      //     console.log(res, "res");
+      //     toast.success("✔️ Withdraw Request Initiated!", {
+      //       position: "top-right",
+      //       autoClose: 5000,
+      //       hideProgressBar: false,
+      //       closeOnClick: true,
+      //       pauseOnHover: true,
+      //       draggable: true,
+      //     });
+      //     props.history.push("/dashboard");
+      //   });
     } else {
       toast.error("❌ Invalid Amount", {
         position: "top-right",

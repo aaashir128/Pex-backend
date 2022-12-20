@@ -44,17 +44,17 @@ function Login(props) {
     // dispatch(loadingToggleAction(true));
     // dispatch(loginAction(email, password, props.history));
 
-    const postData = {
-      email,
-      password,
-    };
-    axios.post(`${baseURL}api/user/login`, postData).then((res) => {
-      console.log(res, "res");
-      dispatch(loginConfirmedAction(res.data.user));
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      props.history.push("/dashboard");
-      window.location.replace("/dashboard");
-    });
+    // const postData = {
+    //   email,
+    //   password,
+    // };
+    // axios.post(`${baseURL}api/user/login`, postData).then((res) => {
+    //   console.log(res, "res");
+    //   dispatch(loginConfirmedAction(res.data.user));
+    //   localStorage.setItem("user", JSON.stringify(res.data.user));
+    //   props.history.push("/dashboard");
+    //   window.location.replace("/dashboard");
+    // });
   }
 
   const signInGoogle = () => {

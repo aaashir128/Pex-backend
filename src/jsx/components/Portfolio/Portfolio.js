@@ -81,27 +81,24 @@ function Portfolio(props) {
     // settest(i);
   };
 
-  useEffect(() => {
-    getTrades();
-  }, []);
+  // useEffect(() => {
+  //   getTrades();
+  // }, []);
 
-  const getTrades = () => {
-    axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
-      console.log(res, "res");
-      // setCoinData(res.data.ActiveTradeRequests);
-      var filterData = res.data.ActiveTradeRequests.filter(
-        (trade) => trade.status === "Open"
-      );
-      setCoinData(filterData);
-    });
-  };
+  // const getTrades = () => {
+  //   axios.get(`${baseURL}${tradeAPI}?user_id=1`).then((res) => {
+  //     console.log(res, "res");
+  //     // setCoinData(res.data.ActiveTradeRequests);
+  //     var filterData = res.data.ActiveTradeRequests.filter(
+  //       (trade) => trade.status === "Open"
+  //     );
+  //     setCoinData(filterData);
+  //   });
+  // };
+
   const closeTrade = () => {
     let profitLoss = sameCoin
-      ? (
-          ((sameCoin[0] - sameCoin[2]?.crypto_purchase_price) *
-            sameCoin[2]?.trade) /
-          sameCoin[2]?.crypto_purchase_price
-        ).toFixed(2)
+      ? (sameCoin[0] - sameCoin[2]?.crypto_purchase_price).toFixed(2)
       : 0;
 
     let amount = 0;
@@ -122,7 +119,7 @@ function Portfolio(props) {
     axios.post(`${baseURL}${createTradeHistoryAPI}`, tradeData).then((res) => {
       console.log(res, "res");
       if (res?.data?.status) {
-        getTrades();
+        // getTrades();
         setModalTradeClose(false);
       }
     });
@@ -199,7 +196,7 @@ function Portfolio(props) {
     };
     axios
       .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=9c9c9f71-a6f2-4584-8067-e45e2615151e&start=1&limit=25&convert=USD",
         {
           headers: {
             "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",

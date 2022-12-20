@@ -41,15 +41,15 @@ function TransactionHistoryScreen(props) {
     // settest(i);
   };
 
-  useEffect(() => {
-    axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
-      console.log(res, "res");
-      let userTradeHistory = res.data.tradeHistory
-        .reverse()
-        .filter((item) => item.active_trade.user_id == usr?.id);
-      setHistoryData(userTradeHistory);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
+  //     console.log(res, "res");
+  //     let userTradeHistory = res.data.tradeHistory
+  //       .reverse()
+  //       .filter((item) => item.active_trade.user_id == usr?.id);
+  //     setHistoryData(userTradeHistory);
+  //   });
+  // }, []);
 
   return (
     <>

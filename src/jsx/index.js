@@ -33,23 +33,9 @@ import Theme6 from "./components/Dashboard/Demo/Theme6";
 
 /// App
 import AppProfile from "./components/AppsMenu/AppProfile/AppProfile";
-import Compose from "./components/AppsMenu/Email/Compose/Compose";
-import Inbox from "./components/AppsMenu/Email/Inbox/Inbox";
-import Read from "./components/AppsMenu/Email/Read/Read";
-import Calendar from "./components/AppsMenu/Calendar/Calendar";
-import PostDetails from "./components/AppsMenu/AppProfile/PostDetails";
-
-/// Product List
-import ProductGrid from "./components/AppsMenu/Shop/ProductGrid/ProductGrid";
-import ProductList from "./components/AppsMenu/Shop/ProductList/ProductList";
-import ProductDetail from "./components/AppsMenu/Shop/ProductGrid/ProductDetail";
-import Checkout from "./components/AppsMenu/Shop/Checkout/Checkout";
-import Invoice from "./components/AppsMenu/Shop/Invoice/Invoice";
-import ProductOrder from "./components/AppsMenu/Shop/ProductOrder";
-import Customers from "./components/AppsMenu/Shop/Customers/Customers";
 
 /// Charts
-import SparklineChart from "./components/charts/Sparkline";
+// import SparklineChart from "./components/charts/Sparkline";
 import ChartJs from "./components/charts/Chartjs";
 import Chartist from "./components/charts/chartist";
 import RechartJs from "./components/charts/rechart";
@@ -77,12 +63,9 @@ import UiTypography from "./components/bootstrap/Typography";
 
 /// Plugins
 import Select2 from "./components/PluginsMenu/Select2/Select2";
-import Nestable from "./components/PluginsMenu/Nestable/Nestable";
-import MainNouiSlider from "./components/PluginsMenu/NouiSlider/MainNouiSlider";
+
 import MainSweetAlert from "./components/PluginsMenu/SweetAlert/SweetAlert";
 import Toastr from "./components/PluginsMenu/Toastr/Toastr";
-import JqvMap from "./components/PluginsMenu/JqvMap/JqvMap";
-import Lightgallery from "./components/PluginsMenu/Lightgallery/Lightgallery";
 
 //Redux
 import IndexReduxSimpaleForm from "./pages/IndexReduxSimpaleForm";
@@ -116,7 +99,7 @@ import Error403 from "./pages/Error403";
 import Error404 from "./pages/Error404";
 import Error500 from "./pages/Error500";
 import Error503 from "./pages/Error503";
-import Setting from "./layouts/Setting";
+// import Setting from "./layouts/Setting";
 import { ThemeContext } from "../context/ThemeContext";
 import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import DepositHistory from "./components/Dashboard/DepositHistory";
@@ -134,6 +117,7 @@ import Market from "./components/Market/Market";
 import DepositRequest from "./components/AdminScreen/DepositRequest";
 import WithdrawalRequests from "./components/AdminScreen/WithdrawalRequests";
 import TransactionHistoryScreen from "./components/Transaction history Screen/TransactionHistoryScreen";
+import DiscoverScreen from "./components/Discover Screen/DiscoverScreen";
 
 const Markup = () => {
   let { coin } = useParams();
@@ -180,21 +164,16 @@ const Markup = () => {
     { url: "app-profile", component: AppProfile },
     { url: "admin-dashboard", component: AdminDashboard },
     { url: "deposit-history", component: DepositHistory },
-    { url: "email-compose", component: Compose },
-    { url: "email-inbox", component: Inbox },
-    { url: "email-read", component: Read },
-    { url: "app-calender", component: Calendar },
-    { url: "post-details", component: PostDetails },
 
     /// Chart
-    { url: "chart-sparkline", component: SparklineChart },
+    // { url: "chart-sparkline", component: SparklineChart },
     { url: "chart-chartjs", component: ChartJs },
     { url: "chart-chartist", component: Chartist },
     { url: "chart-apexchart", component: ApexChart },
     { url: "chart-rechart", component: RechartJs },
 
-    /// Bootstrap
-    { url: "discover", component: Discover },
+    // Discover
+    { url: "discover", component: DiscoverScreen },
 
     { url: "ui-alert", component: UiAlert },
     { url: "ui-badge", component: UiBadge },
@@ -216,12 +195,12 @@ const Markup = () => {
 
     /// Plugin
     { url: "uc-select2", component: Select2 },
-    { url: "uc-nestable", component: Nestable },
-    { url: "uc-noui-slider", component: MainNouiSlider },
+    // { url: "uc-nestable", component: Nestable },
+    // { url: "uc-noui-slider", component: MainNouiSlider },
     { url: "uc-sweetalert", component: MainSweetAlert },
     { url: "uc-toastr", component: Toastr },
-    { url: "map-jqvmap", component: JqvMap },
-    { url: "uc-lightgallery", component: Lightgallery },
+    // { url: "map-jqvmap", component: JqvMap },
+    // { url: "uc-lightgallery", component: Lightgallery },
 
     ///Redux
     { url: "todo", component: Todo },
@@ -233,14 +212,14 @@ const Markup = () => {
     { url: "widget-basic", component: Widget },
 
     /// Shop
-    { url: "ecom-product-grid", component: ProductGrid },
-    { url: "ecom-product-list", component: ProductList },
-    { url: "ecom-product-detail", component: ProductDetail },
-    { url: "ecom-product-order", component: ProductOrder },
-    { url: "ecom-checkout", component: Checkout },
-    { url: "ecom-invoice", component: Invoice },
-    { url: "ecom-product-detail", component: ProductDetail },
-    { url: "ecom-customers", component: Customers },
+    // { url: "ecom-product-grid", component: ProductGrid },
+    // { url: "ecom-product-list", component: ProductList },
+    // { url: "ecom-product-detail", component: ProductDetail },
+    // { url: "ecom-product-order", component: ProductOrder },
+    // { url: "ecom-checkout", component: Checkout },
+    // { url: "ecom-invoice", component: Invoice },
+    // { url: "ecom-product-detail", component: ProductDetail },
+    // { url: "ecom-customers", component: Customers },
 
     /// Form
     { url: "form-element", component: Element },

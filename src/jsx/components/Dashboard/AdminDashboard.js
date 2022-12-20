@@ -1,32 +1,14 @@
 import loadable from "@loadable/component";
-import { LineElement } from "chart.js";
-import { LineChart } from "chartist";
 import pMinDelay from "p-min-delay";
 import React from "react";
-import { Row, Col, Card, Dropdown } from "react-bootstrap";
-// import { Line, Pie } from "react-chartjs-2";
-// import { Line } from "recharts";
-import { Pie, Line } from "react-chartjs-2";
+import { Row, Dropdown } from "react-bootstrap";
 
-import {
-  Sparklines,
-  SparklinesLine,
-  SparklinesBars,
-  SparklinesSpots,
-  SparklinesReferenceLine,
-} from "react-sparklines";
 import PageTitle from "../../layouts/PageTitle";
-import ApexLine3 from "../charts/apexcharts/Line3";
-import GradientArea from "../charts/Chartjs/gradinetArea";
+
+import { Pie } from "react-chartjs-2";
 import LineChart1 from "../charts/Chartjs/line1";
-import ChartPie from "../charts/Chartjs/pie";
 import PolarChart from "../charts/Chartjs/polar";
-import AdminTable from "./AdminTable";
 import DonutChart from "./Dashboard/DonutChart";
-import NewCustomers from "./Dashboard/NewCustomers";
-import NewProject from "./Dashboard/NewProject";
-import TinyLineChart from "../charts/rechart/TinyLineChart";
-import Donut from "../charts/chartist/donut";
 
 const ReservationChart = loadable(() =>
   pMinDelay(import("./Dashboard/ReservationChart"), 1000)
@@ -259,111 +241,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-        {/* <div className="col-xl-4 col-sm-6">
-          <div className="card">
-            <div className="card-body  d-flex px-4">
-              <h4 className="fs-18 font-w600 mb-5 text-nowrap">Total Profit</h4>
-         
-              <div style={{ height: 150 }}>
-                <Pie data={data} height={150} options={options} />
-              </div>
-              <div className="d-flex align-items-end mt-1 justify-content-between">
-                <span>
-                  <small className="text-primary">76</small> left from target
-                </span>
-                <h4 className="mb-0 fs-32 font-w800">42</h4>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-xl-4 col-sm-6">
-          <div className="card">
-            <div className="card-body  d-flex px-4">
-              <h4 className="fs-18 font-w600 mb-5 text-nowrap">Total Assets</h4>
-          
-              <div style={{ height: 150 }}>
-                <Line data={lineData} options={lineOptions} height={150} />
-              
-              </div>
-
-              <div className="d-flex align-items-end mt-1 justify-content-between">
-                <span>
-                  <small className="text-primary">76</small> left from target
-                </span>
-                <h4 className="mb-0 fs-32 font-w800">42</h4>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        {/* <div className="col-xl-4 col-sm-3">
-          <div className="card">
-            <div className="card-body px-4">
-              <h4 className="fs-18 font-w600 mb-5 text-nowrap">
-                Active Trades
-              </h4>
-              <div className="progress default-progress">
-                <div
-                  className="progress-bar progress-animated"
-                  style={{ width: "40%", height: "10px" }}
-                >
-                  <span className="sr-only">45% Complete</span>
-                </div>
-              </div>
-              <div className="d-flex align-items-end mt-1 justify-content-between">
-                <span>
-                  <small className="text-primary">76</small> left from target
-                </span>
-                <h4 className="mb-0 fs-32 font-w800">42</h4>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </Row>
-      {/* <Row>
-        <Col xl={3} lg={3}>
-          <Card>
-            <Card.Header>
-              <h4 className="card-title"> Total User</h4>
-            </Card.Header>
-            <Card.Body>
-              <LineChart1 />
-            </Card.Body>
-          </Card>
-        </Col>
-
-        <Col xl={3} lg={3}>
-          <Card>
-            <Card.Header>
-              <h4 className="card-title">total profit</h4>
-            </Card.Header>
-            <Card.Body>
-              <PolarChart />
-            </Card.Body>
-          </Card>
-        </Col>
-
-        <Col xl={3} lg={3}>
-          <Card>
-            <Card.Header>
-              <h4 className="card-title">total asset</h4>
-            </Card.Header>
-            <Card.Body>
-              <GradientArea />
-            </Card.Body>
-          </Card>
-        </Col>
-
-        <Col xl={3} lg={3}>
-          <Card>
-            <Card.Header>
-              <h4 className="card-title">active trades</h4>
-            </Card.Header>
-            <Card.Body>
-              <LineChart1 />
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row> */}
 
       <Row>
         <div className="col-xl-6">

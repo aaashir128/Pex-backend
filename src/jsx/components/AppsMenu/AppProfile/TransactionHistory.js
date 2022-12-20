@@ -7,20 +7,17 @@ import { baseURL } from "../../../../Strings/Strings";
 
 function TransactionHistory() {
   const [data, setData] = useState([]);
-  useEffect(() => {
-    // const postData = {
-    //   email,
-    //   password,
-    // };
-    let usr = localStorage.getItem("user");
-    usr = JSON.parse(usr);
-    axios
-      .get(`${baseURL}api/deposit_requests?user_id=${usr?.id}`)
-      .then((res) => {
-        console.log(res, "res");
-        setData(res.data.DepositRequests.reverse());
-      });
-  }, []);
+  // useEffect(() => {
+
+  //   let usr = localStorage.getItem("user");
+  //   usr = JSON.parse(usr);
+  //   axios
+  //     .get(`${baseURL}api/deposit_requests?user_id=${usr?.id}`)
+  //     .then((res) => {
+  //       console.log(res, "res");
+  //       setData(res.data.DepositRequests.reverse());
+  //     });
+  // }, []);
   return (
     <div>
       <Col lg={12}>
@@ -77,79 +74,6 @@ function TransactionHistory() {
                     </tr>
                   );
                 })}
-                {/* <tr>
-                  <td>
-                    <Link to="/table-bootstrap-basic">Buy Order</Link>
-                  </td>
-
-                  <td>
-                    <span className="text-muted">Oct 16, 2017</span>
-                  </td>
-                  <td>
-                    <Badge variant="warning light" style={{ width: 80 }}>
-                      Pending
-                    </Badge>
-                  </td>
-                  <td>$45.00</td>
-                </tr>
-                 <tr>
-                  <td>
-                    <Link to="/table-bootstrap-basic">Sell Order</Link>
-                  </td>
-
-                  <td>
-                    <span className="text-muted">Oct 12, 2017</span>
-                  </td>
-                  <td>
-                    <Badge variant="success light" style={{ width: 80 }}>
-                      Successful
-                    </Badge>
-                  </td>
-                  <td>$245.30</td>
-                </tr>
-                <tr>
-                  <td>
-                    <Link to="/table-bootstrap-basic">Buy Order</Link>
-                  </td>
-                  <td>
-                    <span className="text-muted">May 18, 2017</span>
-                  </td>
-                  <td>
-                    <Badge variant="danger light" style={{ width: 80 }}>
-                      Canceled
-                    </Badge>
-                  </td>
-                  <td>$38.00</td>
-                </tr>
-                <tr>
-                  <td>
-                    <Link to="/table-bootstrap-basic">Sell Order</Link>
-                  </td>
-
-                  <td>
-                    <span className="text-muted">Apr 28, 2017</span>
-                  </td>
-                  <td>
-                    <Badge variant="success light" style={{ width: 80 }}>
-                      Successful
-                    </Badge>
-                  </td>
-                  <td>$77.99</td>
-                </tr>
-                <tr>
-                  <td>
-                    <Link to="/table-bootstrap-basic">Buy Order</Link>
-                  </td>
-                  <td>
-                    <span className="text-muted">May 18, 2017</span>
-                  </td>
-                  <td>
-                    <Badge variant="danger light" style={{ width: 80 }}>
-                      Canceled
-                    </Badge>
-                  </td>
-                  <td>$38.00</td>
-                </tr> */}
               </tbody>
             </Table>
           </Card.Body>

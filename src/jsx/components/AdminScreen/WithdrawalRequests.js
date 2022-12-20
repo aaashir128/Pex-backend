@@ -51,34 +51,34 @@ function WithdrawalRequests() {
     // settest(i);
   };
 
-  useEffect(() => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.DepositRequests);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get(`${baseURL}${depositRequests}`).then((res) => {
+  //     console.log(res, "res");
+  //     setData(res.data.DepositRequests);
+  //   });
+  // }, []);
 
-  const getDepositRequests = () => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.DepositRequests);
-    });
-  };
+  // const getDepositRequests = () => {
+  //   axios.get(`${baseURL}${depositRequests}`).then((res) => {
+  //     console.log(res, "res");
+  //     setData(res.data.DepositRequests);
+  //   });
+  // };
 
   const changeStatus = (id, status) => {
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
-    const postData = {
-      id: id ? id : activeId,
-      request_status: status,
-      updated_by: usr?.id,
-      status_description: reason,
-    };
-    axios.put(`${baseURL}${depositRequest}`, postData).then((res) => {
-      console.log(res, "res");
-      setModalCentered(false);
-      getDepositRequests();
-    });
+    // const postData = {
+    //   id: id ? id : activeId,
+    //   request_status: status,
+    //   updated_by: usr?.id,
+    //   status_description: reason,
+    // };
+    // axios.put(`${baseURL}${depositRequest}`, postData).then((res) => {
+    //   console.log(res, "res");
+    //   setModalCentered(false);
+    //   getDepositRequests();
+    // });
   };
   const svg1 = (
     <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">

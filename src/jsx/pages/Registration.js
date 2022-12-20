@@ -8,6 +8,8 @@ import {
 } from "../../store/actions/AuthActions";
 // image
 import logo from "../../images/logo-full.png";
+import axios from "axios";
+import { baseURL } from "../../Strings/Strings";
 
 function Register(props) {
   const [email, setEmail] = useState("");
@@ -27,6 +29,52 @@ function Register(props) {
     passwordCheck: true,
     confirmPasswordCheck: true,
   });
+
+  const onSignUp = (e) => {
+    e.preventDefault();
+    if (user.firstName.length < 2) {
+      swal("First name not valid");
+      // alert.show("First name not valid");
+    } else if (user.lastName.length < 2) {
+      swal("Last name not valid");
+      // alert.show("Last name not valid");
+    } else if (!user.emailCheck) {
+      swal("Email not valid");
+      // alert.show("Email not valid");
+    } else if (!user.password) {
+      swal("Password not valid");
+      // alert.show("Password invalid");
+      swal("Confirm Password not valid");
+    } else if (!(user.password === user.confirmPassword)) {
+      // alert.show("Confirm Password invalid");
+    }
+    // else if (emailExist) {
+    //   alert.show("Cannot Signup using existing Email");
+    // }
+    else {
+      callSignUpApi();
+    }
+  };
+  const callSignUpApi = () => {
+    // const params = {
+    //   email: user.email,
+    //   firstName: user.firstName,
+    //   lastName: user.lastName,
+    //   password: user.password,
+    //   displayName: user.firstName + user.lastName,
+    //   contact: null,
+    //   id_number: "271914",
+    //   avatar: null,
+    // };
+    // console.log("params", params);
+    // axios.post(`${baseURL}api/user`, params).then((res) => {
+    //   console.log(res, "res");
+    //   // dispatch(loginConfirmedAction(res.data.user));
+    //   // localStorage.setItem("user", JSON.stringify(res.data.user));
+    //   // props.history.push("/dashboard");
+    //   // window.location.replace("/dashboard");
+    // });
+  };
 
   const updatePassword = (e) => {
     const result = validatePassword(e);
@@ -104,25 +152,26 @@ function Register(props) {
 
   const dispatch = useDispatch();
 
-  function onSignUp(e) {
-    e.preventDefault();
-    let error = false;
-    const errorObj = { ...errorsObj };
-    if (email === "") {
-      errorObj.email = "Email is Required";
-      error = true;
-      swal("Oops", errorObj.email, "error");
-    }
-    if (password === "") {
-      errorObj.password = "Password is Required";
-      error = true;
-      swal("Oops", errorObj.password, "error");
-    }
-    setErrors(errorObj);
-    if (error) return;
-    dispatch(loadingToggleAction(true));
-    dispatch(signupAction(email, password, props.history));
-  }
+  // function onSignUp(e) {
+  //   e.preventDefault();
+  //   let error = false;
+  //   const errorObj = { ...errorsObj };
+  //   if (email === "") {
+  //     errorObj.email = "Email is Required";
+  //     error = true;
+  //     swal("Oops", errorObj.email, "error");
+  //   }
+  //   if (password === "") {
+  //     errorObj.password = "Password is Required";
+  //     error = true;
+  //     swal("Oops", errorObj.password, "error");
+  //   }
+  //   setErrors(errorObj);
+  //   if (error) return;
+  //   dispatch(loadingToggleAction(true));
+  //   dispatch(signupAction(email, password, props.history));
+  // }
+
   return (
     <div className="authincation h-100 p-meddle">
       <div className="container h-100">
@@ -153,6 +202,10 @@ function Register(props) {
                           type="text"
                           className="form-control"
                           placeholder="First Name"
+                          value={user.firstName}
+                          onChange={(e) =>
+                            setUser({ ...user, firstName: e.target.value })
+                          }
                         />
                       </div>
                       <div className="form-group mb-3">
@@ -163,6 +216,13 @@ function Register(props) {
                           type="text"
                           className="form-control"
                           placeholder="Last Name"
+                          value={user.lastName}
+                          onChange={(e) =>
+                            setUser({
+                              ...user,
+                              lastName: e.target.value,
+                            })
+                          }
                         />
                       </div>
                       <div className="form-group mb-3">
@@ -170,8 +230,13 @@ function Register(props) {
                           <strong>Email</strong>
                         </label>
                         <input
-                          defaultValue={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          value={user.email}
+                          onChange={(e) =>
+                            setUser({
+                              ...user,
+                              email: e.target.value,
+                            })
+                          }
                           className="form-control"
                           placeholder="Email"
                         />

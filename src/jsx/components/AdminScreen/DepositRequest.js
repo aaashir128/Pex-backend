@@ -52,17 +52,17 @@ function DepositRequest() {
   };
 
   useEffect(() => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.DepositRequests);
-    });
+    // axios.get(`${baseURL}${depositRequests}`).then((res) => {
+    //   console.log(res, "res");
+    //   setData(res.data.DepositRequests);
+    // });
   }, []);
 
   const getDepositRequests = () => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data.DepositRequests);
-    });
+    // axios.get(`${baseURL}${depositRequests}`).then((res) => {
+    //   console.log(res, "res");
+    //   setData(res.data.DepositRequests);
+    // });
   };
 
   const changeStatus = (id, status) => {
@@ -74,11 +74,11 @@ function DepositRequest() {
       updated_by: usr?.id,
       status_description: reason,
     };
-    axios.put(`${baseURL}${depositRequest}`, postData).then((res) => {
-      console.log(res, "res");
-      setModalCentered(false);
-      getDepositRequests();
-    });
+    // axios.put(`${baseURL}${depositRequest}`, postData).then((res) => {
+    //   console.log(res, "res");
+    //   setModalCentered(false);
+    //   getDepositRequests();
+    // });
   };
   const svg1 = (
     <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
