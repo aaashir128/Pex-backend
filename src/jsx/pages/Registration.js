@@ -4,6 +4,7 @@ import swal from "sweetalert";
 import { connect, useDispatch } from "react-redux";
 import {
   loadingToggleAction,
+  loginConfirmedAction,
   signupAction,
 } from "../../store/actions/AuthActions";
 // image
@@ -56,24 +57,21 @@ function Register(props) {
     }
   };
   const callSignUpApi = () => {
-    // const params = {
-    //   email: user.email,
-    //   firstName: user.firstName,
-    //   lastName: user.lastName,
-    //   password: user.password,
-    //   displayName: user.firstName + user.lastName,
-    //   contact: null,
-    //   id_number: "271914",
-    //   avatar: null,
-    // };
-    // console.log("params", params);
-    // axios.post(`${baseURL}api/user`, params).then((res) => {
-    //   console.log(res, "res");
-    //   // dispatch(loginConfirmedAction(res.data.user));
-    //   // localStorage.setItem("user", JSON.stringify(res.data.user));
-    //   // props.history.push("/dashboard");
-    //   // window.location.replace("/dashboard");
-    // });
+    const params = {
+      email: user.email,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      password: user.password,
+      user_name: user.firstName + user.lastName,
+    };
+    console.log("params", params);
+    axios.post(`${baseURL}/api/user/register`, params).then((res) => {
+      console.log(res, "res");
+    //   dispatch(loginConfirmedAction(res.data.user));
+    //   localStorage.setItem("user", JSON.stringify(res.data.user));
+      props.history.push("/login");
+    //   window.location.replace("/dashboard");
+    });
   };
 
   const updatePassword = (e) => {

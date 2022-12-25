@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import jwt_decode from 'jwt-decode'
 import {
   loadingToggleAction,
   loginAction,
@@ -41,20 +42,25 @@ function Login(props) {
     if (error) {
       return;
     }
-    // dispatch(loadingToggleAction(true));
-    // dispatch(loginAction(email, password, props.history));
+    dispatch(loadingToggleAction(true));
+    dispatch(loginAction(email, password, props.history));
 
-    // const postData = {
-    //   email,
-    //   password,
-    // };
-    // axios.post(`${baseURL}api/user/login`, postData).then((res) => {
+    const postData = {
+      email,
+      password,
+    };
+    axios.post(`${baseURL}/api/user/login`, postData).then((res) => {
     //   console.log(res, "res");
-    //   dispatch(loginConfirmedAction(res.data.user));
-    //   localStorage.setItem("user", JSON.stringify(res.data.user));
+      const user = jwt_decode(res?.data?.access);
+      const token = res?.data?.access
+      console.log(user,"user");
+      console.log(token,"token");
+    //   dispatch(loginConfirmedAction(user));
+    //   localStorage.setItem("user", JSON.stringify(user));
+    //   localStorage.setItem("token", JSON.stringify());
     //   props.history.push("/dashboard");
     //   window.location.replace("/dashboard");
-    // });
+    });
   }
 
   const signInGoogle = () => {

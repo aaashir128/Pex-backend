@@ -1,13 +1,13 @@
-import React from 'react';
+// import React from 'react';
 
-export const ColumnFilter = ( { column } ) => {
+// export const ColumnFilter = ( { column } ) => {
 	
-	const {filterValue, setFilter} = column
-	return(
-		<div>
+// 	const {filterValue, setFilter} = column
+// 	return(
+// 		<div>
 		
-			<input className="form-control input-search"
-				value={filterValue || ''}  onChange={e => setFilter(e.target.value)} />
-		</div>
-	)
-} 
+// 			<input className="form-control input-search"
+// 				value={filterValue || ''}  onChange={e => setFilter(e.target.value)} />
+// 		</div>
+// 	)
+// } 

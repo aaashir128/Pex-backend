@@ -162,8 +162,58 @@ function Market(props) {
   //     });
   // };
 
+
+  const fetchData = async () => {
+    // axios
+    //   .get(
+    //     "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+    //     {
+    //       headers: {
+    //         "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //       },
+    //     }
+    //   )
+    //   .then((res) => {
+    //     localStorage.setItem("perData", JSON.stringify(res.data.data));
+    //     setCoinData(res.data.data);
+
+
+    //     // var filter = res.data.data.filter(function (item) {
+    //     //   return !result.find((i) => item?.name == i?.coin_name);
+    //     // });
+    //     // console.log("Result", result);
+
+    //     // setCoinData(filter);
+    //     // console.log("Filterrrrrr", filter);
+
+    //     // }, 500);
+    //   });
+
+    try {
+      let config = {
+        url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=7fb31f57-04f3-4cf2-844c-7352c2e67aec&start=1&limit=25&convert=USD",
+        method: "get",
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      };
+      const { data } = await axios.request(config)
+      localStorage.setItem("perData", JSON.stringify(data?.data));
+      setCoinData(data?.data)
+    } catch (error) {
+      console.log(error);
+    }
+
+
+  };
+
+
   useEffect(() => {
-    const id = setInterval(() => {
+    const id = window.setInterval(() => {
       let aa = localStorage.getItem("perData");
       aa = aa && JSON.parse(aa);
       console.log(aa, "aa");
@@ -173,37 +223,14 @@ function Market(props) {
     }, 15000);
     return () => clearInterval(id);
   }, []);
-  const fetchData = async () => {
-    axios
-      .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
-        {
-          headers: {
-            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-          },
-        }
-      )
-      .then((res) => {
-        localStorage.setItem("perData", JSON.stringify(res.data.data));
-        setCoinData(res.data.data);
 
-        // var filter = res.data.data.filter(function (item) {
-        //   return !result.find((i) => item?.name == i?.coin_name);
-        // });
-        // console.log("Result", result);
 
-        // setCoinData(filter);
-        // console.log("Filterrrrrr", filter);
 
-        // }, 500);
-      });
-  };
+
 
   console.log("coinData", coinData);
-  const addToWatchList = (name) => {};
-  const removeFromWatchList = () => {};
+  const addToWatchList = (name) => { };
+  const removeFromWatchList = () => { };
 
   return (
     <>
@@ -248,14 +275,14 @@ function Market(props) {
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="dropdown-menu-right">
                               <a
-                                class="dropdown-item cursor-pointer"
+                                className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={() => setChange("1h")}
                               >
                                 Change 1h
                               </a>
                               <a
-                                class="dropdown-item cursor-pointer"
+                                className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -265,7 +292,7 @@ function Market(props) {
                                 Change 24h
                               </a>
                               <a
-                                class="dropdown-item cursor-pointer"
+                                className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -305,8 +332,9 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...perCoinData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data.slug}.png`);
+                    { [...perCoinData]?.map((data, ind) => {
+                      let coinImg = require(`../../../icons/coins/bzzone.png`);
+                      // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
                       let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -316,7 +344,7 @@ function Market(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              <img src={coinImg} width="40" height="40" />
+                              <img src={coinImg} width="40" height="40" alt="icon" />
                               <div className="mx-2 ">
                                 <p className="mb-0">{data.name}</p>
                                 <p className="mb-0">{data.symbol}</p>
@@ -328,8 +356,8 @@ function Market(props) {
                               perPrice - data.quote.USD.price > 0
                                 ? { color: "green" }
                                 : perPrice - data.quote.USD.price < 0
-                                ? { color: "red" }
-                                : { color: "black" }
+                                  ? { color: "red" }
+                                  : { color: "black" }
                             }
                           >
                             $ {data.quote.USD.price.toFixed(2)}{" "}
@@ -343,11 +371,10 @@ function Market(props) {
                           <td className="text-center">
                             {change === "1h" ? (
                               <p
-                                className={`${
-                                  data.quote.USD.percent_change_1h < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
-                                }`}
+                                className={`${data.quote.USD.percent_change_1h < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
+                                  }`}
                               >
                                 {parseFloat(
                                   data.quote.USD.percent_change_1h
@@ -356,11 +383,10 @@ function Market(props) {
                               </p>
                             ) : change === "7d" ? (
                               <p
-                                className={`${
-                                  data.quote.USD.percent_change_7d < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
-                                }`}
+                                className={`${data.quote.USD.percent_change_7d < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
+                                  }`}
                               >
                                 {parseFloat(
                                   data.quote.USD.percent_change_7d
@@ -369,11 +395,10 @@ function Market(props) {
                               </p>
                             ) : (
                               <p
-                                className={`${
-                                  data.quote.USD.percent_change_24h < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
-                                }`}
+                                className={`${data.quote.USD.percent_change_24h < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
+                                  }`}
                               >
                                 {parseFloat(
                                   data.quote.USD.percent_change_24h
@@ -386,7 +411,7 @@ function Market(props) {
                           <td>
                             <button
                               type="button"
-                              class="btn"
+                              className="btn"
                               style={{
                                 background: "#3eacff",
                                 color: "white",
@@ -494,9 +519,8 @@ function Market(props) {
                         <Link
                           key={i}
                           to="/app-profile"
-                          className={`paginate_button  ${
-                            activePag.current === i ? "current" : ""
-                          } `}
+                          className={`paginate_button  ${activePag.current === i ? "current" : ""
+                            } `}
                           onClick={() => onClick(i)}
                         >
                           {number}
@@ -505,7 +529,7 @@ function Market(props) {
                     </span>
                     <Link
                       className="paginate_button next"
-                      // to="/app-profile"
+                      to="/app-profile"
                       onClick={() =>
                         activePag.current + 1 < paggination?.length &&
                         onClick(activePag.current + 1)
@@ -606,7 +630,7 @@ function Market(props) {
                     className="p-2 mb-3 bg-light rounded d-flex align-items-center justify-content-around"
                     onClick={() => setIsUnits(!isUnits)}
                   >
-                    <i class="fas fa-exchange-alt"></i>
+                    <i className="fas fa-exchange-alt"></i>
                     <h4 className="mb-0">{!isUnits ? "UNITS" : "AMOUNT"}</h4>
                   </div>
                 </div>
