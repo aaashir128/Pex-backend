@@ -52,33 +52,49 @@ function DepositRequest() {
   };
 
   useEffect(() => {
-    // axios.get(`${baseURL}${depositRequests}`).then((res) => {
-    //   console.log(res, "res");
-    //   setData(res.data.DepositRequests);
-    // });
+    let token = localStorage.getItem("token");
+    token = JSON.parse(token);
+    console.log(token, "token");
+
+    axios
+      .get(`${baseURL}${depositRequests}`, {
+        headers: { "x-auth-token": token },
+      })
+      .then((res) => {
+        console.log(res, "res");
+        setData(res.data);
+      });
   }, []);
 
   const getDepositRequests = () => {
-    // axios.get(`${baseURL}${depositRequests}`).then((res) => {
-    //   console.log(res, "res");
-    //   setData(res.data.DepositRequests);
-    // });
+    axios.get(`${baseURL}${depositRequests}`).then((res) => {
+      console.log(res, "res");
+      setData(res.data);
+    });
   };
 
   const changeStatus = (id, status) => {
+    let token = localStorage.getItem("token");
+    token = JSON.parse(token);
+
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
+    console.log(reason, "reason", status, "status");
     const postData = {
-      id: id ? id : activeId,
-      request_status: status,
-      updated_by: usr?.id,
-      status_description: reason,
+      status: status,
+      // status_description: reason,
+      status_description: "accepted",
     };
-    // axios.put(`${baseURL}${depositRequest}`, postData).then((res) => {
-    //   console.log(res, "res");
-    //   setModalCentered(false);
-    //   getDepositRequests();
-    // });
+    console.log(usr, "usr", id, "id");
+    axios
+      .put(`${baseURL}/api/deposit/${id}`, postData, {
+        headers: { "x-auth-token": token },
+      })
+      .then((res) => {
+        console.log(res, "res");
+        setModalCentered(false);
+        getDepositRequests();
+      });
   };
   const svg1 = (
     <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
@@ -128,72 +144,233 @@ function DepositRequest() {
                 </thead>
                 <tbody>
                   {[...data].slice(start, end).map((req, ind) => {
-                    return (
-                      <tr>
-                        <td>
-                          <strong>{ind + 1}</strong>
-                        </td>
-                        <td>
-                          {req?.user?.firstName + " " + req?.user?.lastName}
-                        </td>
-                        <td>$ {req?.amount?.toFixed(2)}</td>
-                        <td>
-                          {req?.request_status == "Pending"
-                            ? moment(req?.requested_at).format(
-                                "YYYY-MM-DD hh:mm a"
-                              )
-                            : moment(req?.updated_at).format(
-                                "YYYY-MM-DD hh:mm a"
-                              )}
-                        </td>
-                        <td>{req?.type}</td>
-                        <td>
-                          <Badge
-                            variant={`${
-                              req?.request_status === "Rejected"
-                                ? "danger light"
-                                : req?.request_status === "Approved"
-                                ? "primary light"
-                                : "warning light"
-                            }`}
-                          >
-                            {" "}
-                            {req?.request_status}
-                          </Badge>
-                        </td>
-                        <td>
-                          {req?.request_status === "Pending" && (
-                            <Dropdown>
-                              <Dropdown.Toggle
-                                variant="primary"
-                                className="light sharp i-false"
-                              >
-                                {svg1}
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    changeStatus(req?.id, "Approved")
-                                  }
+                    if (req?.status === "pending") {
+                      return (
+                        <tr>
+                          <td>
+                            <strong>{ind + 1}</strong>
+                          </td>
+                          <td>
+                            {/* {req?.user?.firstName + " " + req?.user?.lastName} */}
+                            {req?.user_id}
+                          </td>
+                          <td>$ {req?.amount?.toFixed(2)}</td>
+                          <td>
+                            {req?.status == "pending"
+                              ? moment(req?.requested_at).format(
+                                  "YYYY-MM-DD hh:mm a"
+                                )
+                              : moment(req?.updated_at).format(
+                                  "YYYY-MM-DD hh:mm a"
+                                )}
+                          </td>
+                          <td>{req?.type}</td>
+                          <td>
+                            <Badge
+                              variant={`${
+                                req?.status === "Rejected"
+                                  ? "danger light"
+                                  : req?.status === "Approved"
+                                  ? "primary light"
+                                  : "warning light"
+                              }`}
+                            >
+                              {" "}
+                              {req?.status}
+                            </Badge>
+                          </td>
+                          <td>
+                            {req?.status === "pending" && (
+                              <Dropdown>
+                                <Dropdown.Toggle
+                                  variant="primary"
+                                  className="light sharp i-false"
                                 >
-                                  Approve
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setActiveId(req?.id);
-                                    setModalCentered(true);
-                                  }}
+                                  {svg1}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      changeStatus(req?.id, "accepted")
+                                    }
+                                  >
+                                    Approve
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setActiveId(req?.id);
+                                      setModalCentered(true);
+                                    }}
+                                  >
+                                    Reject
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
+                            {req?.status === "Rejected" &&
+                              req?.status_description}
+                          </td>
+                        </tr>
+                      );
+                    }
+                  })}
+                </tbody>
+              </Table>
+            </div>
+            <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
+              <div className="dataTables_info">
+                Showing {activePag.current * sort + 1} to{" "}
+                {data?.length > (activePag.current + 1) * sort
+                  ? (activePag.current + 1) * sort
+                  : data.length}{" "}
+                of {data.length} entries
+              </div>
+              <div
+                className="dataTables_paginate paging_simple_numbers my-2"
+                id="example5_paginate"
+              >
+                <Link
+                  className="paginate_button previous disabled"
+                  to="/app-profile"
+                  onClick={() =>
+                    activePag.current > 0 && onClick(activePag.current - 1)
+                  }
+                >
+                  <i className="fa fa-angle-double-left" aria-hidden="true"></i>
+                </Link>
+                <span>
+                  {paggination.map((number, i) => (
+                    <Link
+                      key={i}
+                      to="/app-profile"
+                      className={`paginate_button  ${
+                        activePag.current === i ? "current" : ""
+                      } `}
+                      onClick={() => onClick(i)}
+                    >
+                      {number}
+                    </Link>
+                  ))}
+                </span>
+                <Link
+                  className="paginate_button next"
+                  // to="/app-profile"
+                  onClick={() =>
+                    activePag.current + 1 < paggination.length &&
+                    onClick(activePag.current + 1)
+                  }
+                >
+                  <i
+                    className="fa fa-angle-double-right"
+                    aria-hidden="true"
+                  ></i>
+                </Link>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+        <Card>
+          <Card.Header>
+            <Card.Title>Deposit Request</Card.Title>
+          </Card.Header>
+          <Card.Body>
+            <div id="job_data" className="dataTables_wrapper">
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th className="width80">
+                      <strong>#</strong>
+                    </th>
+                    <th>
+                      <strong>USERNAME</strong>
+                    </th>
+                    <th>
+                      <strong>DEPOSIT AMOUNT</strong>
+                    </th>
+                    <th>
+                      <strong>DATE</strong>
+                    </th>
+                    <th>
+                      <strong>TYPE</strong>
+                    </th>
+                    <th>
+                      <strong>STATUS</strong>
+                    </th>
+
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...data].slice(start, end).map((req, ind) => {
+                    if (req?.status === "approved") {
+                      return (
+                        <tr>
+                          <td>
+                            <strong>{ind + 1}</strong>
+                          </td>
+                          <td>
+                            {/* {req?.user?.firstName + " " + req?.user?.lastName} */}
+                            {req?.user_id}
+                          </td>
+                          <td>$ {req?.amount?.toFixed(2)}</td>
+                          <td>
+                            {req?.status == "Pending"
+                              ? moment(req?.requested_at).format(
+                                  "YYYY-MM-DD hh:mm a"
+                                )
+                              : moment(req?.updated_at).format(
+                                  "YYYY-MM-DD hh:mm a"
+                                )}
+                          </td>
+                          <td>{req?.type}</td>
+                          <td>
+                            <Badge
+                              variant={`${
+                                req?.status === "Rejected"
+                                  ? "danger light"
+                                  : req?.status === "Approved"
+                                  ? "primary light"
+                                  : "warning light"
+                              }`}
+                            >
+                              {" "}
+                              {req?.status}
+                            </Badge>
+                          </td>
+                          <td>
+                            {req?.status === "Pending" && (
+                              <Dropdown>
+                                <Dropdown.Toggle
+                                  variant="primary"
+                                  className="light sharp i-false"
                                 >
-                                  Reject
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
-                          )}
-                          {req?.request_status === "Rejected" &&
-                            req?.status_description}
-                        </td>
-                      </tr>
-                    );
+                                  {svg1}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      changeStatus(req?.id, "Approved")
+                                    }
+                                  >
+                                    Approve
+                                  </Dropdown.Item>
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setActiveId(req?.id);
+                                      setModalCentered(true);
+                                    }}
+                                  >
+                                    Reject
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
+                            {req?.status === "Rejected" &&
+                              req?.status_description}
+                          </td>
+                        </tr>
+                      );
+                    }
                   })}
                 </tbody>
               </Table>

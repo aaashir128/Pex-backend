@@ -1,5 +1,5 @@
 export const baseURL = "http://localhost:4000";
-export const depositRequests = "api/deposit_requests";
+export const depositRequests = "/api/deposit/";
 export const depositRequest = "api/deposit_request";
 // export const createTrades = "api/deposit_request";
 export const tradeHistoryAPI = "api/trade_history";
