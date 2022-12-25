@@ -55,10 +55,10 @@ function Login(props) {
       const token = res?.data?.access
       console.log(user,"user");
       console.log(token,"token");
-    //   dispatch(loginConfirmedAction(user));
-    //   localStorage.setItem("user", JSON.stringify(user));
-    //   localStorage.setItem("token", JSON.stringify());
-    //   props.history.push("/dashboard");
+      dispatch(loginConfirmedAction(user));
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", JSON.stringify());
+      props.history.push("/dashboard");
     //   window.location.replace("/dashboard");
     });
   }
@@ -187,14 +187,14 @@ function Login(props) {
                     </div>
                   </form>
 
-                  <div className="text-center form-group mb-3">
+                  {/* <div className="text-center form-group mb-3">
                     <button
                       onClick={signInGoogle}
                       className="btn btn-secondary btn-block"
                     >
                       Sign In With GOOGLE
                     </button>
-                  </div>
+                  </div> */}
                   <div className="new-account mt-3">
                     <p>
                       Don't have an account?{" "}

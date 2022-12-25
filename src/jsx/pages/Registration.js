@@ -67,8 +67,8 @@ function Register(props) {
     console.log("params", params);
     axios.post(`${baseURL}/api/user/register`, params).then((res) => {
       console.log(res, "res");
-    //   dispatch(loginConfirmedAction(res.data.user));
-    //   localStorage.setItem("user", JSON.stringify(res.data.user));
+      dispatch(loginConfirmedAction(res.data.user));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       props.history.push("/login");
     //   window.location.replace("/dashboard");
     });

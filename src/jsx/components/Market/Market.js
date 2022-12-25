@@ -207,8 +207,6 @@ function Market(props) {
     } catch (error) {
       console.log(error);
     }
-
-
   };
 
 
