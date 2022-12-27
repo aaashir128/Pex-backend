@@ -8,6 +8,8 @@ import { Button } from "react-bootstrap";
 import { ThemeContext } from "../../../context/ThemeContext";
 import ProjectSlider from "./Dashboard/ProjectSlider";
 import TransactionHistory from "../AppsMenu/AppProfile/TransactionHistory";
+import axios from "axios";
+import { baseURL } from "../../../Strings/Strings";
 
 const ChartBarApex = loadable(() =>
   pMinDelay(import("./Dashboard/ChartBarApex"), 1000)
@@ -16,14 +18,21 @@ const ChartBarApex = loadable(() =>
 const Home = (props) => {
   const { changeBackground } = useContext(ThemeContext);
   const [data, setData] = useState([]);
+
+  const tokn = JSON.parse(localStorage.getItem("token"));
+
   useEffect(() => {
     changeBackground({ value: "light", label: "Light" });
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
-    // axios.get(`${baseURL}api/wallet/${usr?.id}`).then((res) => {
-    //   console.log(res, "res");
-    //   setData(res.data.wallet);
-    // });
+    axios
+      .get(`${baseURL}/api/wallet//${usr?.id}`, {
+        headers: { "x-auth-token": tokn },
+      })
+      .then((res) => {
+        console.log(res, "res");
+        setData(res.data);
+      });
   }, [props.history]);
   return (
     <>

@@ -20,7 +20,9 @@ import PageTitle from "../../layouts/PageTitle";
 
 function DepositRequest() {
   const [modalCentered, setModalCentered] = useState(false);
-  const [data, setData] = useState([]);
+  const [pendingData, setPendingData] = useState([]);
+  const [otherData, setOtherData] = useState([]);
+  const [token, setToken] = useState(null);
   const [activeId, setActiveId] = useState(0);
   const [reason, setReason] = useState("");
   const [start, setStart] = useState(0);
@@ -29,17 +31,17 @@ function DepositRequest() {
 
   const activePag = useRef(0);
   const chageData = (frist, sec) => {
-    for (var i = 0; i < data.length; ++i) {
+    for (var i = 0; i < pendingData.length; ++i) {
       if (i >= frist && i < sec) {
-        data[i]?.classList?.remove("d-none");
+        pendingData[i]?.classList?.remove("d-none");
       } else {
-        data[i]?.classList?.add("d-none");
+        pendingData[i]?.classList?.add("d-none");
       }
     }
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(data?.length / sort))
+  let paggination = Array(Math.ceil(pendingData?.length / sort))
     .fill()
     .map((_, i) => i + 1);
 
@@ -51,26 +53,42 @@ function DepositRequest() {
     // settest(i);
   };
 
+  const tokn = JSON.parse(localStorage.getItem("token"));
+
   useEffect(() => {
-    let token = localStorage.getItem("token");
-    token = JSON.parse(token);
-    console.log(token, "token");
+    // setToken(tokn);
+    // console.log("token", tokn);
 
     axios
       .get(`${baseURL}${depositRequests}`, {
-        headers: { "x-auth-token": token },
+        headers: { "x-auth-token": tokn },
       })
       .then((res) => {
         console.log(res, "res");
-        setData(res.data);
+        const pendindData = res.data.filter((x) => x.status === "pending");
+        const otherData = res.data.filter((x) => x.status !== "pending");
+
+        setPendingData(pendindData);
+        setOtherData(otherData);
+      })
+      .catch((error) => {
+        console.log("error", error.response.data);
       });
   }, []);
 
   const getDepositRequests = () => {
-    axios.get(`${baseURL}${depositRequests}`).then((res) => {
-      console.log(res, "res");
-      setData(res.data);
-    });
+    axios
+      .get(`${baseURL}${depositRequests}`, {
+        headers: { "x-auth-token": tokn },
+      })
+      .then((res) => {
+        console.log(res, "res");
+        const pendindData = res.data.filter((x) => x.status === "pending");
+        const otherData = res.data.filter((x) => x.status !== "pending");
+
+        setPendingData(pendindData);
+        setOtherData(otherData);
+      });
   };
 
   const changeStatus = (id, status) => {
@@ -85,15 +103,18 @@ function DepositRequest() {
       // status_description: reason,
       status_description: "accepted",
     };
-    console.log(usr, "usr", id, "id");
+    console.log(status, "status", id, "id");
     axios
       .put(`${baseURL}/api/deposit/${id}`, postData, {
-        headers: { "x-auth-token": token },
+        headers: { "x-auth-token": tokn },
       })
       .then((res) => {
         console.log(res, "res");
         setModalCentered(false);
         getDepositRequests();
+      })
+      .catch((err) => {
+        console.log("error", err);
       });
   };
   const svg1 = (
@@ -143,7 +164,7 @@ function DepositRequest() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...data].slice(start, end).map((req, ind) => {
+                  {[...pendingData].slice(start, end).map((req, ind) => {
                     if (req?.status === "pending") {
                       return (
                         <tr>
@@ -175,7 +196,6 @@ function DepositRequest() {
                                   : "warning light"
                               }`}
                             >
-                              {" "}
                               {req?.status}
                             </Badge>
                           </td>
@@ -191,7 +211,7 @@ function DepositRequest() {
                                 <Dropdown.Menu>
                                   <Dropdown.Item
                                     onClick={() =>
-                                      changeStatus(req?.id, "accepted")
+                                      changeStatus(req?.id, "approved")
                                     }
                                   >
                                     Approve
@@ -220,10 +240,10 @@ function DepositRequest() {
             <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
               <div className="dataTables_info">
                 Showing {activePag.current * sort + 1} to{" "}
-                {data?.length > (activePag.current + 1) * sort
+                {pendingData?.length > (activePag.current + 1) * sort
                   ? (activePag.current + 1) * sort
-                  : data.length}{" "}
-                of {data.length} entries
+                  : pendingData.length}{" "}
+                of {pendingData.length} entries
               </div>
               <div
                 className="dataTables_paginate paging_simple_numbers my-2"
@@ -301,8 +321,8 @@ function DepositRequest() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...data].slice(start, end).map((req, ind) => {
-                    if (req?.status === "approved") {
+                  {[...otherData].slice(start, end).map((req, ind) => {
+                    if (req?.status !== "pending") {
                       return (
                         <tr>
                           <td>
@@ -314,7 +334,7 @@ function DepositRequest() {
                           </td>
                           <td>$ {req?.amount?.toFixed(2)}</td>
                           <td>
-                            {req?.status == "Pending"
+                            {req?.status == "pending"
                               ? moment(req?.requested_at).format(
                                   "YYYY-MM-DD hh:mm a"
                                 )
@@ -326,19 +346,18 @@ function DepositRequest() {
                           <td>
                             <Badge
                               variant={`${
-                                req?.status === "Rejected"
+                                req?.status === "canceled"
                                   ? "danger light"
-                                  : req?.status === "Approved"
+                                  : req?.status === "accepted"
                                   ? "primary light"
                                   : "warning light"
                               }`}
                             >
-                              {" "}
                               {req?.status}
                             </Badge>
                           </td>
                           <td>
-                            {req?.status === "Pending" && (
+                            {req?.status === "pending" && (
                               <Dropdown>
                                 <Dropdown.Toggle
                                   variant="primary"
@@ -349,7 +368,7 @@ function DepositRequest() {
                                 <Dropdown.Menu>
                                   <Dropdown.Item
                                     onClick={() =>
-                                      changeStatus(req?.id, "Approved")
+                                      changeStatus(req?.id, "approved")
                                     }
                                   >
                                     Approve
@@ -378,10 +397,10 @@ function DepositRequest() {
             <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
               <div className="dataTables_info">
                 Showing {activePag.current * sort + 1} to{" "}
-                {data?.length > (activePag.current + 1) * sort
+                {otherData?.length > (activePag.current + 1) * sort
                   ? (activePag.current + 1) * sort
-                  : data.length}{" "}
-                of {data.length} entries
+                  : otherData.length}{" "}
+                of {otherData.length} entries
               </div>
               <div
                 className="dataTables_paginate paging_simple_numbers my-2"
@@ -459,7 +478,7 @@ function DepositRequest() {
           </Button>
           <Button
             variant="primary"
-            onClick={() => changeStatus(null, "Rejected")}
+            onClick={() => changeStatus(activeId, "canceled")}
           >
             Reject Request
           </Button>
