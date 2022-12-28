@@ -57,36 +57,36 @@ function Login(props) {
       console.log(token,"token");
       dispatch(loginConfirmedAction(user));
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", JSON.stringify());
+      localStorage.setItem("token", JSON.stringify(token));
       props.history.push("/dashboard");
     //   window.location.replace("/dashboard");
     });
   }
 
-  const signInGoogle = () => {
-    auth
-      .signInWithPopup(provider)
-      .then((result) => {
-        var fullName = result.user.displayName.split(" ");
-        let userData = {
-          email: result.user.email,
-          id: result.user.uid,
-          displayName: result.user.displayName,
-          firstName: fullName[0],
-          lastName: fullName[1],
-        };
+//   const signInGoogle = () => {
+//     auth
+//       .signInWithPopup(provider)
+//       .then((result) => {
+//         var fullName = result.user.displayName.split(" ");
+//         let userData = {
+//           email: result.user.email,
+//           id: result.user.uid,
+//           displayName: result.user.displayName,
+//           firstName: fullName[0],
+//           lastName: fullName[1],
+//         };
 
-        dispatch(loginConfirmedAction(userData));
-        localStorage.setItem("user", JSON.stringify(userData));
-        props.history.push("/dashboard");
-        console.log("userData", userData);
-        console.log(result.user);
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-    // Google sign in
-  };
+//         dispatch(loginConfirmedAction(userData));
+//         localStorage.setItem("user", JSON.stringify(userData));
+//         props.history.push("/dashboard");
+//         console.log("userData", userData);
+//         console.log(result.user);
+//       })
+//       .catch((error) => {
+//         alert(error.message);
+//       });
+//     // Google sign in
+//   };
 
   return (
     <div className="authincation d-flex flex-column flex-lg-row flex-column-fluid">

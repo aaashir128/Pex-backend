@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button, Card, Col, Dropdown, Modal, Nav, Tab } from "react-bootstrap";
 
@@ -6,6 +6,7 @@ import axios from "axios";
 import { baseURL, createTradeAPI, tradeAPI } from "../../../Strings/Strings";
 import PageTitle from "../../layouts/PageTitle";
 import { themePrimary } from "../../../css/color";
+
 // import { json } from "stream/consumers";
 
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
@@ -38,6 +39,14 @@ const tabData = [
   },
 ];
 function Market(props) {
+  var timer;
+  const token = JSON.parse(localStorage.getItem("token"));
+
+  const user = localStorage.getItem("user");
+  // console.log("USer", user);
+  const parseUSer = JSON.parse(user);
+
+
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
   const [change, setChange] = useState("24h");
@@ -84,13 +93,13 @@ function Market(props) {
       setBuyAmount({
         ...buyAmount,
         units: (buyAmount.units += 1),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: buyAmount.units * selectedCoin?.data?.price,
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: (buyAmount.amount += 1000),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: buyAmount.amount / selectedCoin?.data?.price,
       });
     }
   };
@@ -100,7 +109,7 @@ function Market(props) {
         setBuyAmount({
           ...buyAmount,
           units: (buyAmount.units -= 1),
-          amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+          amount: buyAmount.units * selectedCoin?.data?.price,
         });
       }
     } else {
@@ -108,7 +117,7 @@ function Market(props) {
         setBuyAmount({
           ...buyAmount,
           amount: (buyAmount.amount -= 1000),
-          units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+          units: buyAmount.amount / selectedCoin?.data?.price,
         });
       }
     }
@@ -119,33 +128,37 @@ function Market(props) {
       setBuyAmount({
         ...buyAmount,
         units: Number(e.target.value),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: buyAmount.units * selectedCoin?.data?.price,
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: Number(e.target.value),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: buyAmount.amount / selectedCoin?.data?.price,
       });
     }
   };
 
   const createTrade = () => {
     if (buyAmount.amount > 0 || buyAmount.units > 0) {
-      // const tradeData = {
-      //   crypto_name: selectedCoin?.data.slug,
-      //   crypto_purchase_price: selectedCoin?.data.quote.USD.price,
-      //   investment: buyAmount.amount,
-      //   trade_profit_end: profitEnd,
-      //   trade_loss_end: lossEnd,
-      //   user_id: 1,
-      // };
-      // axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
-      //   console.log(res, "res");
-      //   if (res?.data?.status) {
-      //     props?.history?.push("/portfolio");
-      //   }
-      // });
+      const tradeData = {
+        crypto_name: selectedCoin?.data?.name,
+        crypto_symbol: selectedCoin?.data?.symbol,
+        crypto_purchase_price: selectedCoin?.data?.price,
+        investment: buyAmount?.amount,
+        take_profit: profitEnd,
+        stop_loss: lossEnd,
+        user_id: parseUSer?.id,
+      };
+      console.log(tradeData);
+      axios.post(`${baseURL}/api/activetrade`, tradeData, { headers: { "x-auth-token": token } }).then((res) => {
+        console.log(res?.data, "res");
+        if (res?.data?.status) {
+          props?.history?.push("/portfolio");
+        }
+        alert("Success")
+        setModalCentered(false)  
+      }).catch(e=>console.log(e));
     }
   };
 
@@ -210,25 +223,41 @@ function Market(props) {
   };
 
 
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      let aa = localStorage.getItem("perData");
-      aa = aa && JSON.parse(aa);
-      console.log(aa, "aa");
-      setPerCoinData(aa);
 
-      fetchData();
-    }, 15000);
-    return () => clearInterval(id);
+  const getDatafromBackend = async () => {
+    try {
+      const token = await localStorage.getItem('token')
+      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
+      console.log(data);
+      setCoinData(data)
+      timer = setTimeout(() => { getDatafromBackend() }, 15000)
+      // setInterval(getDatafromBackend(),3000)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getDatafromBackend()
+    return () => clearTimeout(timer)
+    // const id = window.setInterval(() => {
+    //   let aa = localStorage.getItem("perData");
+    //   aa = aa && JSON.parse(aa);
+    //   console.log(aa, "aa");
+    //   setPerCoinData(aa);
+
+    //   fetchData();
+    // }, 15000);
+    // return () => clearInterval(id);
   }, []);
 
 
 
 
 
-  console.log("coinData", coinData);
-  const addToWatchList = (name) => { };
-  const removeFromWatchList = () => { };
+  // console.log("coinData", coinData);
+  // const addToWatchList = (name) => { };
+  // const removeFromWatchList = () => { };
 
   return (
     <>
@@ -330,10 +359,10 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    { [...perCoinData]?.map((data, ind) => {
+                    {[...coinData]?.map((data, ind) => {
                       let coinImg = require(`../../../icons/coins/bzzone.png`);
                       // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
-                      let perPrice = perCoinData[ind]?.quote?.USD?.price;
+                      let perPrice = coinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
                           key={data?.id}
@@ -351,55 +380,55 @@ function Market(props) {
                           </td>
                           <td
                             style={
-                              perPrice - data.quote.USD.price > 0
+                              perPrice - data?.price > 0
                                 ? { color: "green" }
-                                : perPrice - data.quote.USD.price < 0
+                                : perPrice - data?.price < 0
                                   ? { color: "red" }
                                   : { color: "black" }
                             }
                           >
-                            $ {data.quote.USD.price.toFixed(2)}{" "}
-                            {perPrice - data.quote.USD.price > 0 && (
+                            $ {data?.price.toFixed(2)}{" "}
+                            {perPrice - data?.price > 0 && (
                               <i className="fas fa-arrow-up"></i>
                             )}
-                            {perPrice - data.quote.USD.price < 0 && (
+                            {perPrice - data?.price < 0 && (
                               <i className="fas fa-arrow-down"></i>
                             )}{" "}
                           </td>
                           <td className="text-center">
                             {change === "1h" ? (
                               <p
-                                className={`${data.quote.USD.percent_change_1h < 0
+                                className={`${data?.percent_change_1h < 0
                                   ? "text-danger d-inline"
                                   : "text-success d-inline"
                                   }`}
                               >
                                 {parseFloat(
-                                  data.quote.USD.percent_change_1h
+                                  data?.percent_change_1h
                                 ).toFixed(2)}
                                 %
                               </p>
                             ) : change === "7d" ? (
                               <p
-                                className={`${data.quote.USD.percent_change_7d < 0
+                                className={`${data?.percent_change_7d < 0
                                   ? "text-danger d-inline"
                                   : "text-success d-inline"
                                   }`}
                               >
                                 {parseFloat(
-                                  data.quote.USD.percent_change_7d
+                                  data?.percent_change_7d
                                 ).toFixed(2)}
                                 %
                               </p>
                             ) : (
                               <p
-                                className={`${data.quote.USD.percent_change_24h < 0
+                                className={`${data?.percent_change_24h < 0
                                   ? "text-danger d-inline"
                                   : "text-success d-inline"
                                   }`}
                               >
                                 {parseFloat(
-                                  data.quote.USD.percent_change_24h
+                                  data?.percent_change_24h
                                 ).toFixed(2)}
                                 %
                               </p>
@@ -444,19 +473,19 @@ function Market(props) {
                                   //   changeStatus(req?.id, "Approved")
                                   // }
                                   onClick={async () => {
-                                    const user = localStorage.getItem("user");
-                                    console.log("USer", user);
-                                    const parseUSer = JSON.parse(user);
-                                    console.log("PArse USer", parseUSer.id);
+
+
+                                    console.log("PArse USer", parseUSer.id, token);
                                     console.log("Coin", data.name);
 
                                     await axios
                                       .post(
-                                        "http://localhost:4000/api/watchList",
+                                        `${baseURL}/api/userwatchlist`,
                                         {
                                           user_id: parseUSer.id,
                                           coin_name: data.name,
-                                        }
+                                        },
+                                        { headers: { "x-auth-token": token } }
                                       )
                                       .then((res) => {
                                         console.log(
@@ -561,25 +590,25 @@ function Market(props) {
                 <div className="mx-2">
                   <div className=" d-flex">
                     <p className="mb-0 ">BUY</p>
-                    <h5 className="mb-0 px-1">{selectedCoin?.data.symbol}</h5>
+                    <h5 className="mb-0 px-1">{selectedCoin?.data?.symbol}</h5>
                   </div>
                   <div className="d-flex align-items-center">
                     <h3 className="mb-0">
                       $
-                      {parseFloat(selectedCoin?.data.quote.USD.price).toFixed(
+                      {parseFloat(selectedCoin?.data?.price).toFixed(
                         2
                       )}
                     </h3>
                     <small
                       className={
-                        selectedCoin?.data.quote.USD.percent_change_24h > 0
+                        selectedCoin?.data?.percent_change_24h > 0
                           ? "text-success mb-0 px-1"
                           : "text-danger mb-0 px-1"
                       }
                     >
                       (
                       {parseFloat(
-                        selectedCoin?.data.quote.USD.percent_change_24h
+                        selectedCoin?.data?.percent_change_24h
                       ).toFixed(2)}
                       % )
                     </small>
