@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PageTitle from "../../layouts/PageTitle";
+import cryptoicons from '../../../icons/cryptoIcons/cryptoImg'
 import {
   Button,
   Card,
@@ -37,7 +38,9 @@ const tabData = [
   },
 ];
 function Portfolio(props) {
+  var timer;
   const [APIData, setAPIData] = useState([]);
+  const [portfolio, setportfolio] = useState([])
   const [perCoinData, setPerCoinData] = useState([]);
   const [coinData, setCoinData] = useState([]);
   const [modalTradeClose, setModalTradeClose] = useState(false);
@@ -53,7 +56,6 @@ function Portfolio(props) {
   const [partialTrade, setPartialTrade] = useState(false);
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
   const [colorCheck, setColorCheck] = useState(null);
-
   let usr = localStorage.getItem("user");
   usr = JSON.parse(usr);
 
@@ -177,44 +179,39 @@ function Portfolio(props) {
   };
 
   useEffect(() => {
-    fetchData();
-    const id = setInterval(() => {
-      let aa = localStorage.getItem("perData");
-      aa = aa && JSON.parse(aa);
-      console.log(aa, "aa");
-      setPerCoinData(aa);
 
-      fetchData();
-    }, 15000);
-    return () => clearInterval(id);
+    fetchPortfoliolist()
+    getDatafromBackend()
+    return () => clearTimeout(timer)
+
   }, []);
-  const fetchData = async () => {
-    const config = {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-    };
-    axios
-      .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=9c9c9f71-a6f2-4584-8067-e45e2615151e&start=1&limit=25&convert=USD",
-        {
-          headers: {
-            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-          },
-        }
-      )
-      .then((res) => {
-        let result = res.data.data;
-        let newArray = [];
-        // perCoin - data.quote.USD.price,
-        // setTimeout(() => {
-        localStorage.setItem("perData", JSON.stringify(res.data.data));
-        setAPIData(res.data.data);
-        // }, 500);
-      });
-  };
+  // const fetchData = async () => {
+  //   const config = {
+  //     headers: {
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //   };
+  //   axios
+  //     .get(
+  //       "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=9c9c9f71-a6f2-4584-8067-e45e2615151e&start=1&limit=25&convert=USD",
+  //       {
+  //         headers: {
+  //           "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+  //           "Access-Control-Allow-Origin": "*",
+  //           "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       let result = res.data.data;
+  //       let newArray = [];
+  //       // perCoin - data.quote.USD.price,
+  //       // setTimeout(() => {
+  //       localStorage.setItem("perData", JSON.stringify(res.data.data));
+  //       setAPIData(res.data.data);
+  //       // }, 500);
+  //     });
+  // };
 
   // const filterByReference = (arr1, arr2) => {
   //   let res = [];
@@ -229,7 +226,7 @@ function Portfolio(props) {
 
   var cvalue = function calculateProfitOrLoss(name, price) {
     console.log("coinName", name);
-    let filter = APIData.filter((item) => item.slug == name);
+    let filter = coinData.filter((item) => item.name == name);
     // console.log("filterArray", filter[0]?.quote.USD.price);
     // if (filter[0]?.quote.USD.price - price < 0) {
     //   setColorCheck(true);
@@ -238,7 +235,7 @@ function Portfolio(props) {
     //   setColorCheck(false);
     // }
 
-    return (filter[0]?.quote.USD.price - price).toFixed(2);
+    return (filter[0]?.price - price).toFixed(2);
   };
 
   const getCoinData = (name, img, data) => {
@@ -248,7 +245,34 @@ function Portfolio(props) {
     setSameCoin([filter[0]?.quote.USD.price, img, data]);
   };
 
-  useEffect(() => {
+  const fetchPortfoliolist = async () => {
+    try {
+      const token = JSON.parse(await localStorage.getItem('token'))
+      const user = JSON.parse(await localStorage.getItem('user'))
+      console.log(user, token);
+      const { data } = await axios.get(`${baseURL}/api/activetrade/${user?.id}`, { headers: { "x-auth-token": token } })
+      console.log(data, "watch list data");
+      setportfolio(data)
+    } catch (error) {
+      console.log(error, "watchlist error");
+    }
+  }
+
+  const getDatafromBackend = async () => {
+    try {
+      const token = await localStorage.getItem('token')
+      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
+      console.log(data);
+      setCoinData(data)
+      timer = setTimeout(() => { getDatafromBackend() }, 15000)
+      // setInterval(getDatafromBackend(),3000)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // useEffect(() => {
+    
     // let filter = APIData.filter(
     //   // (data, i) => data.slug == coinData[i]?.crypto_name
     //   (data, i) => data.slug == coinData.filter((d) => d.crypto_name)
@@ -273,17 +297,17 @@ function Portfolio(props) {
     //   item.slug == coinData.filter((i) => i.crypto_name);
     // });
     // setSameCoin(filter);
-    console.log("APIData", APIData);
-    console.log("sameCoin", sameCoin);
-    console.log("coinData", coinData);
-    // setCoinData({...coinData, currentPrice})
-  }, [APIData, coinData]);
+  //   console.log("APIData", APIData);
+  //   console.log("sameCoin", sameCoin);
+  //   console.log("coinData", coinData);
+  //   // setCoinData({...coinData, currentPrice})
+  // }, [APIData, coinData]);
 
-  useEffect(() => {
-    console.log("sameCoin", sameCoin);
-    var i = 2;
-    console.log("Negative check", Math.sign(i));
-  }, [sameCoin]);
+  // useEffect(() => {
+  //   console.log("sameCoin", sameCoin);
+  //   var i = 2;
+  //   console.log("Negative check", Math.sign(i));
+  // }, [sameCoin]);
 
   return (
     <>
@@ -370,8 +394,10 @@ function Portfolio(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
+                    {portfolio?.map((data, ind) => {
+                      // let coinImg = require(`../../../icons/coins/bzzone.png`);
+                      // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
+                      let coinImg = cryptoicons[data?.crypto_symbol];
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -399,7 +425,7 @@ function Portfolio(props) {
                           <td>${data?.trade}</td>
                           <td>
                             {(data.trade / data.crypto_purchase_price).toFixed(
-                              2
+                              4
                             )}
                           </td>
 
@@ -460,30 +486,29 @@ function Portfolio(props) {
                           </td>
 
                           <td
-                            className={`${
-                              Math.sign(
-                                cvalue(
-                                  data?.crypto_name,
-                                  data?.crypto_purchase_price
-                                )
-                              ) === 1
-                                ? "text-success"
-                                : "text-danger"
-                            }`}
+                            className={`${Math.sign(
+                              cvalue(
+                                data?.crypto_name,
+                                data?.crypto_purchase_price
+                              )
+                            ) === 1
+                              ? "text-success"
+                              : "text-danger"
+                              }`}
 
-                            // className={`${
-                            //   (sameCoin[ind]?.quote?.USD?.price -
-                            //     data?.crypto_purchase_price) *
-                            //     (data?.trade / data?.crypto_purchase_price) >
-                            //   0
-                            //     ? "text-success mb-0 "
-                            //     : "text-danger mb-0"
-                            // }`}
+                          // className={`${
+                          //   (sameCoin[ind]?.quote?.USD?.price -
+                          //     data?.crypto_purchase_price) *
+                          //     (data?.trade / data?.crypto_purchase_price) >
+                          //   0
+                          //     ? "text-success mb-0 "
+                          //     : "text-danger mb-0"
+                          // }`}
                           >
-                            {cvalue(
+                            {(cvalue(
                               data?.crypto_name,
                               data?.crypto_purchase_price
-                            )}
+                            )*(data.trade / data.crypto_purchase_price)).toFixed(2)}
                             {/* {(
                               (sameCoin[ind]?.quote?.USD?.price -
                                 data?.crypto_purchase_price) *
@@ -599,9 +624,8 @@ function Portfolio(props) {
                         <Link
                           key={i}
                           to="/app-profile"
-                          className={`paginate_button  ${
-                            activePag.current === i ? "current" : ""
-                          } `}
+                          className={`paginate_button  ${activePag.current === i ? "current" : ""
+                            } `}
                           onClick={() => onClick(i)}
                         >
                           {number}
@@ -655,11 +679,10 @@ function Portfolio(props) {
                       ${sameCoin && sameCoin[0]?.toFixed(2)}
                     </h3>
                     <small
-                      className={`${
-                        sameCoin && sameCoin[3] > 0
-                          ? "text-success mb-0 px-1"
-                          : "text-danger mb-0 px-1"
-                      }`}
+                      className={`${sameCoin && sameCoin[3] > 0
+                        ? "text-success mb-0 px-1"
+                        : "text-danger mb-0 px-1"
+                        }`}
                     >
                       {sameCoin && sameCoin[3]?.toFixed(2)}%
                     </small>
@@ -689,12 +712,11 @@ function Portfolio(props) {
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">CURRENT P/L</h4>
                       <h3
-                        className={`${
-                          sameCoin &&
+                        className={`${sameCoin &&
                           sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
-                            ? "text-success mb-0"
-                            : "text-danger mb-0"
-                        }`}
+                          ? "text-success mb-0"
+                          : "text-danger mb-0"
+                          }`}
                       >
                         $
                         {sameCoin &&

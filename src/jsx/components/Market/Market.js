@@ -6,6 +6,7 @@ import axios from "axios";
 import { baseURL, createTradeAPI, tradeAPI } from "../../../Strings/Strings";
 import PageTitle from "../../layouts/PageTitle";
 import { themePrimary } from "../../../css/color";
+import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
 
 // import { json } from "stream/consumers";
 
@@ -157,8 +158,8 @@ function Market(props) {
           props?.history?.push("/portfolio");
         }
         alert("Success")
-        setModalCentered(false)  
-      }).catch(e=>console.log(e));
+        setModalCentered(false)
+      }).catch(e => console.log(e));
     }
   };
 
@@ -360,7 +361,8 @@ function Market(props) {
                   </thead>
                   <tbody>
                     {[...coinData]?.map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/bzzone.png`);
+                      // let coinImg = require(`../../../icons/coins/bzzone.png`);
+                      let coinImg = cryptoicons[data?.symbol];
                       // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
                       let perPrice = coinData[ind]?.quote?.USD?.price;
                       return (

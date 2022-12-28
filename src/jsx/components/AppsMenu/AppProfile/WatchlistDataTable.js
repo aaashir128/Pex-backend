@@ -9,6 +9,7 @@ import { baseURL, createTradeAPI, tradeAPI } from "../../../../Strings/Strings";
 import set from "date-fns/esm/set";
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 import { ToastContainer, toast } from "react-toastify";
+import cryptoicons from "../../../../icons/cryptoIcons/cryptoImg";
 
 const sort = 10;
 let perArr = [];
@@ -350,7 +351,8 @@ function WatchlistDataTable(props) {
                   {coinData?.filter(i=>Watchlist.some(it=>it.coin_name == i.name)).map((data, ind) => {
                     console.log(data , " MAP DATA");
                     // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
-                    let coinImg = require(`../../../../icons/coins/bzzone.png`);
+                    // let coinImg = require(`../../../../icons/coins/bzzone.png`);
+                    let coinImg = cryptoicons[data?.symbol];
                     let perPrice = perCoinData[ind]?.price;                  
 
                     return (
