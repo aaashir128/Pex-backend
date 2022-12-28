@@ -120,7 +120,7 @@ function Portfolio(props) {
     //   closed_price: sameCoin[0],
     // };
     const sale = coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price
-    console.log(sale);
+    console.log(sale)
     axios.delete(`${baseURL}/api/activetrade/${selectedCoin.id}`,{data:{crypto_sale_price:sale}}).then((res) => {
       console.log(res, "res");
       fetchPortfoliolist()

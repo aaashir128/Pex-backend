@@ -10,6 +10,7 @@ import ProjectSlider from "./Dashboard/ProjectSlider";
 import TransactionHistory from "../AppsMenu/AppProfile/TransactionHistory";
 import axios from "axios";
 import { baseURL } from "../../../Strings/Strings";
+import CurrencyFormat from "react-currency-format";
 
 const ChartBarApex = loadable(() =>
   pMinDelay(import("./Dashboard/ChartBarApex"), 1000)
@@ -36,54 +37,62 @@ const Home = (props) => {
   }, [props.history]);
   return (
     <>
+      {/* <div className="row"> */}
+      {/* <div className="col-xl-12"> */}
       <div className="row">
         <div className="col-xl-12">
           <div className="row">
-            <div className="col-xl-12">
-              <div className="row">
-                <div className="col-xl-12 col-md-12 col-xxl-12">
-                  <div className="card" id="user-activity">
-                    <div className="card-header border-0 pb-0 flex-wrap">
-                      <div>
-                        <span className="mb-0 d-block fs-22">
-                          <strong>Welcome Back!</strong>
-                        </span>
-                        <span className="mb-3 d-block fs-18">
-                          Portfolio Value
-                        </span>
-                        <h2 className="fs-30 font-w700 mb-3">
-                          $ {data?.balance}
-                        </h2>
-                        <Button className="btn btn-primary mb-0 ms-0 px-4">
-                          Portfolio
-                        </Button>
-                      </div>
-                    </div>
-                    <br />
-                    <div className="col-xl-12">
-                      <div className="card-body pt-0">
-                        <ProjectSlider {...data} />
-                      </div>
-                    </div>
+            <div className="col-xl-12 col-md-12 col-xxl-12">
+              <div className="card" id="user-activity">
+                <div className="card-header border-0 pb-0 flex-wrap">
+                  <div>
+                    <span className="mb-0 d-block fs-22">
+                      <strong>Welcome Back!</strong>
+                    </span>
+                    <span className="mb-3 d-block fs-18">Portfolio Value</span>
+                    <CurrencyFormat
+                      value={data?.balance}
+                      displayType={"text"}
+                      // decimalSeparator={true}
+                      decimalScale={2}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                      fixedDecimalScale={true}
+                      renderText={(value) => (
+                        <h2 className="fs-30 font-w700 mb-3">{value}</h2>
+                      )}
+                    />
+                    {/* <h2 className="fs-30 font-w700 mb-3">$ {data?.balance}</h2> */}
+                    <Button className="btn btn-primary mb-0 ms-0 px-4">
+                      Portfolio
+                    </Button>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-xl-12 col-md-12">
-                <div className="row">
-                  <div className="col-xl-8 col-lg-8 col-md-8 ">
-                    <TransactionHistory />
-                  </div>
-                  <div className="card col-xl-4 col-lg-4 col-md-4 ">
-                    <ChartBarApex />
+                <br />
+                <div className="col-xl-12">
+                  <div className="card-body pt-0">
+                    <ProjectSlider {...data} />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="row">
+          <div className="col-xl-12 col-md-12">
+            <div className="row">
+              <div className="col-xl-8 col-lg-8 col-md-8 ">
+                <TransactionHistory />
+              </div>
+              <div className="card col-xl-4 col-lg-4 col-md-4 ">
+                <ChartBarApex />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      {/* </div> */}
+      {/* </div> */}
     </>
   );
 };

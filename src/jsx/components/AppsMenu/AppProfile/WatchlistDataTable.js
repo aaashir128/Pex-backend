@@ -10,6 +10,7 @@ import set from "date-fns/esm/set";
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 import { ToastContainer, toast } from "react-toastify";
 import cryptoicons from "../../../../icons/cryptoIcons/cryptoImg";
+import CurrencyFormat from "react-currency-format";
 
 const sort = 10;
 let perArr = [];
@@ -460,7 +461,7 @@ function WatchlistDataTable(props) {
                 >
                   <Link
                     className="paginate_button previous disabled"
-                    to="/app-profile"
+                    // to="/app-profile"
                     onClick={() =>
                       activePag.current > 0 && onClick(activePag.current - 1)
                     }
@@ -474,7 +475,7 @@ function WatchlistDataTable(props) {
                     {paggination.map((number, i) => (
                       <Link
                         key={i}
-                        to="/app-profile"
+                        // to="/app-profile"
                         className={`paginate_button  ${
                           activePag.current === i ? "current" : ""
                         } `}

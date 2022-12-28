@@ -10,6 +10,7 @@ import {
   Modal,
   Table,
 } from "react-bootstrap";
+import CurrencyFormat from "react-currency-format";
 import { Link } from "react-router-dom";
 import {
   baseURL,
@@ -175,7 +176,18 @@ function DepositRequest() {
                             {/* {req?.user?.firstName + " " + req?.user?.lastName} */}
                             {req?.user_id}
                           </td>
-                          <td>$ {req?.amount?.toFixed(2)}</td>
+                          {/* <td>$ {req?.amount?.toFixed(2)}</td> */}
+                          <td>
+                            <CurrencyFormat
+                              value={req?.amount}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <p>{value}</p>}
+                            />
+                          </td>
                           <td>
                             {req?.status == "pending"
                               ? moment(req?.requested_at).format(
@@ -236,55 +248,58 @@ function DepositRequest() {
                   })}
                 </tbody>
               </Table>
-            </div>
-            <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
-              <div className="dataTables_info">
-                Showing {activePag.current * sort + 1} to{" "}
-                {pendingData?.length > (activePag.current + 1) * sort
-                  ? (activePag.current + 1) * sort
-                  : pendingData.length}{" "}
-                of {pendingData.length} entries
-              </div>
-              <div
-                className="dataTables_paginate paging_simple_numbers my-2"
-                id="example5_paginate"
-              >
-                <Link
-                  className="paginate_button previous disabled"
-                  to="/app-profile"
-                  onClick={() =>
-                    activePag.current > 0 && onClick(activePag.current - 1)
-                  }
+              <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
+                <div className="dataTables_info">
+                  Showing {activePag.current * sort + 1} to{" "}
+                  {pendingData?.length > (activePag.current + 1) * sort
+                    ? (activePag.current + 1) * sort
+                    : pendingData.length}{" "}
+                  of {pendingData.length} entries
+                </div>
+                <div
+                  className="dataTables_paginate paging_simple_numbers my-2"
+                  id="example5_paginate"
                 >
-                  <i className="fa fa-angle-double-left" aria-hidden="true"></i>
-                </Link>
-                <span>
-                  {paggination.map((number, i) => (
-                    <Link
-                      key={i}
-                      to="/app-profile"
-                      className={`paginate_button  ${
-                        activePag.current === i ? "current" : ""
-                      } `}
-                      onClick={() => onClick(i)}
-                    >
-                      {number}
-                    </Link>
-                  ))}
-                </span>
-                <Link
-                  className="paginate_button next"
-                  // to="/app-profile"
-                  onClick={() =>
-                    activePag.current + 1 < paggination.length &&
-                    onClick(activePag.current + 1)
-                  }
-                >
-                  <i
-                    className="fa fa-angle-double-right"
-                    aria-hidden="true"
-                  ></i>
-                </Link>
+                  <Link
+                    className="paginate_button previous disabled"
+                    // to="/app-profile"
+                    onClick={() =>
+                      activePag.current > 0 && onClick(activePag.current - 1)
+                    }
+                  >
+                    <i
+                      className="fa fa-angle-double-left"
+                      aria-hidden="true"
+                    ></i>
+                  </Link>
+                  <span>
+                    {paggination.map((number, i) => (
+                      <Link
+                        key={i}
+                        // to="/app-profile"
+                        className={`paginate_button  ${
+                          activePag.current === i ? "current" : ""
+                        } `}
+                        onClick={() => onClick(i)}
+                      >
+                        {number}
+                      </Link>
+                    ))}
+                  </span>
+                  <Link
+                    className="paginate_button next"
+                    // to="/app-profile"
+                    onClick={() =>
+                      activePag.current + 1 < paggination.length &&
+                      onClick(activePag.current + 1)
+                    }
+                  >
+                    <i
+                      className="fa fa-angle-double-right"
+                      aria-hidden="true"
+                    ></i>
+                  </Link>
+                </div>
               </div>
             </div>
           </Card.Body>
@@ -332,7 +347,20 @@ function DepositRequest() {
                             {/* {req?.user?.firstName + " " + req?.user?.lastName} */}
                             {req?.user_id}
                           </td>
-                          <td>$ {req?.amount?.toFixed(2)}</td>
+                          {/* <td>$ {req?.amount?.toFixed(2)}</td> */}
+                          <td>
+                            <CurrencyFormat
+                              value={req?.amount}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => (
+                                <p className="mb-0">{value}</p>
+                              )}
+                            />
+                          </td>
                           <td>
                             {req?.status == "pending"
                               ? moment(req?.requested_at).format(
@@ -393,55 +421,58 @@ function DepositRequest() {
                   })}
                 </tbody>
               </Table>
-            </div>
-            <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
-              <div className="dataTables_info">
-                Showing {activePag.current * sort + 1} to{" "}
-                {otherData?.length > (activePag.current + 1) * sort
-                  ? (activePag.current + 1) * sort
-                  : otherData.length}{" "}
-                of {otherData.length} entries
-              </div>
-              <div
-                className="dataTables_paginate paging_simple_numbers my-2"
-                id="example5_paginate"
-              >
-                <Link
-                  className="paginate_button previous disabled"
-                  to="/app-profile"
-                  onClick={() =>
-                    activePag.current > 0 && onClick(activePag.current - 1)
-                  }
+              <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
+                <div className="dataTables_info">
+                  Showing {activePag.current * sort + 1} to{" "}
+                  {otherData?.length > (activePag.current + 1) * sort
+                    ? (activePag.current + 1) * sort
+                    : otherData.length}{" "}
+                  of {otherData.length} entries
+                </div>
+                <div
+                  className="dataTables_paginate paging_simple_numbers my-2"
+                  id="example5_paginate"
                 >
-                  <i className="fa fa-angle-double-left" aria-hidden="true"></i>
-                </Link>
-                <span>
-                  {paggination.map((number, i) => (
-                    <Link
-                      key={i}
-                      to="/app-profile"
-                      className={`paginate_button  ${
-                        activePag.current === i ? "current" : ""
-                      } `}
-                      onClick={() => onClick(i)}
-                    >
-                      {number}
-                    </Link>
-                  ))}
-                </span>
-                <Link
-                  className="paginate_button next"
-                  // to="/app-profile"
-                  onClick={() =>
-                    activePag.current + 1 < paggination.length &&
-                    onClick(activePag.current + 1)
-                  }
-                >
-                  <i
-                    className="fa fa-angle-double-right"
-                    aria-hidden="true"
-                  ></i>
-                </Link>
+                  <Link
+                    className="paginate_button previous disabled"
+                    // to="/app-profile"
+                    onClick={() =>
+                      activePag.current > 0 && onClick(activePag.current - 1)
+                    }
+                  >
+                    <i
+                      className="fa fa-angle-double-left"
+                      aria-hidden="true"
+                    ></i>
+                  </Link>
+                  <span>
+                    {paggination.map((number, i) => (
+                      <Link
+                        key={i}
+                        // to="/app-profile"
+                        className={`paginate_button  ${
+                          activePag.current === i ? "current" : ""
+                        } `}
+                        onClick={() => onClick(i)}
+                      >
+                        {number}
+                      </Link>
+                    ))}
+                  </span>
+                  <Link
+                    className="paginate_button next"
+                    // to="/app-profile"
+                    onClick={() =>
+                      activePag.current + 1 < paggination.length &&
+                      onClick(activePag.current + 1)
+                    }
+                  >
+                    <i
+                      className="fa fa-angle-double-right"
+                      aria-hidden="true"
+                    ></i>
+                  </Link>
+                </div>
               </div>
             </div>
           </Card.Body>
