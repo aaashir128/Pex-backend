@@ -20,6 +20,7 @@ const Header = ({ onNote }) => {
   useEffect(async () => {
     const usr = await localStorage.getItem("user");
     setUser(JSON.parse(usr));
+    console.log("user", usr);
   }, []);
 
   var finalName = filterName.includes("app")
@@ -230,7 +231,8 @@ const Header = ({ onNote }) => {
                   <img src={profile} width={20} alt="" />
                   <div className="header-info ms-3">
                     <span className="fs-18 font-w500 mb-2">
-                      {user?.firstName + " " + user?.lastName}
+                      {/* {user?.firstName + " " + user?.lastName} */}
+                      {user?.username}
                     </span>
                     <small className="fs-12 font-w400">{user?.email}</small>
                   </div>
