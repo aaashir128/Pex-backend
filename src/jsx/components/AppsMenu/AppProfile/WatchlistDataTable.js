@@ -28,6 +28,8 @@ const tabData = [
   },
 ];
 function WatchlistDataTable(props) {
+  var timer;
+  const [Watchlist, setWatchlist] = useState([])
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
   const [change, setChange] = useState("24h");
@@ -153,48 +155,51 @@ function WatchlistDataTable(props) {
     // }
   };
 
+
+
   useEffect(() => {
     // getUSerData();
     fetchData();
-    const id = setInterval(() => {
-      let aa = localStorage.getItem("perData");
-      aa = aa && JSON.parse(aa);
-      console.log(aa, "aa");
-      setPerCoinData(aa);
+    fetchWatchlist();
+    return () => clearTimeout(timer)
 
-      fetchData();
-    }, 15000);
-    return () => clearInterval(id);
+    // const id = setInterval(() => {
+      // let aa = localStorage.getItem("perData");
+      // aa = aa && JSON.parse(aa);
+      // console.log(aa, "aa");
+      // setPerCoinData(aa);
+
+    //   fetchData();
+    // }, 15000)
+    // return () => clearInterval(id)
   }, []);
+  const fetchWatchlist = async() => {
+    try {
+      const token = JSON.parse(await localStorage.getItem('token'))
+      const user = JSON.parse(await localStorage.getItem('user'))
+      console.log(user,token);
+      const { data } = await axios.get(`${baseURL}/api/userwatchlist/${user?.id}`, { headers: { "x-auth-token": token } })
+      console.log(data,"watch list data");
+      setWatchlist(data);
+    } catch (error) {
+      console.log(error,"watchlist error");
+    }
+  }
   const fetchData = async () => {
-    axios
-      .get(
-        "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
-        {
-          headers: {
-            "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-          },
-        }
-      )
-      .then((res) => {
-        let result = res.data.data;
-        let newArray = [];
-
-        localStorage.setItem("perData", JSON.stringify(res.data.data));
-
-        // var filter = res.data.data.filter(function (item) {
-        //   return resultt.find((i) => item?.name === i?.coin_name);
-        // });
-        // console.log("Filterrrrrr", filter);
-
-        // setCoinData(filter);
-      })
-      .catch((err) => {
-        console.log("Err", err);
-      });
+    try {
+      const token = await localStorage.getItem('token')
+      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
+      console.log(data);
+      setCoinData(data)
+      timer = setTimeout(() => { fetchData() }, 15000)
+      // setInterval(getDatafromBackend(),3000)
+    } catch (error) {
+      console.log(error);
+    }
   };
+  const getWatchlistcoins = (arr) => {
+    return arr?.filter(i=>Watchlist.some(it=>it.coin_name == i.name ))
+  }
   const deleteCoinHandler = () => {};
 
   return (
@@ -342,9 +347,12 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...coinData].map((data, ind) => {
-                    let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
-                    let perPrice = perCoinData[ind]?.quote?.USD?.price;
+                  {coinData?.filter(i=>Watchlist.some(it=>it.coin_name == i.name)).map((data, ind) => {
+                    console.log(data , " MAP DATA");
+                    // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
+                    let coinImg = require(`../../../../icons/coins/bzzone.png`);
+                    let perPrice = perCoinData[ind]?.price;                  
+
                     return (
                       <tr
                         key={data?.id}
@@ -362,32 +370,32 @@ function WatchlistDataTable(props) {
                         </td>
                         <td
                           style={
-                            perPrice - data.quote.USD.price > 0
+                            perPrice - data?.price > 0
                               ? { color: "green" }
-                              : perPrice - data.quote.USD.price < 0
+                              : perPrice - data?.price < 0
                               ? { color: "red" }
                               : { color: "black" }
                           }
                         >
-                          $ {data.quote.USD.price.toFixed(2)}{" "}
-                          {perPrice - data.quote.USD.price > 0 && (
+                          $ {data?.price.toFixed(2)}{" "}
+                          {perPrice - data?.price > 0 && (
                             <i className="fas fa-arrow-up"></i>
                           )}
-                          {perPrice - data.quote.USD.price < 0 && (
+                          {perPrice - data?.price < 0 && (
                             <i className="fas fa-arrow-down"></i>
                           )}{" "}
                         </td>
                         <td className="text-center">
                           {change === "1h"
                             ? parseFloat(
-                                data.quote.USD.percent_change_1h
+                                data?.percent_change_1h
                               ).toFixed(2)
                             : change === "7d"
                             ? parseFloat(
-                                data.quote.USD.percent_change_7d
+                                data?.percent_change_7d
                               ).toFixed(2)
                             : parseFloat(
-                                data.quote.USD.percent_change_24h
+                                data?.percent_change_24h
                               ).toFixed(2)}
                           %
                         </td>
@@ -512,18 +520,18 @@ function WatchlistDataTable(props) {
                 </div>
                 <div className="d-flex align-items-center">
                   <h3 className="mb-0">
-                    ${parseFloat(selectedCoin?.data.quote.USD.price).toFixed(2)}
+                    ${parseFloat(selectedCoin?.price).toFixed(2)}
                   </h3>
                   <small
                     className={
-                      selectedCoin?.data.quote.USD.percent_change_24h > 0
+                      selectedCoin?.percent_change_24h > 0
                         ? "text-success mb-0 px-1"
                         : "text-danger mb-0 px-1"
                     }
                   >
                     (
                     {parseFloat(
-                      selectedCoin?.data.quote.USD.percent_change_24h
+                      selectedCoin?.percent_change_24h
                     ).toFixed(2)}
                     % )
                   </small>

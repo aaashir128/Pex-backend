@@ -16,6 +16,7 @@ const AppProfile = () => {
           <div className="card">
         
             <WatchlistDataTable />
+
           </div>
         </div>
       </div>

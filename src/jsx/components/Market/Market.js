@@ -176,51 +176,51 @@ function Market(props) {
   // };
 
 
-  const fetchData = async () => {
-    // axios
-    //   .get(
-    //     "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
-    //     {
-    //       headers: {
-    //         "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
-    //         "Access-Control-Allow-Origin": "*",
-    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    //       },
-    //     }
-    //   )
-    //   .then((res) => {
-    //     localStorage.setItem("perData", JSON.stringify(res.data.data));
-    //     setCoinData(res.data.data);
+  // const fetchData = async () => {
+  //   // axios
+  //   //   .get(
+  //   //     "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=b102e6d8-b50b-4e58-9893-053706a2b065&start=1&limit=25&convert=USD",
+  //   //     {
+  //   //       headers: {
+  //   //         "x-apikey": "b102e6d8-b50b-4e58-9893-053706a2b065",
+  //   //         "Access-Control-Allow-Origin": "*",
+  //   //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //   //       },
+  //   //     }
+  //   //   )
+  //   //   .then((res) => {
+  //   //     localStorage.setItem("perData", JSON.stringify(res.data.data));
+  //   //     setCoinData(res.data.data);
 
 
-    //     // var filter = res.data.data.filter(function (item) {
-    //     //   return !result.find((i) => item?.name == i?.coin_name);
-    //     // });
-    //     // console.log("Result", result);
+  //   //     // var filter = res.data.data.filter(function (item) {
+  //   //     //   return !result.find((i) => item?.name == i?.coin_name);
+  //   //     // });
+  //   //     // console.log("Result", result);
 
-    //     // setCoinData(filter);
-    //     // console.log("Filterrrrrr", filter);
+  //   //     // setCoinData(filter);
+  //   //     // console.log("Filterrrrrr", filter);
 
-    //     // }, 500);
-    //   });
+  //   //     // }, 500);
+  //   //   });
 
-    try {
-      let config = {
-        url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=7fb31f57-04f3-4cf2-844c-7352c2e67aec&start=1&limit=25&convert=USD",
-        method: "get",
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Credentials': 'true'
-        }
-      };
-      const { data } = await axios.request(config)
-      localStorage.setItem("perData", JSON.stringify(data?.data));
-      setCoinData(data?.data)
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   try {
+  //     let config = {
+  //       url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=7fb31f57-04f3-4cf2-844c-7352c2e67aec&start=1&limit=25&convert=USD",
+  //       method: "get",
+  //       headers: {
+  //         'Access-Control-Allow-Origin': '*',
+  //         'Access-Control-Allow-Headers': '*',
+  //         'Access-Control-Allow-Credentials': 'true'
+  //       }
+  //     };
+  //     const { data } = await axios.request(config)
+  //     localStorage.setItem("perData", JSON.stringify(data?.data));
+  //     setCoinData(data?.data)
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
 
 
