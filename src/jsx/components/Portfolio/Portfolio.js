@@ -370,7 +370,7 @@ function Portfolio(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData].map((data, ind) => {
+                    {[...coinData].slice(start, end).map((data, ind) => {
                       let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
@@ -584,7 +584,7 @@ function Portfolio(props) {
                   >
                     <Link
                       className="paginate_button previous disabled"
-                      to="/app-profile"
+                      // to="/app-profile"
                       onClick={() =>
                         activePag.current > 0 && onClick(activePag.current - 1)
                       }
@@ -598,7 +598,7 @@ function Portfolio(props) {
                       {paggination.map((number, i) => (
                         <Link
                           key={i}
-                          to="/app-profile"
+                          // to="/app-profile"
                           className={`paginate_button  ${
                             activePag.current === i ? "current" : ""
                           } `}

@@ -455,7 +455,7 @@ function StocksTable() {
                 >
                   <Link
                     className="paginate_button previous disabled"
-                    to="/app-profile"
+                    // to="/app-profile"
                     onClick={() =>
                       activePag.current > 0 && onClick(activePag.current - 1)
                     }
@@ -469,7 +469,7 @@ function StocksTable() {
                     {paggination.map((number, i) => (
                       <Link
                         key={i}
-                        to="/app-profile"
+                        // to="/app-profile"
                         className={`paginate_button  ${
                           activePag.current === i ? "current" : ""
                         } `}

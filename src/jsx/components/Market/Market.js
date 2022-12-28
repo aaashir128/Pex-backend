@@ -6,6 +6,7 @@ import axios from "axios";
 import { baseURL, createTradeAPI, tradeAPI } from "../../../Strings/Strings";
 import PageTitle from "../../layouts/PageTitle";
 import { themePrimary } from "../../../css/color";
+import CurrencyFormat from "react-currency-format";
 
 // import { json } from "stream/consumers";
 
@@ -45,7 +46,6 @@ function Market(props) {
   const user = localStorage.getItem("user");
   // console.log("USer", user);
   const parseUSer = JSON.parse(user);
-
 
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
@@ -151,14 +151,19 @@ function Market(props) {
         user_id: parseUSer?.id,
       };
       console.log(tradeData);
-      axios.post(`${baseURL}/api/activetrade`, tradeData, { headers: { "x-auth-token": token } }).then((res) => {
-        console.log(res?.data, "res");
-        if (res?.data?.status) {
-          props?.history?.push("/portfolio");
-        }
-        alert("Success")
-        setModalCentered(false)  
-      }).catch(e=>console.log(e));
+      axios
+        .post(`${baseURL}/api/activetrade`, tradeData, {
+          headers: { "x-auth-token": token },
+        })
+        .then((res) => {
+          console.log(res?.data, "res");
+          if (res?.data?.status) {
+            props?.history?.push("/portfolio");
+          }
+          alert("Success");
+          setModalCentered(false);
+        })
+        .catch((e) => console.log(e));
     }
   };
 
@@ -174,7 +179,6 @@ function Market(props) {
   //       console.log("Err", err);
   //     });
   // };
-
 
   const fetchData = async () => {
     // axios
@@ -192,7 +196,6 @@ function Market(props) {
     //     localStorage.setItem("perData", JSON.stringify(res.data.data));
     //     setCoinData(res.data.data);
 
-
     //     // var filter = res.data.data.filter(function (item) {
     //     //   return !result.find((i) => item?.name == i?.coin_name);
     //     // });
@@ -209,37 +212,39 @@ function Market(props) {
         url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=7fb31f57-04f3-4cf2-844c-7352c2e67aec&start=1&limit=25&convert=USD",
         method: "get",
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Credentials': 'true'
-        }
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Credentials": "true",
+        },
       };
-      const { data } = await axios.request(config)
+      const { data } = await axios.request(config);
       localStorage.setItem("perData", JSON.stringify(data?.data));
-      setCoinData(data?.data)
+      setCoinData(data?.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-
-
   const getDatafromBackend = async () => {
     try {
-      const token = await localStorage.getItem('token')
-      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
+      const token = await localStorage.getItem("token");
+      const { data } = await axios.get(`${baseURL}/coinmarket`, {
+        headers: { "x-auth-token": token },
+      });
       console.log(data);
-      setCoinData(data)
-      timer = setTimeout(() => { getDatafromBackend() }, 15000)
+      setCoinData(data);
+      timer = setTimeout(() => {
+        getDatafromBackend();
+      }, 15000);
       // setInterval(getDatafromBackend(),3000)
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    getDatafromBackend()
-    return () => clearTimeout(timer)
+    getDatafromBackend();
+    return () => clearTimeout(timer);
     // const id = window.setInterval(() => {
     //   let aa = localStorage.getItem("perData");
     //   aa = aa && JSON.parse(aa);
@@ -250,10 +255,6 @@ function Market(props) {
     // }, 15000);
     // return () => clearInterval(id);
   }, []);
-
-
-
-
 
   // console.log("coinData", coinData);
   // const addToWatchList = (name) => { };
@@ -359,7 +360,7 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData]?.map((data, ind) => {
+                    {[...coinData].slice(start, end).map((data, ind) => {
                       let coinImg = require(`../../../icons/coins/bzzone.png`);
                       // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
                       let perPrice = coinData[ind]?.quote?.USD?.price;
@@ -371,7 +372,12 @@ function Market(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              <img src={coinImg} width="40" height="40" alt="icon" />
+                              <img
+                                src={coinImg}
+                                width="40"
+                                height="40"
+                                alt="icon"
+                              />
                               <div className="mx-2 ">
                                 <p className="mb-0">{data.name}</p>
                                 <p className="mb-0">{data.symbol}</p>
@@ -383,11 +389,20 @@ function Market(props) {
                               perPrice - data?.price > 0
                                 ? { color: "green" }
                                 : perPrice - data?.price < 0
-                                  ? { color: "red" }
-                                  : { color: "black" }
+                                ? { color: "red" }
+                                : { color: "black" }
                             }
                           >
-                            $ {data?.price.toFixed(2)}{" "}
+                            <CurrencyFormat
+                              value={data?.price}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <p>{value}</p>}
+                            />
+                            {/* $ {data?.price.toFixed(2)}{" "} */}
                             {perPrice - data?.price > 0 && (
                               <i className="fas fa-arrow-up"></i>
                             )}
@@ -398,38 +413,37 @@ function Market(props) {
                           <td className="text-center">
                             {change === "1h" ? (
                               <p
-                                className={`${data?.percent_change_1h < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
-                                  }`}
+                                className={`${
+                                  data?.percent_change_1h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
                               >
-                                {parseFloat(
-                                  data?.percent_change_1h
-                                ).toFixed(2)}
+                                {parseFloat(data?.percent_change_1h).toFixed(2)}
                                 %
                               </p>
                             ) : change === "7d" ? (
                               <p
-                                className={`${data?.percent_change_7d < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
-                                  }`}
+                                className={`${
+                                  data?.percent_change_7d < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
                               >
-                                {parseFloat(
-                                  data?.percent_change_7d
-                                ).toFixed(2)}
+                                {parseFloat(data?.percent_change_7d).toFixed(2)}
                                 %
                               </p>
                             ) : (
                               <p
-                                className={`${data?.percent_change_24h < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
-                                  }`}
+                                className={`${
+                                  data?.percent_change_24h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
                               >
-                                {parseFloat(
-                                  data?.percent_change_24h
-                                ).toFixed(2)}
+                                {parseFloat(data?.percent_change_24h).toFixed(
+                                  2
+                                )}
                                 %
                               </p>
                             )}
@@ -473,9 +487,11 @@ function Market(props) {
                                   //   changeStatus(req?.id, "Approved")
                                   // }
                                   onClick={async () => {
-
-
-                                    console.log("PArse USer", parseUSer.id, token);
+                                    console.log(
+                                      "PArse USer",
+                                      parseUSer.id,
+                                      token
+                                    );
                                     console.log("Coin", data.name);
 
                                     await axios
@@ -531,7 +547,7 @@ function Market(props) {
                   >
                     <Link
                       className="paginate_button previous disabled"
-                      to="/app-profile"
+                      // to="/app-profile"
                       onClick={() =>
                         activePag.current > 0 && onClick(activePag.current - 1)
                       }
@@ -545,9 +561,10 @@ function Market(props) {
                       {paggination.map((number, i) => (
                         <Link
                           key={i}
-                          to="/app-profile"
-                          className={`paginate_button  ${activePag.current === i ? "current" : ""
-                            } `}
+                          // to="/app-profile"
+                          className={`paginate_button  ${
+                            activePag.current === i ? "current" : ""
+                          } `}
                           onClick={() => onClick(i)}
                         >
                           {number}
@@ -556,7 +573,7 @@ function Market(props) {
                     </span>
                     <Link
                       className="paginate_button next"
-                      to="/app-profile"
+                      // to="#"
                       onClick={() =>
                         activePag.current + 1 < paggination?.length &&
                         onClick(activePag.current + 1)
@@ -594,10 +611,16 @@ function Market(props) {
                   </div>
                   <div className="d-flex align-items-center">
                     <h3 className="mb-0">
-                      $
-                      {parseFloat(selectedCoin?.data?.price).toFixed(
-                        2
-                      )}
+                      {/* ${parseFloat(selectedCoin?.data?.price).toFixed(2)} */}
+                      <CurrencyFormat
+                        value={selectedCoin?.data?.price}
+                        displayType={"text"}
+                        decimalScale={2}
+                        thousandSeparator={true}
+                        prefix={"$"}
+                        fixedDecimalScale={true}
+                        renderText={(value) => <p>{value}</p>}
+                      />
                     </h3>
                     <small
                       className={

@@ -9,6 +9,7 @@ import { baseURL, createTradeAPI, tradeAPI } from "../../../../Strings/Strings";
 import set from "date-fns/esm/set";
 //cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 import { ToastContainer, toast } from "react-toastify";
+import CurrencyFormat from "react-currency-format";
 
 const sort = 10;
 let perArr = [];
@@ -342,7 +343,7 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...coinData].map((data, ind) => {
+                  {[...coinData].slice(start, end).map((data, ind) => {
                     let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
                     let perPrice = perCoinData[ind]?.quote?.USD?.price;
                     return (
@@ -369,6 +370,15 @@ function WatchlistDataTable(props) {
                               : { color: "black" }
                           }
                         >
+                          {/* <CurrencyFormat
+                              value={req?.amount}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <p>{value}</p>}
+                            /> */}
                           $ {data.quote.USD.price.toFixed(2)}{" "}
                           {perPrice - data.quote.USD.price > 0 && (
                             <i className="fas fa-arrow-up"></i>
@@ -450,7 +460,7 @@ function WatchlistDataTable(props) {
                 >
                   <Link
                     className="paginate_button previous disabled"
-                    to="/app-profile"
+                    // to="/app-profile"
                     onClick={() =>
                       activePag.current > 0 && onClick(activePag.current - 1)
                     }
@@ -464,7 +474,7 @@ function WatchlistDataTable(props) {
                     {paggination.map((number, i) => (
                       <Link
                         key={i}
-                        to="/app-profile"
+                        // to="/app-profile"
                         className={`paginate_button  ${
                           activePag.current === i ? "current" : ""
                         } `}
