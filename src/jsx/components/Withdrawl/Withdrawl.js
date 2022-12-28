@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import PageTitle from "../../layouts/PageTitle";
 import axios from "axios";
+import { baseURL, withdrawRequest } from "../../../Strings/Strings";
 
 function Withdrawl(props) {
   const [amount, setAmount] = useState(0);
@@ -11,27 +12,36 @@ function Withdrawl(props) {
     e.preventDefault();
 
     if (amount > 0) {
-      // let usr = await localStorage.getItem("user");
-      // usr = JSON.parse(usr);
-      // const postData = {
-      //   user_id: usr?.id,
-      //   amount: parseFloat(amount),
-      //   type: "Withdraw",
-      // };
-      // axios
-      //   .post(`http://localhost:4000/api/deposit_request`, postData)
-      //   .then((res) => {
-      //     console.log(res, "res");
-      //     toast.success("✔️ Withdraw Request Initiated!", {
-      //       position: "top-right",
-      //       autoClose: 5000,
-      //       hideProgressBar: false,
-      //       closeOnClick: true,
-      //       pauseOnHover: true,
-      //       draggable: true,
-      //     });
-      //     props.history.push("/dashboard");
-      //   });
+      let usr = await localStorage.getItem("user");
+      usr = JSON.parse(usr);
+
+      let token = await localStorage.getItem("token");
+      token = JSON.parse(token);
+      // console.log(token, "token");
+
+      const postData = {
+        user_id: usr?.id,
+        amount: parseFloat(amount),
+      };
+      axios
+        .post(`${baseURL}${withdrawRequest}`, postData, {
+          headers: { "x-auth-token": token },
+        })
+        .then((res) => {
+          console.log(res, "res");
+          toast.success("✔️ Withdraw Request Initiated!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          props.history.push("/dashboard");
+        })
+        .catch((err) => {
+          console.log("err", err.response.message);
+        });
     } else {
       toast.error("❌ Invalid Amount", {
         position: "top-right",

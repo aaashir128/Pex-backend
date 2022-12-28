@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import jwt_decode from 'jwt-decode'
+import jwt_decode from "jwt-decode";
 import {
   loadingToggleAction,
   loginAction,
@@ -50,16 +50,26 @@ function Login(props) {
       password,
     };
     axios.post(`${baseURL}/api/user/login`, postData).then((res) => {
-    //   console.log(res, "res");
+      //   console.log(res, "res");
       const user = jwt_decode(res?.data?.access);
+<<<<<<< HEAD
       const token = res?.data?.access
       console.log(user,"user");
       console.log(token,"token");
+=======
+      const token = res?.data?.access;
+      console.log(user, "user");
+      console.log(token, "token");
+>>>>>>> ashir
       dispatch(loginConfirmedAction(user));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
       props.history.push("/dashboard");
+<<<<<<< HEAD
     //   window.location.replace("/dashboard");
+=======
+      // window.location.replace("/dashboard");
+>>>>>>> ashir
     });
   }
 
