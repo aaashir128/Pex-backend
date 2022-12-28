@@ -19,6 +19,7 @@ import {
   createTradeHistoryAPI,
   tradeAPI,
 } from "../../../Strings/Strings";
+import CurrencyFormat from 'react-currency-format'
 import { themePrimary } from "../../../css/color";
 
 const sort = 10;
@@ -99,30 +100,34 @@ function Portfolio(props) {
   // };
 
   const closeTrade = () => {
-    let profitLoss = sameCoin
-      ? (sameCoin[0] - sameCoin[2]?.crypto_purchase_price).toFixed(2)
-      : 0;
+    // let profitLoss = sameCoin
+    //   ? (sameCoin[0] - sameCoin[2]?.crypto_purchase_price).toFixed(2)
+    //   : 0;
 
-    let amount = 0;
-    if (partialTrade) {
-      amount = buyAmount.amount;
-      profitLoss = (buyAmount.amount / sameCoin[2]?.trade) * profitLoss;
-    } else {
-      amount = sameCoin ? sameCoin[2]?.trade : 0;
-    }
-    const tradeData = {
-      trade_id: closeId,
-      status: partialTrade ? "Close" : "Open",
-      amount: amount,
-      profit: profitLoss > 0 ? profitLoss : 0,
-      loss: profitLoss < 0 ? profitLoss : 0,
-      closed_price: sameCoin[0],
-    };
-    axios.post(`${baseURL}${createTradeHistoryAPI}`, tradeData).then((res) => {
+    // let amount = 0;
+    // if (partialTrade) {
+    //   amount = buyAmount.amount;
+    //   profitLoss = (buyAmount.amount / sameCoin[2]?.trade) * profitLoss;
+    // } else {
+    //   amount = sameCoin ? sameCoin[2]?.trade : 0;
+    // }
+    // const tradeData = {
+    //   trade_id: closeId,
+    //   status: partialTrade ? "Close" : "Open",
+    //   amount: amount,
+    //   profit: profitLoss > 0 ? profitLoss : 0,
+    //   loss: profitLoss < 0 ? profitLoss : 0,
+    //   closed_price: sameCoin[0],
+    // };
+    const sale = coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price
+    console.log(sale);
+    axios.delete(`${baseURL}/api/activetrade/${selectedCoin.id}`,{data:{crypto_sale_price:sale}}).then((res) => {
       console.log(res, "res");
+      fetchPortfoliolist()
+        setModalTradeClose(false);
       if (res?.data?.status) {
         // getTrades();
-        setModalTradeClose(false);
+        
       }
     });
   };
@@ -516,7 +521,7 @@ function Portfolio(props) {
                             ).toFixed(2)} */}
                           </td>
                           <td>
-                            {data?.status === "Open" ? (
+                         
                               <Button
                                 className="me-2"
                                 variant="outline-danger"
@@ -524,20 +529,11 @@ function Portfolio(props) {
                                   getCoinData(data?.crypto_name, coinImg, data);
                                   setModalTradeClose(true);
                                   setCloseId(data?.id);
-                                  setSelectedCoin([
-                                    sameCoin[ind]?.quote?.USD?.price,
-                                    coinImg,
-                                    data,
-                                    sameCoin[ind]?.quote?.USD
-                                      ?.percent_change_24h,
-                                  ]);
+                                  setSelectedCoin(data);
                                 }}
                               >
                                 Close
                               </Button>
-                            ) : (
-                              "Closed"
-                            )}
                           </td>
                           <td>
                             <Dropdown className="dropdown ms-auto text-right">
@@ -666,18 +662,27 @@ function Portfolio(props) {
           <Modal.Body>
             <div className="d-flex flex-column">
               <div className="d-flex mb-4">
-                <img src={sameCoin && sameCoin[1]} width="40" height="40" />
+                <img src={cryptoicons[selectedCoin?.crypto_symbol]} alt="img" width="40" height="40" />
                 <div className="mx-2">
                   <div className=" d-flex">
                     <p className="mb-0 ">BUY </p>
                     <h5 className="mb-0 px-1 text-uppercase">
-                      {sameCoin && sameCoin[2]?.crypto_name}
+                      {selectedCoin?.crypto_name}
                     </h5>
                   </div>
                   <div className="d-flex align-items-center">
-                    <h3 className="mb-0">
-                      ${sameCoin && sameCoin[0]?.toFixed(2)}
-                    </h3>
+                  <CurrencyFormat
+                              value={coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <h3 className="mb-0">
+                              {value}
+                            </h3>}
+                            />
+                   
                     <small
                       className={`${sameCoin && sameCoin[3] > 0
                         ? "text-success mb-0 px-1"
@@ -696,14 +701,20 @@ function Portfolio(props) {
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">AMOUNT</h4>
                       <div>
-                        <h3 className="mb-0">
-                          ${sameCoin && sameCoin[2]?.trade}
-                        </h3>
+                        <CurrencyFormat
+                              value={selectedCoin?.trade}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <h3 className="mb-0">{value}</h3>}
+                            />
                         <p className="mb-0 d-flex justify-content-end">
-                          {sameCoin &&
+                          {selectedCoin &&
                             (
-                              sameCoin[2]?.trade /
-                              sameCoin[2]?.crypto_purchase_price
+                              selectedCoin?.trade /
+                              selectedCoin?.crypto_purchase_price
                             ).toFixed(2)}{" "}
                           UNITS
                         </p>
@@ -711,41 +722,49 @@ function Portfolio(props) {
                     </div>
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">CURRENT P/L</h4>
-                      <h3
-                        className={`${sameCoin &&
-                          sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
-                          ? "text-success mb-0"
-                          : "text-danger mb-0"
-                          }`}
-                      >
-                        $
-                        {sameCoin &&
-                          (
-                            sameCoin[0] - sameCoin[2]?.crypto_purchase_price
-                          ).toFixed(2)}
-                        {/* {sameCoin &&
-                          (
-                            ((sameCoin[0] -
-                              sameCoin[2]?.crypto_purchase_price) *
-                              sameCoin[2]?.trade) /
-                            sameCoin[2]?.crypto_purchase_price
-                          ).toFixed(2)} */}
-                      </h3>
+                      <CurrencyFormat
+                              value={(cvalue(
+                                selectedCoin?.crypto_name,
+                                selectedCoin?.crypto_purchase_price
+                              )*(selectedCoin?.trade / selectedCoin?.crypto_purchase_price)).toFixed(2)}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <h3
+                                className={`${sameCoin &&
+                                  sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
+                                  ? "text-success mb-0"
+                                  : "text-danger mb-0"
+                                  }`}
+                              >{value}
+                              </h3>
+                              }
+                            />
+                      
                     </div>
 
                     <hr />
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">TOTAL</h4>
-                      <h3 className="mb-0">
-                        $
-                        {sameCoin &&
-                          (
-                            Number(sameCoin[2]?.trade) +
-                            Number(
-                              sameCoin[0] - sameCoin[2]?.crypto_purchase_price
-                            )
-                          ).toFixed(2)}
-                      </h3>
+                      <CurrencyFormat
+                              value={(selectedCoin?.trade + (cvalue(
+                                selectedCoin?.crypto_name,
+                                selectedCoin?.crypto_purchase_price
+                              )*(selectedCoin?.trade / selectedCoin?.crypto_purchase_price))).toFixed(2)}
+                              displayType={"text"}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => <h3
+                                className="mb-0"
+                              >{value}
+                              </h3>
+                              }
+                            />
+                     
                     </div>
                   </div>
                 </div>
