@@ -31,6 +31,8 @@ const tabData = [
 ];
 function WatchlistDataTable(props) {
   var timer;
+  const parseUSer = JSON.parse(localStorage.getItem('user'))
+  const token = JSON.parse(localStorage.getItem('token'))
   const [Watchlist, setWatchlist] = useState([])
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
@@ -129,34 +131,27 @@ function WatchlistDataTable(props) {
   };
 
   const createTrade = () => {
-    // if (buyAmount.amount > 0 || buyAmount.units > 0) {
-    //   // const tradeData = {
-    //   //   crypto_name: selectedCoin?.data.slug,
-    //   //   crypto_purchase_price: selectedCoin?.data.quote.USD.price,
-    //   //   investment: buyAmount.amount,
-    //   //   trade_profit_end: profitEnd,
-    //   //   trade_loss_end: lossEnd,
-    //   //   user_id: 1,
-    //   // };
-    //   axios.post(`${baseURL}${createTradeAPI}`, tradeData).then((res) => {
-    //     console.log(res, "res");
-    //     if (res?.data?.status) {
-    //       props?.history?.push("/portfolio");
-    //     } else {
-    //       toast.error("❌ Invalid Amount, " + res?.data?.message, {
-    //         position: "top-right",
-    //         autoClose: 5000,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //       });
-    //     }
-    //   });
-    // }
+    if (buyAmount.amount > 0 || buyAmount.units > 0) {
+      const tradeData = {
+        crypto_name: selectedCoin?.data?.name,
+        crypto_symbol: selectedCoin?.data?.symbol,
+        crypto_purchase_price: selectedCoin?.data?.price,
+        investment: buyAmount?.amount,
+        take_profit: profitEnd,
+        stop_loss: lossEnd,
+        user_id: parseUSer?.id,
+      };
+      console.log(tradeData);
+      axios.post(`${baseURL}/api/activetrade`, tradeData, { headers: { "x-auth-token": token } }).then((res) => {
+        console.log(res?.data, "res");
+        if (res?.data?.status) {
+          props?.history?.push("/portfolio");
+        }
+        alert("Success")
+        setModalCentered(false)
+      }).catch(e => console.log(e));
+    }
   };
-
 
 
   useEffect(() => {
@@ -202,7 +197,22 @@ function WatchlistDataTable(props) {
   const getWatchlistcoins = (arr) => {
     return arr?.filter(i=>Watchlist.some(it=>it.coin_name == i.name ))
   }
-  const deleteCoinHandler = () => {};
+  const deleteCoinHandler = async() => {
+    // deleteCoinId,deleteCoinName
+
+    try {
+      const token1 = JSON.parse(await localStorage.getItem('token'))
+
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, {data:{ coin_name : deleteCoinName }}, { headers: { "x-auth-token": token1 } })
+      console.log(res);
+      setDeleteCoinName('')
+      setModalCentered2(false)
+      fetchWatchlist()
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
 
   return (
     <div className="col-12">
