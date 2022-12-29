@@ -58,7 +58,12 @@ function Login(props) {
       dispatch(loginConfirmedAction(user));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(token));
-      props.history.push("/dashboard");
+      if(user?.is_admin == 1) {
+        props.history.push("/admin-dashboard");
+      }else{
+        props.history.push("/dashboard");
+      }
+      
     //   window.location.replace("/dashboard");
     });
   }

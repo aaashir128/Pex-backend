@@ -6,6 +6,7 @@ import Header from "./Header";
 import AdminSideBar from "./AdminSideBar";
 
 const JobieNav = ({ title, onClick: ClickToAddEvent, onClick2, onClick3 }) => {
+  const user = JSON.parse(localStorage.getItem('user'))
   const [toggle, setToggle] = useState("");
   const onClick = (name) => setToggle(toggle === name ? "" : name);
   return (
@@ -21,8 +22,11 @@ const JobieNav = ({ title, onClick: ClickToAddEvent, onClick2, onClick3 }) => {
         onBox={() => onClick("box")}
         onClick={() => ClickToAddEvent()}
       />
-      <SideBar />
-      {/* <AdminSideBar /> */}
+      {
+        user?.is_admin == 1 ? <AdminSideBar /> : <SideBar />
+      }
+      
+      
     </Fragment>
   );
 };
