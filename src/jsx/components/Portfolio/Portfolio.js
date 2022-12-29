@@ -72,9 +72,9 @@ function Portfolio(props) {
   };
 
   // activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(coinData?.length / sort))
-    .fill()
-    .map((_, i) => i + 1);
+  // let paggination = Array(Math.ceil(coinData?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1,2,3,4];
+  let paggination = [1,2,3,4]
+  
 
   const onClick = (i) => {
     activePag.current = i;
@@ -252,8 +252,8 @@ function Portfolio(props) {
 
   const fetchPortfoliolist = async () => {
     try {
-      const token = JSON.parse(await localStorage.getItem('token'))
-      const user = JSON.parse(await localStorage.getItem('user'))
+      const token = JSON.parse( localStorage.getItem('token'))
+      const user = JSON.parse( localStorage.getItem('user'))
       console.log(user, token);
       const { data } = await axios.get(`${baseURL}/api/activetrade/${user?.id}`, { headers: { "x-auth-token": token } })
       console.log(data, "watch list data");
@@ -399,7 +399,7 @@ function Portfolio(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {portfolio?.map((data, ind) => {
+                    { portfolio?.length > 0 && [...portfolio]?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                       let coinImg = cryptoicons[data?.crypto_symbol];

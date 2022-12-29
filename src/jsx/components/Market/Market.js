@@ -50,6 +50,7 @@ function Market(props) {
 
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
+  const pre = useRef([])
   const [change, setChange] = useState("24h");
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(10);
@@ -230,7 +231,12 @@ function Market(props) {
         headers: { "x-auth-token": token },
       });
       console.log(data);
-      setCoinData(data);
+      // if(localStorage.getItem('perviouse')!=localStorage.getItem('perviouse')){}
+        localStorage.setItem('perviouse',localStorage.getItem("cur"))
+      localStorage.setItem("cur",JSON.stringify(data))
+      pre.current = coinData;
+      // setPerCoinData(JSON.parse( await localStorage.getItem('perviouse')))
+      setCoinData(data)
       timer = setTimeout(() => {
         getDatafromBackend();
       }, 15000);
@@ -361,8 +367,9 @@ function Market(props) {
                     {[...coinData]?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       let coinImg = cryptoicons[data?.symbol];
+                      const perdata = JSON.parse(localStorage?.getItem("perviouse"))
                       // let coinImg = require(`../../../icons/coins/${data.slug}.png`);
-                      let perPrice = coinData[ind]?.quote?.USD?.price;
+                      let perPrice = perdata && perdata[ind]?.price;
                       return (
                         <tr
                           key={data?.id}
@@ -386,10 +393,10 @@ function Market(props) {
                           <td
                             style={
                               perPrice - data?.price > 0
-                                ? { color: "green" }
+                                ? { color: "green",display:'flex' }
                                 : perPrice - data?.price < 0
-                                ? { color: "red" }
-                                : { color: "black" }
+                                ? { color: "red",display:'flex' }
+                                : { color: "black",display:'flex' }
                             }
                           >
                             <CurrencyFormat

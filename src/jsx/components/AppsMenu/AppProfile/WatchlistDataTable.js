@@ -67,9 +67,8 @@ function WatchlistDataTable(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(coinData?.length / sort))
-    .fill()
-    .map((_, i) => i + 1);
+  // let paggination = Array(Math.ceil(coinData?.length / sort))?.fill()?.map((_, i) => i + 1) ;
+  let paggination = [1,2,3,4]
 
   const onClick = (i) => {
     activePag.current = i;
@@ -187,6 +186,7 @@ function WatchlistDataTable(props) {
       const token = await localStorage.getItem('token')
       const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
       console.log(data);
+      setPerCoinData(coinData)
       setCoinData(data)
       timer = setTimeout(() => { fetchData() }, 15000)
       // setInterval(getDatafromBackend(),3000)
@@ -195,7 +195,7 @@ function WatchlistDataTable(props) {
     }
   };
   const getWatchlistcoins = (arr) => {
-    return arr?.filter(i=>Watchlist.some(it=>it.coin_name == i.name ))
+    return arr?.filter(i=>Watchlist?.some(it=>it?.coin_name == i?.name ))
   }
   const deleteCoinHandler = async() => {
     // deleteCoinId,deleteCoinName
@@ -359,7 +359,7 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {coinData?.filter(i=>Watchlist.some(it=>it.coin_name == i.name)).map((data, ind) => {
+                  { coinData?.length > 0 && Watchlist?.length>0 && coinData?.filter(i=>Watchlist?.some(it=>it.coin_name == i.name))?.map((data, ind) => {
                     console.log(data , " MAP DATA");
                     // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
                     // let coinImg = require(`../../../../icons/coins/bzzone.png`);

@@ -27,7 +27,7 @@ const Home = (props) => {
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
     axios
-      .get(`${baseURL}/api/wallet//${usr?.id}`, {
+      .get(`${baseURL}/api/wallet/${usr?.id}`, {
         headers: { "x-auth-token": tokn },
       })
       .then((res) => {
