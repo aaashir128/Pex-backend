@@ -203,7 +203,7 @@ function WatchlistDataTable(props) {
     try {
       const token1 = JSON.parse(await localStorage.getItem('token'))
 
-      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, {data:{ coin_name : deleteCoinName }}, { headers: { "x-auth-token": token1 } })
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { data:{coin_name : deleteCoinName} }, { headers: { "x-auth-token": token1 } })
       console.log(res);
       setDeleteCoinName('')
       setModalCentered2(false)
@@ -399,6 +399,44 @@ function WatchlistDataTable(props) {
                           )}{" "}
                         </td>
                         <td className="text-center">
+                            {change === "1h" ? (
+                              <p
+                                className={`${
+                                  data?.percent_change_1h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(data?.percent_change_1h).toFixed(2)}
+                                %
+                              </p>
+                            ) : change === "7d" ? (
+                              <p
+                                className={`${
+                                  data?.percent_change_7d < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(data?.percent_change_7d).toFixed(2)}
+                                %
+                              </p>
+                            ) : (
+                              <p
+                                className={`${
+                                  data?.percent_change_24h < 0
+                                    ? "text-danger d-inline"
+                                    : "text-success d-inline"
+                                }`}
+                              >
+                                {parseFloat(data?.percent_change_24h).toFixed(
+                                  2
+                                )}
+                                %
+                              </p>
+                            )}
+                          </td>
+                        {/* <td className="text-center">
                           {change === "1h"
                             ? parseFloat(
                                 data?.percent_change_1h
@@ -411,7 +449,7 @@ function WatchlistDataTable(props) {
                                 data?.percent_change_24h
                               ).toFixed(2)}
                           %
-                        </td>
+                        </td> */}
 
                         <td>
                           <button
@@ -533,18 +571,18 @@ function WatchlistDataTable(props) {
                 </div>
                 <div className="d-flex align-items-center">
                   <h3 className="mb-0">
-                    ${parseFloat(selectedCoin?.price).toFixed(2)}
+                    ${parseFloat(selectedCoin?.data?.price).toFixed(2)}
                   </h3>
                   <small
                     className={
-                      selectedCoin?.percent_change_24h > 0
+                      selectedCoin?.data?.percent_change_24h > 0
                         ? "text-success mb-0 px-1"
                         : "text-danger mb-0 px-1"
                     }
                   >
                     (
                     {parseFloat(
-                      selectedCoin?.percent_change_24h
+                      selectedCoin?.data?.percent_change_24h
                     ).toFixed(2)}
                     % )
                   </small>
