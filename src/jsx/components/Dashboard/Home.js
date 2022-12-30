@@ -19,10 +19,23 @@ const ChartBarApex = loadable(() =>
 const Home = (props) => {
   const { changeBackground } = useContext(ThemeContext);
   const [data, setData] = useState([]);
+  const [historyData, sethistoryData] = useState([])
 
   const tokn = JSON.parse(localStorage.getItem("token"));
 
+  const getTrades = () => {
+    const user = JSON.parse(localStorage.getItem('user'))
+    const token = JSON.parse(localStorage.getItem('token'))
+    axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
+      console.log(res?.data, "res");
+      let userTradeHistory = res?.data;
+      sethistoryData(userTradeHistory);
+      console.log(userTradeHistory);
+    });
+  }
+
   useEffect(() => {
+    // getTrades()
     changeBackground({ value: "light", label: "Light" });
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
@@ -34,7 +47,7 @@ const Home = (props) => {
         console.log(res, "res");
         setData(res.data);
       });
-  }, [props.history]);
+  }, []);
   return (
     <>
       {/* <div className="row"> */}

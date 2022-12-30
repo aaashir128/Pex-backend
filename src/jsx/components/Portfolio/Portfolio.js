@@ -183,13 +183,7 @@ function Portfolio(props) {
     }
   };
 
-  useEffect(() => {
 
-    fetchPortfoliolist()
-    getDatafromBackend()
-    return () => clearTimeout(timer)
-
-  }, []);
   // const fetchData = async () => {
   //   const config = {
   //     headers: {
@@ -247,15 +241,15 @@ function Portfolio(props) {
     console.log("cName", name);
     let filter = APIData.filter((item) => item.slug == name);
     console.log("cName filter", filter);
-    setSameCoin([filter[0]?.quote.USD.price, img, data]);
+    setSameCoin([filter[0]?.price, img, data]);
   };
 
   const fetchPortfoliolist = async () => {
     try {
-      const token = JSON.parse( localStorage.getItem('token'))
-      const user = JSON.parse( localStorage.getItem('user'))
+      const token = JSON.parse(await localStorage.getItem('token'))
+      const user = JSON.parse(await localStorage.getItem('user'))
       console.log(user, token);
-      const { data } = await axios.get(`${baseURL}/api/activetrade/${user?.id}`, { headers: { "x-auth-token": token } })
+      const { data } = await axios.get(`${baseURL}/api/activetrade/${user.id}`, { headers: { "x-auth-token": token } })
       console.log(data, "watch list data");
       setportfolio(data)
     } catch (error) {
@@ -313,6 +307,14 @@ function Portfolio(props) {
   //   var i = 2;
   //   console.log("Negative check", Math.sign(i));
   // }, [sameCoin]);
+
+  useEffect(() => {
+
+    getDatafromBackend()
+    fetchPortfoliolist()
+    return () => clearTimeout(timer)
+
+  }, []);
 
   return (
     <>

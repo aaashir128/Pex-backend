@@ -1,5 +1,5 @@
 // export const baseURL = "http://localhost:4000";
-export const baseURL = "https://prime-exchange.cyclic.app";
+export const baseURL = "https://muddy-fly-hosiery.cyclic.app";
 export const depositRequests = "/api/deposit/";
 export const depositRequest = "api/deposit_request";
 export const withdrawRequest = "/api/withdraw/";

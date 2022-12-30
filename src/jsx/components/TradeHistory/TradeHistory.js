@@ -6,6 +6,7 @@ import PageTitle from "../../layouts/PageTitle";
 import { Button, Dropdown } from "react-bootstrap";
 import { baseURL, tradeAPI, tradeHistoryAPI } from "../../../Strings/Strings";
 import moment from "moment";
+import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
 
 const sort = 10;
 let perArr = [];
@@ -28,9 +29,8 @@ function TradeHistory(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(historyData?.length / sort))
-    .fill()
-    .map((_, i) => i + 1);
+  // let paggination = Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1);
+  let paggination = [1, 2, 3, 4];
 
   const onClick = (i) => {
     activePag.current = i;
@@ -40,15 +40,20 @@ function TradeHistory(props) {
     // settest(i);
   };
 
-  // useEffect(() => {
-  //   axios.get(`${baseURL}${tradeHistoryAPI}`).then((res) => {
-  //     console.log(res, "res");
-  //     let userTradeHistory = res.data.tradeHistory
-  //       .reverse()
-  //       .filter((item) => item.active_trade.user_id == usr?.id);
-  //     setHistoryData(userTradeHistory);
-  //   });
-  // }, []);
+  const getTrades = () => {
+    const user = JSON.parse(localStorage.getItem('user'))
+    const token = JSON.parse(localStorage.getItem('token'))
+    axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
+      console.log(res?.data, "res");
+      let userTradeHistory = res?.data;
+      setHistoryData(userTradeHistory);
+      console.log(userTradeHistory);
+    });
+  }
+
+  useEffect(() => {
+    getTrades()
+  }, []);
 
   return (
     <>
@@ -115,8 +120,9 @@ function TradeHistory(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...historyData].map((data, ind) => {
-                      let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
+                    { historyData?.length > 0 && [...historyData]?.map((data, ind) => {
+                      let coinImg = cryptoicons[data];
+                      // let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
@@ -129,16 +135,18 @@ function TradeHistory(props) {
                               <img src={coinImg} width="40" height="40" />
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
-                                  {data?.active_trade?.crypto_name}
+                                  {data?.crypto_name}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td>{data.amount}</td>
+                          <td>${data?.open_trade}</td>
 
-                          <td>{data.closed_price}</td>
+                          <td>${data?.close_trade}</td>
 
-                          <td>{data.profit > 0 ? data.profit : data.loss}</td>
+                          <td
+                          style={data?.actual_profit > 0 ? {color:'green'} : {color:'red'} }
+                          >${data?.actual_profit > 0 ? data?.actual_profit?.toFixed(2) : data?.actual_loss?.toFixed(2)}</td>
                           <td>
                             {moment(data?.active_trade?.invested_date).format(
                               "YYYY-MM-DD hh:mm a"
@@ -183,9 +191,8 @@ function TradeHistory(props) {
                         <Link
                           key={i}
                           // to="/app-profile"
-                          className={`paginate_button  ${
-                            activePag.current === i ? "current" : ""
-                          } `}
+                          className={`paginate_button  ${activePag.current === i ? "current" : ""
+                            } `}
                           onClick={() => onClick(i)}
                         >
                           {number}
