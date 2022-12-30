@@ -132,7 +132,7 @@ function TradeHistory(props) {
                         >
                           <td className="sorting_1">
                             <div className="d-flex align-items-center">
-                              <img src={coinImg} width="40" height="40" />
+                              {/* <img src={coinImg} width="40" height="40" /> */}
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
                                   {data?.crypto_name}

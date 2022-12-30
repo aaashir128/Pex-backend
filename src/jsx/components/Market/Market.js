@@ -227,9 +227,7 @@ function Market(props) {
   const getDatafromBackend = async () => {
     try {
       const token = await localStorage.getItem("token");
-      const { data } = await axios.get(`${baseURL}/coinmarket`, {
-        headers: { "x-auth-token": token },
-      });
+      const { data } = await axios.get(`${baseURL}/coinmarket`, {headers: { "x-auth-token": token }});
       console.log(data);
       // if(localStorage.getItem('perviouse')!=localStorage.getItem('perviouse')){}
         localStorage.setItem('perviouse',localStorage.getItem("cur"))
@@ -364,7 +362,7 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData]?.map((data, ind) => {
+                    {[...coinData]?.filter(i=>cryptoicons[i.symbol])?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       let coinImg = cryptoicons[data?.symbol];
                       const perdata = JSON.parse(localStorage?.getItem("perviouse"))

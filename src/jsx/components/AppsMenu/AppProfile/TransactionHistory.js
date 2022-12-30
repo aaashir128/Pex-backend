@@ -7,17 +7,34 @@ import { baseURL } from "../../../../Strings/Strings";
 
 function TransactionHistory() {
   const [data, setData] = useState([]);
-  // useEffect(() => {
+  const [deposit, setdeposit] = useState([])
+  useEffect(() => {
 
-  //   let usr = localStorage.getItem("user");
-  //   usr = JSON.parse(usr);
-  //   axios
-  //     .get(`${baseURL}api/deposit_requests?user_id=${usr?.id}`)
-  //     .then((res) => {
-  //       console.log(res, "res");
-  //       setData(res.data.DepositRequests.reverse());
-  //     });
-  // }, []);
+    let usr = localStorage.getItem("user");
+    let token = JSON.parse(localStorage.getItem("token"))
+    usr = JSON.parse(usr);
+    axios
+      .get(`${baseURL}/api/withdraw/${usr?.id}`,{headers: { "x-auth-token": token }})
+      .then((res) => {
+        console.log(res?.data, "res");
+        const nn = res?.data?.map(i => {
+          return {...i, type:"Withdraw"}
+        })
+        setData(nn.reverse());
+      }).catch(err=>{console.log(err?.response?.data)});
+
+
+
+      axios
+      .get(`${baseURL}/api/deposit/${usr?.id}`,{headers: { "x-auth-token": token }})
+      .then((res) => {
+        console.log(res?.data, "res");
+        const nn = res?.data?.map(i => {
+          return {...i, type:"Deposit"}
+        })
+        setdeposit(nn.reverse());
+      }).catch(err=>{console.log(err?.response?.data)});
+  }, []);
   return (
     <div>
       <Col lg={12}>
@@ -37,16 +54,16 @@ function TransactionHistory() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((req, ind) => {
+                {[...data,...deposit]?.map((req, ind) => {
                   return (
-                    <tr>
+                    <tr key={ind}>
                       <td>
                         <Link to="/table-bootstrap-basic">{ind + 1}</Link>
                       </td>
 
                       <td>
                         <span className="text-muted">
-                          {req?.request_status == "Pending"
+                          {req?.status == "Pending"
                             ? moment(req?.created_at).format(
                                 "YYYY-MM-DD hh:mm a"
                               )
@@ -58,15 +75,15 @@ function TransactionHistory() {
                       <td>
                         <Badge
                           variant={`${
-                            req?.request_status === "Rejected"
+                            req?.status === "Rejected"
                               ? "danger light"
-                              : req?.request_status === "Approved"
+                              : req?.status === "Approved"
                               ? "primary light"
                               : "warning light"
                           }`}
                           style={{ width: 80 }}
                         >
-                          {req?.request_status}
+                          {req?.status}
                         </Badge>
                       </td>
                       <td>{req?.type}</td>

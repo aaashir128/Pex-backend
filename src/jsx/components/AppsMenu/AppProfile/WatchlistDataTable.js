@@ -83,13 +83,13 @@ function WatchlistDataTable(props) {
       setBuyAmount({
         ...buyAmount,
         units: (buyAmount.units += 1),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: buyAmount.units * selectedCoin?.data?.price,
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: (buyAmount.amount += 1000),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: buyAmount.amount / selectedCoin?.data?.price,
       });
     }
   };
@@ -99,7 +99,7 @@ function WatchlistDataTable(props) {
         setBuyAmount({
           ...buyAmount,
           units: (buyAmount.units -= 1),
-          amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+          amount: buyAmount.units * selectedCoin?.data?.price,
         });
       }
     } else {
@@ -107,7 +107,7 @@ function WatchlistDataTable(props) {
         setBuyAmount({
           ...buyAmount,
           amount: (buyAmount.amount -= 1000),
-          units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+          units: buyAmount.amount / selectedCoin?.data?.price,
         });
       }
     }
@@ -118,13 +118,13 @@ function WatchlistDataTable(props) {
       setBuyAmount({
         ...buyAmount,
         units: Number(e.target.value),
-        amount: buyAmount.units * selectedCoin?.data.quote.USD.price,
+        amount: buyAmount.units * selectedCoin?.data?.price,
       });
     } else {
       setBuyAmount({
         ...buyAmount,
         amount: Number(e.target.value),
-        units: buyAmount.amount / selectedCoin?.data.quote.USD.price,
+        units: buyAmount.amount / selectedCoin?.data?.price,
       });
     }
   };
@@ -201,9 +201,9 @@ function WatchlistDataTable(props) {
     // deleteCoinId,deleteCoinName
 
     try {
-      const token1 = JSON.parse(await localStorage.getItem('token'))
+      const token =  localStorage.getItem('token')
 
-      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { data:{coin_name : deleteCoinName} }, { headers: { "x-auth-token": token1 } })
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { coin_name : deleteCoinName }, { headers: { "x-auth-token": token } })
       console.log(res);
       setDeleteCoinName('')
       setModalCentered2(false)
