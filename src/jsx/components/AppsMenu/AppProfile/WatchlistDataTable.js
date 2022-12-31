@@ -234,7 +234,7 @@ function WatchlistDataTable(props) {
 
   return (
     <div className="col-12">
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -244,7 +244,7 @@ function WatchlistDataTable(props) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+      /> */}
       <div className="card">
         <div className="card-body">
           <div className="table-responsive">
@@ -326,15 +326,15 @@ function WatchlistDataTable(props) {
                           >
                             Change {change}
                           </Dropdown.Toggle>
-                          <Dropdown.Menu className="dropdown-menu-right">
-                            <a
+                          <Dropdown.Menu className="dropdown-menu dropdown-menu-right">
+                            <Dropdown.Item
                               class="dropdown-item"
                               href="#"
                               onClick={() => setChange("1h")}
                             >
                               Change 1h
-                            </a>
-                            <a
+                            </Dropdown.Item>
+                            <Dropdown.Item
                               class="dropdown-item"
                               href="#"
                               onClick={(e) => {
@@ -343,8 +343,8 @@ function WatchlistDataTable(props) {
                               }}
                             >
                               Change 24h
-                            </a>
-                            <a
+                            </Dropdown.Item>
+                            <Dropdown.Item
                               class="dropdown-item"
                               href="#"
                               onClick={(e) => {
@@ -353,7 +353,7 @@ function WatchlistDataTable(props) {
                               }}
                             >
                               Change 7d
-                            </a>
+                            </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>

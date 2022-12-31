@@ -322,15 +322,15 @@ function Market(props) {
                             >
                               Change {change}
                             </Dropdown.Toggle>
-                            <Dropdown.Menu className="dropdown-menu-right">
-                              <a
+                            <Dropdown.Menu className="dropdown-menu dropdown-menu-right">
+                              <Dropdown.Item
                                 className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={() => setChange("1h")}
                               >
                                 Change 1h
-                              </a>
-                              <a
+                              </Dropdown.Item>
+                              <Dropdown.Item
                                 className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={(e) => {
@@ -339,8 +339,8 @@ function Market(props) {
                                 }}
                               >
                                 Change 24h
-                              </a>
-                              <a
+                              </Dropdown.Item>
+                              <Dropdown.Item
                                 className="dropdown-item cursor-pointer"
                                 //   href="#"
                                 onClick={(e) => {
@@ -349,7 +349,7 @@ function Market(props) {
                                 }}
                               >
                                 Change 7d
-                              </a>
+                              </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
                         </div>
