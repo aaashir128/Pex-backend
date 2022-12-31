@@ -263,7 +263,7 @@ function Market(props) {
 
   useEffect(() => {
     getDatafromBackend();
-    return () => clearTimeout(timer);
+    return () => {clearTimeout(timer)};
     // const id = window.setInterval(() => {
     //   let aa = localStorage.getItem("perData");
     //   aa = aa && JSON.parse(aa);

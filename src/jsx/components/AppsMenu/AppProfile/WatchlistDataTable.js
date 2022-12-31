@@ -173,7 +173,7 @@ function WatchlistDataTable(props) {
     // getUSerData();
     fetchData();
     fetchWatchlist();
-    return () => clearTimeout(timer)
+    return () => {clearTimeout(timer)}
 
     // const id = setInterval(() => {
     // let aa = localStorage.getItem("perData");

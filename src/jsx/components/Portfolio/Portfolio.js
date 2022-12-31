@@ -59,6 +59,8 @@ function Portfolio(props) {
   const [sameCoin, setSameCoin] = useState();
   const [isUnits, setIsUnits] = useState(false);
   const [partialTrade, setPartialTrade] = useState(false);
+  const [totalInvestment, settotalInvestment] = useState(0)
+  const [wallet, setwallet] = useState({})
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
   const [colorCheck, setColorCheck] = useState(null);
   let usr = localStorage.getItem("user");
@@ -259,11 +261,31 @@ function Portfolio(props) {
       const user = JSON.parse(await localStorage.getItem('user'))
       console.log(user, token);
       const { data } = await axios.get(`${baseURL}/api/activetrade/${user.id}`, { headers: { "x-auth-token": token } })
-      console.log(data, "watch list data");
+      let total = 0;
+      for(let i = 0; i<data?.length; i++ ){
+        total += data[i]?.trade
+      }
+      settotalInvestment(total)
+      console.log(data, total,"watch list data");
       setportfolio(data)
     } catch (error) {
       console.log(error, "watchlist error");
     }
+  }
+
+  const fetchWalets = async() => {
+    const tokn = JSON.parse(await localStorage.getItem('token'))
+    const user = JSON.parse(await localStorage.getItem('user'))
+    axios
+      .get(`${baseURL}/api/wallet/${user?.id}`, {
+        headers: { "x-auth-token": tokn },
+      })
+      .then((res) => {
+        // console.log(res, "res");
+        setwallet(res?.data);
+      }).catch(e=>{
+        console.log(e);
+      });
   }
 
   const getDatafromBackend = async () => {
@@ -324,9 +346,10 @@ function Portfolio(props) {
 
   useEffect(() => {
 
+    fetchWalets()
     getDatafromBackend()
     fetchPortfoliolist()
-    return () => clearTimeout(timer)
+    return () => {clearTimeout(timer)}
 
   }, []);
 
@@ -1048,7 +1071,7 @@ function Portfolio(props) {
           <Col lg={3} className="">
             <div className="text-center">
               <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                $16,000
+                ${wallet?.balance}
               </h4>
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Cash Available
@@ -1059,7 +1082,7 @@ function Portfolio(props) {
           <Col lg={3} className="">
             <div className="text-center">
               <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                $46,000
+                ${totalInvestment}
               </h4>
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Total Invested
@@ -1081,7 +1104,7 @@ function Portfolio(props) {
           <Col lg={3} className="">
             <div className="text-center">
               <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                $100,000
+                ${(wallet?.balance+totalInvestment)?.toFixed(2)}
               </h4>
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Portfolio Value

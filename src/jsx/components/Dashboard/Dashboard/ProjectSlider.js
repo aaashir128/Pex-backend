@@ -5,9 +5,9 @@ import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { baseURL, tradeAPI } from "../../../../Strings/Strings";
 
-const ProjectSlider = (props) => {
-  const [data, setData] = useState([]);
-  const [invest, setInvest] = useState(0);
+const ProjectSlider = ({data,totalInvested}) => {
+  // const [data, setData] = useState([]);
+  // const [invest, setInvest] = useState(0);
   useEffect(() => {
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
@@ -25,7 +25,7 @@ const ProjectSlider = (props) => {
 
     //   setInvest(TotalInvested);
     // });
-  }, [props.history]);
+  }, []);
   const settings = {
     dots: false,
     infinite: true,
@@ -67,7 +67,7 @@ const ProjectSlider = (props) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong>$ {data?.balance}</strong>
+                <strong>$ {data?.balance ?? 0.00}</strong>
               </span>
 
               <span className="mb-7 d-block fs-18">Cash Available</span>
@@ -81,7 +81,7 @@ const ProjectSlider = (props) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong>$ {invest}</strong>
+                <strong>$ {totalInvested ?? 0.00}</strong>
               </span>
 
               <span className="mb-7 d-block fs-18">Total Invested</span>

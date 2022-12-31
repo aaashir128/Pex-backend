@@ -20,22 +20,30 @@ const Home = (props) => {
   const { changeBackground } = useContext(ThemeContext);
   const [data, setData] = useState([]);
   const [historyData, sethistoryData] = useState([])
+  const [totalInvested, settotalInvested] = useState(0)
 
   const tokn = JSON.parse(localStorage.getItem("token"));
 
-  const getTrades = () => {
+  const getTrades = async() => {
     const user = JSON.parse(localStorage.getItem('user'))
     const token = JSON.parse(localStorage.getItem('token'))
-    axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
-      console.log(res?.data, "res");
+    let total = 0;
+    axios.get(`${baseURL}/api/activetrade/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
+      // console.log(res?.data, "res");
       let userTradeHistory = res?.data;
-      sethistoryData(userTradeHistory);
-      console.log(userTradeHistory);
+      for(let i = 0; i<userTradeHistory?.length; i++ ){
+        total += res?.data[i]?.trade
+      }
+      settotalInvested(total)
+      // sethistoryData(userTradeHistory);
+      console.log(total,res?.data);
+    }).catch(e=>{
+      console.log(e);
     });
   }
 
   useEffect(() => {
-    // getTrades()
+    getTrades()
     changeBackground({ value: "light", label: "Light" });
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
@@ -44,8 +52,10 @@ const Home = (props) => {
         headers: { "x-auth-token": tokn },
       })
       .then((res) => {
-        console.log(res, "res");
-        setData(res.data);
+        // console.log(res, "res");
+        setData(res?.data);
+      }).catch(e=>{
+        console.log(e);
       });
   }, []);
   return (
@@ -64,7 +74,7 @@ const Home = (props) => {
                     </span>
                     <span className="mb-3 d-block fs-18">Portfolio Value</span>
                     <CurrencyFormat
-                      value={data?.balance > 0 ? data?.balance : 0.00}
+                      value={data?.balance > 0 ? data?.balance+totalInvested : 0.00}
                       displayType={"text"}
                       // decimalSeparator={true}
                       decimalScale={2}
@@ -84,7 +94,7 @@ const Home = (props) => {
                 <br />
                 <div className="col-xl-12">
                   <div className="card-body pt-0">
-                    <ProjectSlider {...data} />
+                    <ProjectSlider data={data} totalInvested={totalInvested} />
                   </div>
                 </div>
               </div>
