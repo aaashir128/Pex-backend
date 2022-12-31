@@ -218,9 +218,9 @@ function WatchlistDataTable(props) {
 
     showModal("Loading...", "Removing....")
     try {
-      const token = localStorage.getItem('token')
+      const token = JSON.parse(localStorage.getItem('token'))
 
-      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { coin_name: deleteCoinName }, { headers: { "x-auth-token": token } })
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { headers: { "x-auth-token": token },data:{coin_name: deleteCoinName} } )
       console.log(res);
       setDeleteCoinName('')
       setModalCentered2(false)
