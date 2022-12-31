@@ -21,6 +21,7 @@ import {
 } from "../../../Strings/Strings";
 import CurrencyFormat from 'react-currency-format'
 import { themePrimary } from "../../../css/color";
+import ERModal from "../modals/ERModal";
 
 const sort = 10;
 let perArr = [];
@@ -40,6 +41,9 @@ const tabData = [
 ];
 function Portfolio(props) {
   var timer;
+  const [op, setop] = useState(false)
+  const [hd, sethd] = useState("")
+  const [msg, setmsg] = useState("")
   const [APIData, setAPIData] = useState([]);
   const [portfolio, setportfolio] = useState([])
   const [perCoinData, setPerCoinData] = useState([]);
@@ -119,16 +123,21 @@ function Portfolio(props) {
     //   loss: profitLoss < 0 ? profitLoss : 0,
     //   closed_price: sameCoin[0],
     // };
+    showModal('Loading...',"Closing...")
     const sale = coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price
     console.log(sale)
     axios.delete(`${baseURL}/api/activetrade/${selectedCoin.id}`,{data:{crypto_sale_price:sale}}).then((res) => {
       console.log(res, "res");
       fetchPortfoliolist()
-        setModalTradeClose(false);
+      setModalTradeClose(false);
+      showModal("Success","Closed successfully!")
       if (res?.data?.status) {
         // getTrades();
         
       }
+    }).catch(e=>{
+      console.log(e);
+      showModal("Error!",`Error Occured while closing : ${e.response.data ? e.response.data : "Unknown Error Occured!"}`)
     });
   };
 
@@ -270,6 +279,11 @@ function Portfolio(props) {
     }
   }
 
+  const showModal = (hd,msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
   // useEffect(() => {
     
     // let filter = APIData.filter(
@@ -319,6 +333,8 @@ function Portfolio(props) {
   return (
     <>
       <PageTitle activeMenu="Portfolio" motherMenu="Home" />
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
+
 
       {/* <div className="d-flex justify-between"> */}
       <div className="col-12">

@@ -8,6 +8,7 @@ import PageTitle from "../../layouts/PageTitle";
 import { themePrimary } from "../../../css/color";
 import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
 import CurrencyFormat from "react-currency-format";
+import ERModal from "../modals/ERModal";
 
 // import { json } from "stream/consumers";
 
@@ -50,6 +51,9 @@ function Market(props) {
 
   const [coinData, setCoinData] = useState([]);
   const [perCoinData, setPerCoinData] = useState([]);
+  const [op, setop] = useState(false)
+  const [hd, sethd] = useState("")
+  const [msg, setmsg] = useState("")
   const pre = useRef([])
   const [change, setChange] = useState("24h");
   const [start, setStart] = useState(0);
@@ -142,6 +146,7 @@ function Market(props) {
   };
 
   const createTrade = () => {
+    showModal("Loading...","loading...")
     if (buyAmount.amount > 0 || buyAmount.units > 0) {
       const tradeData = {
         crypto_name: selectedCoin?.data?.name,
@@ -158,11 +163,23 @@ function Market(props) {
         if (res?.data?.status) {
           props?.history?.push("/portfolio");
         }
-        alert("Success")
-        setModalCentered(false)
-      }).catch(e => console.log(e));
+        // alert("Success")
+        showModal("Success!", "Congratulation!! Trade was created successfullt!")
+        setModalCentered(false)        
+      }).catch(e => {
+        console.log(e);
+        showModal("Error Occurd!",e.response.data ? e.response.data : "Unknown Error Occured!" )
+      });
+    }else{
+      showModal("Error","Invalid Amount Entered!")
     }
   };
+
+  const showModal = (hd,msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
 
   // const getUSerData = () => {
   //   console.log("Get USer Data");
@@ -227,11 +244,11 @@ function Market(props) {
   const getDatafromBackend = async () => {
     try {
       const token = await localStorage.getItem("token");
-      const { data } = await axios.get(`${baseURL}/coinmarket`, {headers: { "x-auth-token": token }});
+      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } });
       console.log(data);
       // if(localStorage.getItem('perviouse')!=localStorage.getItem('perviouse')){}
-        localStorage.setItem('perviouse',localStorage.getItem("cur"))
-      localStorage.setItem("cur",JSON.stringify(data))
+      localStorage.setItem('perviouse', localStorage.getItem("cur"))
+      localStorage.setItem("cur", JSON.stringify(data))
       pre.current = coinData;
       // setPerCoinData(JSON.parse( await localStorage.getItem('perviouse')))
       setCoinData(data)
@@ -264,6 +281,7 @@ function Market(props) {
 
   return (
     <>
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
       <PageTitle activeMenu="Market" motherMenu="Home" />
 
       <div className="col-12">
@@ -299,6 +317,7 @@ function Market(props) {
                         <div className="basic-dropdown">
                           <Dropdown>
                             <Dropdown.Toggle
+                              id="dropdown-basic"
                               style={{ backgroundColor: "transparent" }}
                             >
                               Change {change}
@@ -362,7 +381,7 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData]?.filter(i=>cryptoicons[i.symbol])?.map((data, ind) => {
+                    {[...coinData]?.filter(i => cryptoicons[i.symbol])?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       let coinImg = cryptoicons[data?.symbol];
                       const perdata = JSON.parse(localStorage?.getItem("perviouse"))
@@ -391,10 +410,10 @@ function Market(props) {
                           <td
                             style={
                               perPrice - data?.price > 0
-                                ? { color: "green",display:'flex' }
+                                ? { color: "green", display: 'flex' }
                                 : perPrice - data?.price < 0
-                                ? { color: "red",display:'flex' }
-                                : { color: "black",display:'flex' }
+                                  ? { color: "red", display: 'flex' }
+                                  : { color: "black", display: 'flex' }
                             }
                           >
                             <CurrencyFormat
@@ -408,42 +427,39 @@ function Market(props) {
                             />
                             {/* $ {data?.price.toFixed(2)}{" "} */}
                             {perPrice - data?.price > 0 && (
-                              <i className="fas fa-arrow-up"></i>
+                              <i style={{ paddingLeft: "5px", paddingTop: '5px' }} className="fas fa-arrow-up"></i>
                             )}
                             {perPrice - data?.price < 0 && (
-                              <i className="fas fa-arrow-down"></i>
+                              <i style={{ paddingLeft: "5px", paddingTop: '5px' }} className="fas fa-arrow-down"></i>
                             )}{" "}
                           </td>
                           <td className="text-center">
                             {change === "1h" ? (
                               <p
-                                className={`${
-                                  data?.percent_change_1h < 0
+                                className={`${data?.percent_change_1h < 0
                                     ? "text-danger d-inline"
                                     : "text-success d-inline"
-                                }`}
+                                  }`}
                               >
                                 {parseFloat(data?.percent_change_1h).toFixed(2)}
                                 %
                               </p>
                             ) : change === "7d" ? (
                               <p
-                                className={`${
-                                  data?.percent_change_7d < 0
+                                className={`${data?.percent_change_7d < 0
                                     ? "text-danger d-inline"
                                     : "text-success d-inline"
-                                }`}
+                                  }`}
                               >
                                 {parseFloat(data?.percent_change_7d).toFixed(2)}
                                 %
                               </p>
                             ) : (
                               <p
-                                className={`${
-                                  data?.percent_change_24h < 0
+                                className={`${data?.percent_change_24h < 0
                                     ? "text-danger d-inline"
                                     : "text-success d-inline"
-                                }`}
+                                  }`}
                               >
                                 {parseFloat(data?.percent_change_24h).toFixed(
                                   2
@@ -512,9 +528,11 @@ function Market(props) {
                                           "Successfully Add Coin",
                                           res
                                         );
+                                        showModal("Success!","Added to watch list successfully!")
                                       })
                                       .catch((err) => {
                                         console.log(err);
+                                        showModal("Error!","Error occured while adding to watchlist : "+(err.response.data ? err.response.data : "Unknow Error Occured"))
                                       });
                                   }}
                                 >
@@ -566,9 +584,8 @@ function Market(props) {
                         <Link
                           key={i}
                           // to="/app-profile"
-                          className={`paginate_button  ${
-                            activePag.current === i ? "current" : ""
-                          } `}
+                          className={`paginate_button  ${activePag.current === i ? "current" : ""
+                            } `}
                           onClick={() => onClick(i)}
                         >
                           {number}

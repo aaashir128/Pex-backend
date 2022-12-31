@@ -15,14 +15,24 @@ import tradingPic from "../../images/trading.webp";
 import axios from "axios";
 import { baseURL } from "../../Strings/Strings";
 import { auth, provider } from "../../services/Firebase";
+import ERModal from "../components/modals/ERModal";
 
 function Login(props) {
   const [email, setEmail] = useState("johnsmith@gmail.com");
+  const [op, setop] = useState(false)
+  const [hd, sethd] = useState("")
+  const [msg, setmsg] = useState("")
   // const [email, setEmail] = useState("demo@example.com");
   let errorsObj = { email: "", password: "" };
   const [errors, setErrors] = useState(errorsObj);
   const [password, setPassword] = useState("example123");
   // const [password, setPassword] = useState("123456");
+
+  const showModal = (hd, msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
 
   const dispatch = useDispatch();
 
@@ -42,6 +52,8 @@ function Login(props) {
     if (error) {
       return;
     }
+    showModal("Loading", "Athenticating...")
+
     dispatch(loadingToggleAction(true));
     // dispatch(loginAction(email, password, props.history));
 
@@ -68,6 +80,9 @@ function Login(props) {
 
       }
 
+    }).catch(e => {
+      console.log(e);
+      showModal("Error!", `❌ Error occured while Athenticating : ${e.response.data ? e.response.data : "Unknown Error Occured."}`)
     });
   }
 
@@ -217,6 +232,7 @@ function Login(props) {
           </div>
         </div>
       </div>
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
     </div>
   );
 }

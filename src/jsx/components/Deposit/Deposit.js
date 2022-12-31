@@ -5,12 +5,18 @@ import { ToastContainer, toast } from "react-toastify";
 import PageTitle from "../../layouts/PageTitle";
 import axios from "axios";
 import { baseURL } from "../../../Strings/Strings";
+import ERModal from "../modals/ERModal";
 
 function Deposit(props) {
+  const [op, setop] = useState(false)
+  const [hd, sethd] = useState("")
+  const [msg, setmsg] = useState("")
   const [amount, setAmount] = useState(0);
 
   const notifyTopRight = async (e) => {
     e.preventDefault();
+
+    showModal("Loading...","Loading...")
 
     if (amount > 0) {
       let usr = await localStorage.getItem("user");
@@ -37,22 +43,35 @@ function Deposit(props) {
             pauseOnHover: true,
             draggable: true,
           });
-          props.history.push("/dashboard");
-        });
+          showModal("Request Sent!","✔️ Deposit Request Initiated!")
+          // props.history.push("/dashboard");
+        }).catch(e=>{
+          console.log(e);
+          showModal("Error!",`Error occured while requesting : ${e.response.data ? e.response.data : "Unknown Error!"}`)
+        })
+        
     } else {
-      toast.error("❌ Invalid Amount", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      showModal("Error!","❌ Invalid Amount Entered")
+      // toast.error("❌ Invalid Amount", {
+      //   position: "top-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      // });
     }
   };
+  const showModal = (hd,msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
   return (
     <>
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
+
       <PageTitle motherMenu="Home" activeMenu="Deposit" />
       <div className="d-flex align-items-center justify-content-center">
         <div className="col-xl-8 col-lg-8" style={{ marginTop: "10%" }}>

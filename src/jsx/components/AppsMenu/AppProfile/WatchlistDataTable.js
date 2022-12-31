@@ -11,6 +11,7 @@ import set from "date-fns/esm/set";
 import { ToastContainer, toast } from "react-toastify";
 import cryptoicons from "../../../../icons/cryptoIcons/cryptoImg";
 import CurrencyFormat from "react-currency-format";
+import ERModal from "../../modals/ERModal.jsx";
 
 const sort = 10;
 let perArr = [];
@@ -31,6 +32,9 @@ const tabData = [
 ];
 function WatchlistDataTable(props) {
   var timer;
+  const [op, setop] = useState(false)
+  const [msg, setmsg] = useState("")
+  const [hd, sethd] = useState("")
   const parseUSer = JSON.parse(localStorage.getItem('user'))
   const token = JSON.parse(localStorage.getItem('token'))
   const [Watchlist, setWatchlist] = useState([])
@@ -55,6 +59,12 @@ function WatchlistDataTable(props) {
   usr = JSON.parse(usr);
   // console.log("user", usr);
 
+  const showModal = (hd, msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
+
   const activePag = useRef(0);
   const chageData = (frist, sec) => {
     for (var i = 0; i < coinData?.length; ++i) {
@@ -68,7 +78,7 @@ function WatchlistDataTable(props) {
 
   activePag.current === 0 && chageData(0, sort);
   // let paggination = Array(Math.ceil(coinData?.length / sort))?.fill()?.map((_, i) => i + 1) ;
-  let paggination = [1,2,3,4]
+  let paggination = [1, 2, 3, 4]
 
   const onClick = (i) => {
     activePag.current = i;
@@ -130,6 +140,7 @@ function WatchlistDataTable(props) {
   };
 
   const createTrade = () => {
+    showModal("Loading...", "loading...")
     if (buyAmount.amount > 0 || buyAmount.units > 0) {
       const tradeData = {
         crypto_name: selectedCoin?.data?.name,
@@ -146,9 +157,14 @@ function WatchlistDataTable(props) {
         if (res?.data?.status) {
           props?.history?.push("/portfolio");
         }
-        alert("Success")
+        showModal("Success!", "Congratulation!! Trade was created successfullt!")
         setModalCentered(false)
-      }).catch(e => console.log(e));
+      }).catch(e => {
+        console.log(e)
+        showModal("Error Occurd!", e.response.data ? e.response.data : "Unknown Error Occured!")
+      });
+    } else {
+      showModal("Error", "Invalid Amount Entered!")
     }
   };
 
@@ -160,25 +176,25 @@ function WatchlistDataTable(props) {
     return () => clearTimeout(timer)
 
     // const id = setInterval(() => {
-      // let aa = localStorage.getItem("perData");
-      // aa = aa && JSON.parse(aa);
-      // console.log(aa, "aa");
-      // setPerCoinData(aa);
+    // let aa = localStorage.getItem("perData");
+    // aa = aa && JSON.parse(aa);
+    // console.log(aa, "aa");
+    // setPerCoinData(aa);
 
     //   fetchData();
     // }, 15000)
     // return () => clearInterval(id)
   }, []);
-  const fetchWatchlist = async() => {
+  const fetchWatchlist = async () => {
     try {
       const token = JSON.parse(await localStorage.getItem('token'))
       const user = JSON.parse(await localStorage.getItem('user'))
-      console.log(user,token);
+      console.log(user, token);
       const { data } = await axios.get(`${baseURL}/api/userwatchlist/${user?.id}`, { headers: { "x-auth-token": token } })
-      console.log(data,"watch list data");
+      console.log(data, "watch list data");
       setWatchlist(data);
     } catch (error) {
-      console.log(error,"watchlist error");
+      console.log(error, "watchlist error");
     }
   }
   const fetchData = async () => {
@@ -195,23 +211,25 @@ function WatchlistDataTable(props) {
     }
   };
   const getWatchlistcoins = (arr) => {
-    return arr?.filter(i=>Watchlist?.some(it=>it?.coin_name == i?.name ))
+    return arr?.filter(i => Watchlist?.some(it => it?.coin_name == i?.name))
   }
-  const deleteCoinHandler = async() => {
+  const deleteCoinHandler = async () => {
     // deleteCoinId,deleteCoinName
 
+    showModal("Loading...", "Removing....")
     try {
-      const token =  localStorage.getItem('token')
+      const token = localStorage.getItem('token')
 
-      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { coin_name : deleteCoinName }, { headers: { "x-auth-token": token } })
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { coin_name: deleteCoinName }, { headers: { "x-auth-token": token } })
       console.log(res);
       setDeleteCoinName('')
       setModalCentered2(false)
       fetchWatchlist()
+      showModal("Removed! ", "Successfully removed from watchlist!")
     } catch (error) {
       console.log(error);
+      showModal("Error!", `Error occured while removing from watch list : ${error.response.data ? error.response.data : "Unknown Error Occured"}`)
     }
-
   };
 
   return (
@@ -359,12 +377,12 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  { coinData?.length > 0 && Watchlist?.length>0 && coinData?.filter(i=>Watchlist?.some(it=>it.coin_name == i.name))?.map((data, ind) => {
-                    console.log(data , " MAP DATA");
+                  {coinData?.length > 0 && Watchlist?.length > 0 && coinData?.filter(i => Watchlist?.some(it => it.coin_name == i.name))?.map((data, ind) => {
+                    console.log(data, " MAP DATA");
                     // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
                     // let coinImg = require(`../../../../icons/coins/bzzone.png`);
                     let coinImg = cryptoicons[data?.symbol];
-                    let perPrice = perCoinData[ind]?.price;                  
+                    let perPrice = perCoinData[ind]?.price;
 
                     return (
                       <tr
@@ -386,8 +404,8 @@ function WatchlistDataTable(props) {
                             perPrice - data?.price > 0
                               ? { color: "green" }
                               : perPrice - data?.price < 0
-                              ? { color: "red" }
-                              : { color: "black" }
+                                ? { color: "red" }
+                                : { color: "black" }
                           }
                         >
                           $ {data?.price.toFixed(2)}{" "}
@@ -399,43 +417,40 @@ function WatchlistDataTable(props) {
                           )}{" "}
                         </td>
                         <td className="text-center">
-                            {change === "1h" ? (
-                              <p
-                                className={`${
-                                  data?.percent_change_1h < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
+                          {change === "1h" ? (
+                            <p
+                              className={`${data?.percent_change_1h < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
                                 }`}
-                              >
-                                {parseFloat(data?.percent_change_1h).toFixed(2)}
-                                %
-                              </p>
-                            ) : change === "7d" ? (
-                              <p
-                                className={`${
-                                  data?.percent_change_7d < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
+                            >
+                              {parseFloat(data?.percent_change_1h).toFixed(2)}
+                              %
+                            </p>
+                          ) : change === "7d" ? (
+                            <p
+                              className={`${data?.percent_change_7d < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
                                 }`}
-                              >
-                                {parseFloat(data?.percent_change_7d).toFixed(2)}
-                                %
-                              </p>
-                            ) : (
-                              <p
-                                className={`${
-                                  data?.percent_change_24h < 0
-                                    ? "text-danger d-inline"
-                                    : "text-success d-inline"
+                            >
+                              {parseFloat(data?.percent_change_7d).toFixed(2)}
+                              %
+                            </p>
+                          ) : (
+                            <p
+                              className={`${data?.percent_change_24h < 0
+                                  ? "text-danger d-inline"
+                                  : "text-success d-inline"
                                 }`}
-                              >
-                                {parseFloat(data?.percent_change_24h).toFixed(
-                                  2
-                                )}
-                                %
-                              </p>
-                            )}
-                          </td>
+                            >
+                              {parseFloat(data?.percent_change_24h).toFixed(
+                                2
+                              )}
+                              %
+                            </p>
+                          )}
+                        </td>
                         {/* <td className="text-center">
                           {change === "1h"
                             ? parseFloat(
@@ -524,9 +539,8 @@ function WatchlistDataTable(props) {
                       <Link
                         key={i}
                         // to="/app-profile"
-                        className={`paginate_button  ${
-                          activePag.current === i ? "current" : ""
-                        } `}
+                        className={`paginate_button  ${activePag.current === i ? "current" : ""
+                          } `}
                         onClick={() => onClick(i)}
                       >
                         {number}
@@ -784,6 +798,7 @@ function WatchlistDataTable(props) {
           </Modal.Footer>
         </Modal>
       </div>
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
     </div>
   );
 }

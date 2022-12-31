@@ -1,0 +1,103 @@
+.containeri{
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 200000;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.inner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 45vh;
+}
+.modali{
+    /* border: 1px solid black; */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 2px 2px 3px 1px lightgray;
+}
+.headeri{
+    height: 20%;
+    display: flex;    
+}
+.headerinner{
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+}
+.text{
+    font-size: 20px;
+    /* font-weight: ; */
+    color: gray;
+}
+.cross{
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: red;
+    padding: 0px 5px;
+    border-radius: 50px;
+}
+.cross:hover{
+    box-shadow: 1px 1px 1px 2px lightgray;
+}
+.bodyContainer{
+    height: 60%;
+    display: flex;
+}
+.bodyInner{
+    width: 90%;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: larger;
+    color: gray;
+}
+.footeri{
+    height: 20%;
+    display: flex;
+}
+.footerInner{
+    width: 90%;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid lightgray;
+}
+.footerbutton{
+ width: 30%;
+ height: 60%;
+ background-color: lightgray;
+ font-size: 15px;
+ font-weight: 600;  
+ border-radius: 10px; 
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ cursor: pointer;
+}
+.footerbutton:hover{
+    background-color: white;
+    box-shadow: 1px 1px 1px 2px lightgray;
+}
