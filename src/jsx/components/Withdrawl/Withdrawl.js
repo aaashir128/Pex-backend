@@ -112,7 +112,7 @@ function Withdrawl(props) {
                 </div>
               </form>
 
-              <ToastContainer
+              {/* <ToastContainer
                 position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}
@@ -122,7 +122,7 @@ function Withdrawl(props) {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-              />
+              /> */}
             </div>
           </div>
         </div>

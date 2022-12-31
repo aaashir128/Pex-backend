@@ -118,7 +118,7 @@ function Deposit(props) {
                 </div>
               </form>
 
-              <ToastContainer
+              {/* <ToastContainer
                 position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}
@@ -128,7 +128,7 @@ function Deposit(props) {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-              />
+              /> */}
             </div>
           </div>
         </div>

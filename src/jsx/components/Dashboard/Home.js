@@ -64,7 +64,7 @@ const Home = (props) => {
                     </span>
                     <span className="mb-3 d-block fs-18">Portfolio Value</span>
                     <CurrencyFormat
-                      value={data?.balance}
+                      value={data?.balance > 0 ? data?.balance : 0.00}
                       displayType={"text"}
                       // decimalSeparator={true}
                       decimalScale={2}
