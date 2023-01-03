@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import cryptoicons from "../../../../icons/cryptoIcons/cryptoImg";
 import CurrencyFormat from "react-currency-format";
 import ERModal from "../../modals/ERModal.jsx";
-
+import sortArray from "../../../../utils/sort";
 const sort = 10;
 let perArr = [];
 
@@ -33,6 +33,7 @@ const tabData = [
 function WatchlistDataTable(props) {
   var timer;
   const [op, setop] = useState(false)
+  const [order, setorder] = useState("ASC")
   const [msg, setmsg] = useState("")
   const [hd, sethd] = useState("")
   const parseUSer = JSON.parse(localStorage.getItem('user'))
@@ -65,6 +66,11 @@ function WatchlistDataTable(props) {
     setmsg(msg)
   }
 
+  const sortDATA = (arr,elem,type,order) => {
+    setCoinData(sortArray(arr,elem,type,order))
+    order == "ASC" ? setorder("DESC") : setorder("ASC")
+  }
+
   const activePag = useRef(0);
   const chageData = (frist, sec) => {
     for (var i = 0; i < coinData?.length; ++i) {
@@ -77,8 +83,8 @@ function WatchlistDataTable(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  // let paggination = Array(Math.ceil(coinData?.length / sort))?.fill()?.map((_, i) => i + 1) ;
-  let paggination = [1, 2, 3, 4]
+  let paggination = Array(Math.ceil(Watchlist?.length / sort))?.fill()?.map((_, i) => i + 1) ;
+  // let paggination = [1, 2, 3, 4]
 
   const onClick = (i) => {
     activePag.current = i;
@@ -377,7 +383,7 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {coinData?.length > 0 && Watchlist?.length > 0 && coinData?.filter(i => Watchlist?.some(it => it.coin_name == i.name))?.map((data, ind) => {
+                  {coinData?.length > 0 && Watchlist?.length > 0 && coinData?.filter(i => Watchlist?.some(it => it.coin_name == i.name))?.slice(start,end)?.map((data, ind) => {
                     console.log(data, " MAP DATA");
                     // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
                     // let coinImg = require(`../../../../icons/coins/bzzone.png`);
@@ -513,10 +519,10 @@ function WatchlistDataTable(props) {
               <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
                 <div className="dataTables_info">
                   Showing {activePag.current * sort + 1} to{" "}
-                  {coinData?.length > (activePag.current + 1) * sort
+                  {Watchlist?.length > (activePag.current + 1) * sort
                     ? (activePag.current + 1) * sort
-                    : coinData?.length}{" "}
-                  of {coinData?.length} entries
+                    : Watchlist?.length}{" "}
+                  of {Watchlist?.length} entries
                 </div>
                 <div
                   className="dataTables_paginate paging_simple_numbers my-2"

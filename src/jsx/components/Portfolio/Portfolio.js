@@ -22,6 +22,7 @@ import {
 import CurrencyFormat from 'react-currency-format'
 import { themePrimary } from "../../../css/color";
 import ERModal from "../modals/ERModal";
+import sortArray from "../../../utils/sort";
 
 const sort = 10;
 let perArr = [];
@@ -41,6 +42,7 @@ const tabData = [
 ];
 function Portfolio(props) {
   var timer;
+  const [order, setorder] = useState("ASC")
   const [op, setop] = useState(false)
   const [hd, sethd] = useState("")
   const [msg, setmsg] = useState("")
@@ -77,9 +79,14 @@ function Portfolio(props) {
     }
   };
 
+  const sortDATA = (arr,elem,type,order) => {
+    setportfolio(sortArray(arr,elem,type,order))
+    order == "ASC" ? setorder("DESC") : setorder("ASC")
+  }
+
   // activePag.current === 0 && chageData(0, sort);
-  // let paggination = Array(Math.ceil(coinData?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1,2,3,4];
-  let paggination = [1,2,3,4]
+  let paggination = Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1,2,3,4];
+  // let paggination = [1,2,3,4]
   
 
   const onClick = (i) => {
@@ -373,6 +380,7 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(portfolio,"crypto_name","string",order)}}
                       >
                         Asset
                       </th>
@@ -381,6 +389,7 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(portfolio,"trade","num",order)}}
                       >
                         Amount
                       </th>
@@ -398,6 +407,7 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(portfolio,"crypto_purchase_price","num",order)}}
                       >
                         Open
                       </th>
@@ -440,7 +450,7 @@ function Portfolio(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    { portfolio?.length > 0 && [...portfolio]?.map((data, ind) => {
+                    { portfolio?.length > 0 && [...portfolio]?.slice(start,end)?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                       let coinImg = cryptoicons[data?.crypto_symbol];
@@ -475,7 +485,7 @@ function Portfolio(props) {
                             )}
                           </td>
 
-                          <td>{data.crypto_purchase_price}</td>
+                          <td>{data?.crypto_purchase_price}</td>
                           <td>
                             {!data.trade_loss_end ? (
                               <Button
@@ -635,10 +645,10 @@ function Portfolio(props) {
                 <div className="d-sm-flex text-center justify-content-between align-items-center mt-4">
                   <div className="dataTables_info">
                     Showing {activePag.current * sort + 1} to{" "}
-                    {coinData?.length > (activePag.current + 1) * sort
+                    {portfolio?.length > (activePag.current + 1) * sort
                       ? (activePag.current + 1) * sort
-                      : coinData?.length}{" "}
-                    of {coinData?.length} entries
+                      : portfolio?.length}{" "}
+                    of {portfolio?.length} entries
                   </div>
                   <div
                     className="dataTables_paginate paging_simple_numbers my-2"

@@ -4,10 +4,14 @@ import { Badge, Card, Col, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { baseURL } from "../../../../Strings/Strings";
+import sortArray from "../../../../utils/sort";
 
 function TransactionHistory() {
   const [data, setData] = useState([]);
   const [deposit, setdeposit] = useState([])
+  const [fullData, setfullData] = useState([])
+  const [order, setorder] = useState("ASC")
+
   useEffect(() => {
 
     let usr = localStorage.getItem("user");
@@ -35,6 +39,15 @@ function TransactionHistory() {
         setdeposit(nn.reverse());
       }).catch(err=>{console.log(err?.response?.data)});
   }, []);
+  useEffect(()=>{
+    setfullData([...data,...deposit])
+  },[data,deposit])
+
+  const sortDATA = (arr,elem,type,order) => {
+    setfullData(sortArray(arr,elem,type,order))
+    order == "ASC" ? setorder("DESC") : setorder("ASC")
+  }
+
   return (
     <div>
       <Col lg={12}>
@@ -47,14 +60,14 @@ function TransactionHistory() {
               <thead>
                 <tr>
                   <th>S.No</th>
-                  <th>Date Time</th>
-                  <th>Status</th>
-                  <th>Type</th>
-                  <th>Amount</th>
+                  <th onClick={()=>{sortDATA(fullData,"requested_at","date",order)}} >Date Time</th>
+                  <th onClick={()=>{sortDATA(fullData,"status","string",order)}} >Status</th>
+                  <th onClick={()=>{sortDATA(fullData,"type","string",order)}} >Type</th>
+                  <th onClick={()=>{sortDATA(fullData,"amount","num",order)}} >Amount</th>
                 </tr>
               </thead>
               <tbody>
-                {[...data,...deposit]?.map((req, ind) => {
+                {fullData?.map((req, ind) => {
                   return (
                     <tr key={ind}>
                       <td>
@@ -64,10 +77,10 @@ function TransactionHistory() {
                       <td>
                         <span className="text-muted">
                           {req?.status == "Pending"
-                            ? moment(req?.created_at).format(
+                            ? moment(req?.requested_at).format(
                                 "YYYY-MM-DD hh:mm a"
                               )
-                            : moment(req?.updated_at).format(
+                            : moment(req?.requested_at).format(
                                 "YYYY-MM-DD hh:mm a"
                               )}
                         </span>

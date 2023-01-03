@@ -7,11 +7,13 @@ import { Button, Dropdown } from "react-bootstrap";
 import { baseURL, tradeAPI, tradeHistoryAPI } from "../../../Strings/Strings";
 import moment from "moment";
 import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
+import sortArray from "../../../utils/sort";
 
 const sort = 10;
 let perArr = [];
 function TradeHistory(props) {
   const [historyData, setHistoryData] = useState([]);
+  const [order, setorder] = useState("ASC")
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(10);
   let usr = localStorage.getItem("user");
@@ -29,8 +31,8 @@ function TradeHistory(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  // let paggination = Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1);
-  let paggination = [1, 2, 3, 4];
+  let paggination = Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1);
+  // let paggination = [1, 2, 3, 4];
 
   const onClick = (i) => {
     activePag.current = i;
@@ -55,6 +57,11 @@ function TradeHistory(props) {
     getTrades()
   }, []);
 
+  const sortDATA = (arr,elem,type,order) => {
+    setHistoryData(sortArray(arr,elem,type,order))
+    order == "ASC" ? setorder("DESC") : setorder("ASC")
+  }
+
   return (
     <>
       <PageTitle activeMenu="Trade History" motherMenu="Home" />
@@ -72,6 +79,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(historyData,"crypto_name","string",order)}}
                       >
                         Asset
                       </th>
@@ -80,6 +88,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(historyData,"open_trade","num",order)}}
                       >
                         Amount
                       </th>
@@ -89,6 +98,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(historyData,"close_trade","num",order)}}
                       >
                         Crypto Price
                       </th>
@@ -106,6 +116,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(historyData,"open_at","date",order)}}
                       >
                         Date Open
                       </th>
@@ -114,13 +125,14 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(historyData,"close_trade","date",order)}}
                       >
                         Date Close
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    { historyData?.length > 0 && [...historyData]?.map((data, ind) => {
+                    { historyData?.length > 0 && [...historyData]?.slice(start,end)?.map((data, ind) => {
                       let coinImg = cryptoicons[data];
                       // let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
@@ -148,12 +160,12 @@ function TradeHistory(props) {
                           style={data?.actual_profit > 0 ? {color:'green'} : {color:'red'} }
                           >${data?.actual_profit > 0 ? data?.actual_profit?.toFixed(2) : data?.actual_loss?.toFixed(2)}</td>
                           <td>
-                            {moment(data?.active_trade?.invested_date).format(
+                            {moment(data?.open_at).format(
                               "YYYY-MM-DD hh:mm a"
                             )}
                           </td>
                           <td>
-                            {moment(data.created_at).format(
+                            {moment(data?.closed_at).format(
                               "YYYY-MM-DD hh:mm a"
                             )}
                           </td>

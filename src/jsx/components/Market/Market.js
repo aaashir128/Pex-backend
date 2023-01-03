@@ -9,6 +9,7 @@ import { themePrimary } from "../../../css/color";
 import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
 import CurrencyFormat from "react-currency-format";
 import ERModal from "../modals/ERModal";
+import sortArray from "../../../utils/sort";
 
 // import { json } from "stream/consumers";
 
@@ -66,6 +67,7 @@ function Market(props) {
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
   const [slAmount, setSlAmount] = useState(0);
   const [tpAmount, setTpAmount] = useState(0);
+  const [order, setorder] = useState("ASC")
   let usr = localStorage.getItem("user");
   usr = JSON.parse(usr);
   // console.log("user", usr);
@@ -179,6 +181,11 @@ function Market(props) {
     setop(true)
     sethd(hd)
     setmsg(msg)
+  }
+
+  const sortDATA = (arr,elem,type,order) => {
+    setCoinData(sortArray(arr,elem,type,order))
+    order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
   // const getUSerData = () => {
@@ -297,6 +304,7 @@ function Market(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(coinData,"name","string",order)}}
                       >
                         Markets
                       </th>
@@ -305,6 +313,7 @@ function Market(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
+                        onClick={()=>{sortDATA(coinData,"price","num",order)}}
                       >
                         Price
                       </th>
@@ -381,7 +390,7 @@ function Market(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...coinData]?.filter(i => cryptoicons[i.symbol])?.map((data, ind) => {
+                    {[...coinData]?.filter(i => cryptoicons[i.symbol])?.slice(start,end)?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       let coinImg = cryptoicons[data?.symbol];
                       const perdata = JSON.parse(localStorage?.getItem("perviouse"))
@@ -614,7 +623,7 @@ function Market(props) {
           <Modal className="fade" show={modalCentered} centered>
             <Modal.Header style={{ backgroundColor: themePrimary }}>
               <Modal.Title className="text-white text-uppercase">
-                Buy {selectedCoin?.data.name}
+                Buy {selectedCoin?.data?.name}
               </Modal.Title>
               <Button
                 onClick={() => setModalCentered(false)}
