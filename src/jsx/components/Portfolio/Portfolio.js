@@ -65,6 +65,7 @@ function Portfolio(props) {
   const [wallet, setwallet] = useState({})
   const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
   const [colorCheck, setColorCheck] = useState(null);
+  const [profitloss, setprofitloss] = useState(0)
   let usr = localStorage.getItem("user");
   usr = JSON.parse(usr);
 
@@ -79,15 +80,15 @@ function Portfolio(props) {
     }
   };
 
-  const sortDATA = (arr,elem,type,order) => {
-    setportfolio(sortArray(arr,elem,type,order))
+  const sortDATA = (arr, elem, type, order) => {
+    setportfolio(sortArray(arr, elem, type, order))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
   // activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1,2,3,4];
+  let paggination = Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1, 2, 3, 4];
   // let paggination = [1,2,3,4]
-  
+
 
   const onClick = (i) => {
     activePag.current = i;
@@ -132,21 +133,21 @@ function Portfolio(props) {
     //   loss: profitLoss < 0 ? profitLoss : 0,
     //   closed_price: sameCoin[0],
     // };
-    showModal('Loading...',"Closing...")
-    const sale = coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price
+    showModal('Loading...', "Closing...")
+    const sale = coinData?.find(i => i?.name == selectedCoin?.crypto_name)?.price
     console.log(sale)
-    axios.delete(`${baseURL}/api/activetrade/${selectedCoin.id}`,{data:{crypto_sale_price:sale}}).then((res) => {
+    axios.delete(`${baseURL}/api/activetrade/${selectedCoin.id}`, { data: { crypto_sale_price: sale } }).then((res) => {
       console.log(res, "res");
       fetchPortfoliolist()
       setModalTradeClose(false);
-      showModal("Success","Closed successfully!")
+      showModal("Success", "Closed successfully!")
       if (res?.data?.status) {
         // getTrades();
-        
+
       }
-    }).catch(e=>{
+    }).catch(e => {
       console.log(e);
-      showModal("Error!",`Error Occured while closing : ${e.response.data ? e.response.data : "Unknown Error Occured!"}`)
+      showModal("Error!", `Error Occured while closing : ${e.response.data ? e.response.data : "Unknown Error Occured!"}`)
     });
   };
 
@@ -255,6 +256,22 @@ function Portfolio(props) {
     return (filter[0]?.price - price).toFixed(2);
   };
 
+  useEffect(() => {
+    // data?.crypto_name,
+    //   data?.crypto_purchase_price
+    if (coinData.length > 0 && portfolio.length > 0) {
+      let profitLoss = 0;
+      for (let i = 0; i < portfolio.length; i++) {
+        let filter = coinData.filter((item) => item.name == portfolio[i].crypto_name);
+        let pr = (filter[0]?.price - portfolio[i].crypto_purchase_price) * (portfolio[i].trade / portfolio[i].crypto_purchase_price);
+        profitLoss += pr
+        // console.log(filter[0]?.price," ",portfolio[i].crypto_purchase_price ," ",pr , profitLoss, " Now Profit and Loss");
+      }
+      console.log(profitLoss);
+      setprofitloss(profitLoss)
+    }
+  }, [coinData, portfolio])
+
   const getCoinData = (name, img, data) => {
     console.log("cName", name);
     let filter = APIData.filter((item) => item.slug == name);
@@ -269,18 +286,18 @@ function Portfolio(props) {
       console.log(user, token);
       const { data } = await axios.get(`${baseURL}/api/activetrade/${user.id}`, { headers: { "x-auth-token": token } })
       let total = 0;
-      for(let i = 0; i<data?.length; i++ ){
+      for (let i = 0; i < data?.length; i++) {
         total += data[i]?.trade
       }
       settotalInvestment(total)
-      console.log(data, total,"watch list data");
+      console.log(data, total, "watch list data");
       setportfolio(data)
     } catch (error) {
       console.log(error, "watchlist error");
     }
   }
 
-  const fetchWalets = async() => {
+  const fetchWalets = async () => {
     const tokn = JSON.parse(await localStorage.getItem('token'))
     const user = JSON.parse(await localStorage.getItem('user'))
     axios
@@ -290,7 +307,7 @@ function Portfolio(props) {
       .then((res) => {
         // console.log(res, "res");
         setwallet(res?.data);
-      }).catch(e=>{
+      }).catch(e => {
         console.log(e);
       });
   }
@@ -308,37 +325,37 @@ function Portfolio(props) {
     }
   }
 
-  const showModal = (hd,msg) => {
+  const showModal = (hd, msg) => {
     setop(true)
     sethd(hd)
     setmsg(msg)
   }
   // useEffect(() => {
-    
-    // let filter = APIData.filter(
-    //   // (data, i) => data.slug == coinData[i]?.crypto_name
-    //   (data, i) => data.slug == coinData.filter((d) => d.crypto_name)
-    //   // (data, i) => console.log(i)
-    // );
 
-    // let res = [];
-    // res = APIData.filter((el) => {
-    //   return !coinData.find((element) => {
-    //     return element.slug === el.crypto_name;
-    //   });
-    // });
-    // return setSameCoin(res);
+  // let filter = APIData.filter(
+  //   // (data, i) => data.slug == coinData[i]?.crypto_name
+  //   (data, i) => data.slug == coinData.filter((d) => d.crypto_name)
+  //   // (data, i) => console.log(i)
+  // );
 
-    // console.log(filterByReference(arr1, arr2));
+  // let res = [];
+  // res = APIData.filter((el) => {
+  //   return !coinData.find((element) => {
+  //     return element.slug === el.crypto_name;
+  //   });
+  // });
+  // return setSameCoin(res);
 
-    // var filter = APIData.filter(function (item) {
-    //   return coinData.find((i) => item.slug === i.crypto_name);
-    // });
+  // console.log(filterByReference(arr1, arr2));
 
-    // let filter = APIData.filter((item) => {
-    //   item.slug == coinData.filter((i) => i.crypto_name);
-    // });
-    // setSameCoin(filter);
+  // var filter = APIData.filter(function (item) {
+  //   return coinData.find((i) => item.slug === i.crypto_name);
+  // });
+
+  // let filter = APIData.filter((item) => {
+  //   item.slug == coinData.filter((i) => i.crypto_name);
+  // });
+  // setSameCoin(filter);
   //   console.log("APIData", APIData);
   //   console.log("sameCoin", sameCoin);
   //   console.log("coinData", coinData);
@@ -353,10 +370,11 @@ function Portfolio(props) {
 
   useEffect(() => {
 
+    console.log("useEffect Call");
     fetchWalets()
     getDatafromBackend()
     fetchPortfoliolist()
-    return () => {clearTimeout(timer)}
+    return () => { clearTimeout(timer) }
 
   }, []);
 
@@ -380,7 +398,7 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(portfolio,"crypto_name","string",order)}}
+                        onClick={() => { sortDATA(portfolio, "crypto_name", "string", order) }}
                       >
                         Asset
                       </th>
@@ -389,7 +407,7 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(portfolio,"trade","num",order)}}
+                        onClick={() => { sortDATA(portfolio, "trade", "num", order) }}
                       >
                         Amount
                       </th>
@@ -407,11 +425,11 @@ function Portfolio(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(portfolio,"crypto_purchase_price","num",order)}}
+                        onClick={() => { sortDATA(portfolio, "crypto_purchase_price", "num", order) }}
                       >
                         Open
                       </th>
-                      <th
+                      {/* <th
                         className="sorting"
                         tabIndex={0}
                         rowSpan={1}
@@ -426,7 +444,7 @@ function Portfolio(props) {
                         colSpan={1}
                       >
                         TP
-                      </th>
+                      </th> */}
                       <th
                         className="sorting"
                         tabIndex={0}
@@ -450,14 +468,25 @@ function Portfolio(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    { portfolio?.length > 0 && [...portfolio]?.slice(start,end)?.map((data, ind) => {
+                    {portfolio?.length > 0 && [...portfolio]?.reduce((pre, cur) => {
+                      if (pre.some(i => i.crypto_name == cur.crypto_name)) {
+                        let curst = pre
+                        let ine = pre.find(i => i.crypto_name == cur.crypto_name)
+                        let nine = { ...ine, trade: ine.trade + cur.trade, units : ine.units+(cur.trade/cur.crypto_purchase_price), crypto_purchase_price:ine.crypto_purchase_price+cur.crypto_purchase_price }
+                        curst[curst.indexOf(ine)] = nine
+                        pre = curst
+                      } else {
+                        pre = [...pre, {crypto_symbol:cur.crypto_symbol,crypto_name:cur.crypto_name,trade:cur.trade,units:(cur.trade/cur.crypto_purchase_price),crypto_purchase_price:cur.crypto_purchase_price}]
+                      }
+                      return pre
+                    }, [])?.slice(start, end)?.map((data, ind) => {
                       // let coinImg = require(`../../../icons/coins/bzzone.png`);
                       // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                       let coinImg = cryptoicons[data?.crypto_symbol];
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
                       return (
                         <tr
-                          key={data?.id}
+                          key={ind}
                           role="row"
                           className="even market-trbg"
                         >
@@ -465,8 +494,11 @@ function Portfolio(props) {
                             <div
                               className="d-flex align-items-center"
                               onClick={() =>
-                                props.history.push(
-                                  `/portfolio/breakdown/${data.crypto_name}`
+                                props.history.push({
+                                  pathname:`/portfolio/${data.crypto_name}`,
+                                  state:{cd:coinData,pf:portfolio}
+                                }
+                                  
                                 )
                               }
                             >
@@ -480,13 +512,11 @@ function Portfolio(props) {
                           </td>
                           <td>${data?.trade}</td>
                           <td>
-                            {(data.trade / data.crypto_purchase_price).toFixed(
-                              4
-                            )}
+                            {(data.units).toFixed(4)}
                           </td>
 
-                          <td>{data?.crypto_purchase_price}</td>
-                          <td>
+                          <td>{(data?.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length).toFixed(2)}</td>
+                          {/* <td>
                             {!data.trade_loss_end ? (
                               <Button
                                 //   className="me-4"
@@ -539,13 +569,13 @@ function Portfolio(props) {
                                 {data.trade_profit_end}
                               </Button>
                             )}
-                          </td>
+                          </td> */}
 
                           <td
                             className={`${Math.sign(
                               cvalue(
                                 data?.crypto_name,
-                                data?.crypto_purchase_price
+                                data?.crypto_purchase_price/((portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length)
                               )
                             ) === 1
                               ? "text-success"
@@ -563,28 +593,28 @@ function Portfolio(props) {
                           >
                             {(cvalue(
                               data?.crypto_name,
-                              data?.crypto_purchase_price
-                            )*(data.trade / data.crypto_purchase_price)).toFixed(2)}
+                              data?.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length
+                            ) * (data.trade / (data.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length))).toFixed(2)}
                             {/* {(
                               (sameCoin[ind]?.quote?.USD?.price -
                                 data?.crypto_purchase_price) *
                               (data?.trade / data?.crypto_purchase_price)
                             ).toFixed(2)} */}
                           </td>
-                          <td>
-                         
-                              <Button
-                                className="me-2"
-                                variant="outline-danger"
-                                onClick={() => {
-                                  getCoinData(data?.crypto_name, coinImg, data);
-                                  setModalTradeClose(true);
-                                  setCloseId(data?.id);
-                                  setSelectedCoin(data);
-                                }}
-                              >
-                                Close
-                              </Button>
+                          {/* <td>
+
+                            <Button
+                              className="me-2"
+                              variant="outline-danger"
+                              onClick={() => {
+                                getCoinData(data?.crypto_name, coinImg, data);
+                                setModalTradeClose(true);
+                                setCloseId(data?.id);
+                                setSelectedCoin(data);
+                              }}
+                            >
+                              Close
+                            </Button>
                           </td>
                           <td>
                             <Dropdown className="dropdown ms-auto text-right">
@@ -636,7 +666,7 @@ function Portfolio(props) {
                                 <Dropdown.Item>Set Price Alert</Dropdown.Item>
                               </Dropdown.Menu>
                             </Dropdown>
-                          </td>
+                          </td> */}
                         </tr>
                       );
                     })}
@@ -722,18 +752,18 @@ function Portfolio(props) {
                     </h5>
                   </div>
                   <div className="d-flex align-items-center">
-                  <CurrencyFormat
-                              value={coinData?.find(i=> i?.name == selectedCoin?.crypto_name)?.price}
-                              displayType={"text"}
-                              decimalScale={2}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                              fixedDecimalScale={true}
-                              renderText={(value) => <h3 className="mb-0">
-                              {value}
-                            </h3>}
-                            />
-                   
+                    <CurrencyFormat
+                      value={coinData?.find(i => i?.name == selectedCoin?.crypto_name)?.price}
+                      displayType={"text"}
+                      decimalScale={2}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                      fixedDecimalScale={true}
+                      renderText={(value) => <h3 className="mb-0">
+                        {value}
+                      </h3>}
+                    />
+
                     <small
                       className={`${sameCoin && sameCoin[3] > 0
                         ? "text-success mb-0 px-1"
@@ -753,14 +783,14 @@ function Portfolio(props) {
                       <h4 className="mb-0">AMOUNT</h4>
                       <div>
                         <CurrencyFormat
-                              value={selectedCoin?.trade}
-                              displayType={"text"}
-                              decimalScale={2}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                              fixedDecimalScale={true}
-                              renderText={(value) => <h3 className="mb-0">{value}</h3>}
-                            />
+                          value={selectedCoin?.trade}
+                          displayType={"text"}
+                          decimalScale={2}
+                          thousandSeparator={true}
+                          prefix={"$"}
+                          fixedDecimalScale={true}
+                          renderText={(value) => <h3 className="mb-0">{value}</h3>}
+                        />
                         <p className="mb-0 d-flex justify-content-end">
                           {selectedCoin &&
                             (
@@ -774,48 +804,48 @@ function Portfolio(props) {
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">CURRENT P/L</h4>
                       <CurrencyFormat
-                              value={(cvalue(
-                                selectedCoin?.crypto_name,
-                                selectedCoin?.crypto_purchase_price
-                              )*(selectedCoin?.trade / selectedCoin?.crypto_purchase_price)).toFixed(2)}
-                              displayType={"text"}
-                              decimalScale={2}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                              fixedDecimalScale={true}
-                              renderText={(value) => <h3
-                                className={`${sameCoin &&
-                                  sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
-                                  ? "text-success mb-0"
-                                  : "text-danger mb-0"
-                                  }`}
-                              >{value}
-                              </h3>
-                              }
-                            />
-                      
+                        value={(cvalue(
+                          selectedCoin?.crypto_name,
+                          selectedCoin?.crypto_purchase_price
+                        ) * (selectedCoin?.trade / selectedCoin?.crypto_purchase_price)).toFixed(2)}
+                        displayType={"text"}
+                        decimalScale={2}
+                        thousandSeparator={true}
+                        prefix={"$"}
+                        fixedDecimalScale={true}
+                        renderText={(value) => <h3
+                          className={`${sameCoin &&
+                            sameCoin[0] - sameCoin[2]?.crypto_purchase_price > 0
+                            ? "text-success mb-0"
+                            : "text-danger mb-0"
+                            }`}
+                        >{value}
+                        </h3>
+                        }
+                      />
+
                     </div>
 
                     <hr />
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-0">TOTAL</h4>
                       <CurrencyFormat
-                              value={(selectedCoin?.trade + (cvalue(
-                                selectedCoin?.crypto_name,
-                                selectedCoin?.crypto_purchase_price
-                              )*(selectedCoin?.trade / selectedCoin?.crypto_purchase_price))).toFixed(2)}
-                              displayType={"text"}
-                              decimalScale={2}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                              fixedDecimalScale={true}
-                              renderText={(value) => <h3
-                                className="mb-0"
-                              >{value}
-                              </h3>
-                              }
-                            />
-                     
+                        value={(selectedCoin?.trade + (cvalue(
+                          selectedCoin?.crypto_name,
+                          selectedCoin?.crypto_purchase_price
+                        ) * (selectedCoin?.trade / selectedCoin?.crypto_purchase_price))).toFixed(2)}
+                        displayType={"text"}
+                        decimalScale={2}
+                        thousandSeparator={true}
+                        prefix={"$"}
+                        fixedDecimalScale={true}
+                        renderText={(value) => <h3
+                          className="mb-0"
+                        >{value}
+                        </h3>
+                        }
+                      />
+
                     </div>
                   </div>
                 </div>
@@ -1102,10 +1132,10 @@ function Portfolio(props) {
           </Col>
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                -$1600
+              <h4 className={"mb-0 " + (profitloss > 0 ? "text-success" : "text-danger")} style={{ fontSize: "1.4rem" }}>
+                ${profitloss.toFixed(2)}
               </h4>
-              <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
+              <p className="mb-0" style={{ fontSize: "1.4rem" }}>
                 Profit/Loss
               </p>
               {/* <h5 className=" display-4">=</h5> */}
@@ -1113,8 +1143,8 @@ function Portfolio(props) {
           </Col>
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                ${(wallet?.balance+totalInvestment)?.toFixed(2)}
+              <h4 className="mb-0" style={{ fontSize: "1.4rem" }}>
+                ${(wallet?.balance + totalInvestment)?.toFixed(2)}
               </h4>
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Portfolio Value

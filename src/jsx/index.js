@@ -118,6 +118,7 @@ import DepositRequest from "./components/AdminScreen/DepositRequest";
 import WithdrawalRequests from "./components/AdminScreen/WithdrawalRequests";
 import TransactionHistoryScreen from "./components/Transaction history Screen/TransactionHistoryScreen";
 import DiscoverScreen from "./components/Discover Screen/DiscoverScreen";
+import InnerTrade from "./components/Portfolio/InnerTrade";
 
 const Markup = () => {
   let { coin } = useParams();
@@ -148,7 +149,7 @@ const Markup = () => {
 
     ///Portfolio
     { url: "portfolio", component: Portfolio },
-    { url: "portfolio/breakdown/:coin", component: Breakdown },
+    { url: "portfolio/:coin", component: InnerTrade },
     ///Demo
     { url: "horizontal-sidebar", component: Theme1 },
     { url: "nav-header", component: Theme2 },

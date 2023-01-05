@@ -17,12 +17,32 @@ const ChartBarApex = loadable(() =>
 );
 
 const Home = (props) => {
+
+  var timer;
+
   const { changeBackground } = useContext(ThemeContext);
   const [data, setData] = useState([]);
   const [historyData, sethistoryData] = useState([])
   const [totalInvested, settotalInvested] = useState(0)
+  const [portfolio, setportfolio] = useState([])
+  const [profitloss, setprofitloss] = useState(0)
 
   const tokn = JSON.parse(localStorage.getItem("token"));
+
+  const [coinData, setcoinData] = useState([])
+
+  const getDatafromBackend = async () => {
+    try {
+      const token = await localStorage.getItem('token')
+      const { data } = await axios.get(`${baseURL}/coinmarket`, { headers: { "x-auth-token": token } })
+      console.log(data);
+      setcoinData(data)
+      timer = setTimeout(() => { getDatafromBackend() }, 15000)
+      // setInterval(getDatafromBackend(),3000)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const getTrades = async() => {
     const user = JSON.parse(localStorage.getItem('user'))
@@ -36,6 +56,7 @@ const Home = (props) => {
       }
       settotalInvested(total)
       // sethistoryData(userTradeHistory);
+      setportfolio(res?.data)
       console.log(total,res?.data);
     }).catch(e=>{
       console.log(e);
@@ -43,6 +64,23 @@ const Home = (props) => {
   }
 
   useEffect(() => {
+    // data?.crypto_name,
+    //   data?.crypto_purchase_price
+    if (coinData.length > 0 && portfolio.length > 0) {
+      let profitLoss = 0;
+      for (let i = 0; i < portfolio.length; i++) {
+        let filter = coinData.filter((item) => item.name == portfolio[i].crypto_name);
+        let pr = ( filter[0]?.price - portfolio[i].crypto_purchase_price )*(portfolio[i].trade / portfolio[i].crypto_purchase_price);
+        profitLoss += pr
+        // console.log(filter[0]?.price," ",portfolio[i].crypto_purchase_price ," ",pr , profitLoss, " Now Profit and Loss");
+      }
+      console.log(profitLoss , "Profit and Loss Data");
+      setprofitloss(profitLoss)
+    }
+  }, [coinData, portfolio])
+
+  useEffect(() => {
+    getDatafromBackend()
     getTrades()
     changeBackground({ value: "light", label: "Light" });
     let usr = localStorage.getItem("user");
@@ -57,6 +95,9 @@ const Home = (props) => {
       }).catch(e=>{
         console.log(e);
       });
+
+      return () => { clearTimeout(timer) }
+
   }, []);
   return (
     <>
@@ -94,7 +135,7 @@ const Home = (props) => {
                 <br />
                 <div className="col-xl-12">
                   <div className="card-body pt-0">
-                    <ProjectSlider data={data} totalInvested={totalInvested} />
+                    <ProjectSlider data={data} totalInvested={totalInvested} profitLoss={profitloss} />
                   </div>
                 </div>
               </div>

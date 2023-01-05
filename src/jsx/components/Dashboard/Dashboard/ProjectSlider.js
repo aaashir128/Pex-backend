@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { baseURL, tradeAPI } from "../../../../Strings/Strings";
 
-const ProjectSlider = ({data,totalInvested}) => {
+const ProjectSlider = ({data,totalInvested,profitLoss}) => {
   // const [data, setData] = useState([]);
   // const [invest, setInvest] = useState(0);
   useEffect(() => {
@@ -95,7 +95,7 @@ const ProjectSlider = ({data,totalInvested}) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong>$ 0.00</strong>
+                <strong className={profitLoss>0?"text-success":profitLoss<0?"text-danger":""} >$ {profitLoss?.toFixed(2)}</strong>
               </span>
 
               <span className="mb-7 d-block fs-18">Profit/Loss</span>
