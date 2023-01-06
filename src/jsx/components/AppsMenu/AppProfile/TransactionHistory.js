@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { baseURL } from "../../../../Strings/Strings";
 import sortArray from "../../../../utils/sort";
+import CurrencyFormat from "react-currency-format";
 
 function TransactionHistory() {
   const [data, setData] = useState([]);
@@ -100,7 +101,21 @@ function TransactionHistory() {
                         </Badge>
                       </td>
                       <td>{req?.type}</td>
-                      <td>$ {req?.amount}</td>
+                      <td>
+                      <CurrencyFormat
+                            value={req?.amount}
+                            displayType={"text"}
+                            // decimalSeparator={true}
+                            decimalScale={2}
+                            thousandSeparator={true}
+                            prefix={"$"}
+                            fixedDecimalScale={true}
+                            renderText={(value) => (
+                              <span>{value} </span>
+                            )}
+                          />
+                        {/* $ {req?.amount} */}
+                      </td>
                     </tr>
                   );
                 })}

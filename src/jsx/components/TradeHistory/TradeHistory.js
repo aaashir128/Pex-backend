@@ -8,6 +8,7 @@ import { baseURL, tradeAPI, tradeHistoryAPI } from "../../../Strings/Strings";
 import moment from "moment";
 import cryptoicons from "../../../icons/cryptoIcons/cryptoImg";
 import sortArray from "../../../utils/sort";
+import CurrencyFormat from "react-currency-format";
 
 const sort = 10;
 let perArr = [];
@@ -31,7 +32,7 @@ function TradeHistory(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1);
+  let paggination = historyData.length > 0 ? Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1) : [1];
   // let paggination = [1, 2, 3, 4];
 
   const onClick = (i) => {
@@ -47,7 +48,7 @@ function TradeHistory(props) {
     const token = JSON.parse(localStorage.getItem('token'))
     axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
       console.log(res?.data, "res");
-      let userTradeHistory = res?.data;
+      let userTradeHistory = res?.data?.reverse();
       setHistoryData(userTradeHistory);
       console.log(userTradeHistory);
     });
@@ -152,9 +153,37 @@ function TradeHistory(props) {
                               </div>
                             </div>
                           </td>
-                          <td>${data?.open_trade}</td>
+                          <td>
+                          <CurrencyFormat
+                            value={data?.open_trade}
+                            displayType={"text"}
+                            // decimalSeparator={true}
+                            decimalScale={2}
+                            thousandSeparator={true}
+                            prefix={"$"}
+                            fixedDecimalScale={true}
+                            renderText={(value) => (
+                              <span>{value} </span>
+                            )}
+                          />
+                            {/* ${data?.open_trade} */}
+                          </td>
 
-                          <td>${data?.close_trade}</td>
+                          <td>
+                          <CurrencyFormat
+                            value={data?.close_trade}
+                            displayType={"text"}
+                            // decimalSeparator={true}
+                            decimalScale={2}
+                            thousandSeparator={true}
+                            prefix={"$"}
+                            fixedDecimalScale={true}
+                            renderText={(value) => (
+                              <span>{value} </span>
+                            )}
+                          />
+                            {/* ${data?.close_trade} */}
+                          </td>
 
                           <td
                           style={data?.actual_profit > 0 ? {color:'green'} : {color:'red'} }

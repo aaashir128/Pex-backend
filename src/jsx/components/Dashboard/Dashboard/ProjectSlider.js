@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { baseURL, tradeAPI } from "../../../../Strings/Strings";
+import CurrencyFormat from "react-currency-format";
 
 const ProjectSlider = ({data,totalInvested,profitLoss}) => {
   // const [data, setData] = useState([]);
@@ -67,7 +68,19 @@ const ProjectSlider = ({data,totalInvested,profitLoss}) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong>$ {data?.balance ?? 0.00}</strong>
+                <CurrencyFormat
+                      value={data?.balance > 0 ? data?.balance : 0.00}
+                      displayType={"text"}
+                      // decimalSeparator={true}
+                      decimalScale={2}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                      fixedDecimalScale={true}
+                      renderText={(value) => (
+                        <strong>{value}</strong>
+                      )}
+                    />
+                {/* <strong>$ {data?.balance ?? 0.00}</strong> */}
               </span>
 
               <span className="mb-7 d-block fs-18">Cash Available</span>
@@ -81,7 +94,19 @@ const ProjectSlider = ({data,totalInvested,profitLoss}) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong>$ {totalInvested ?? 0.00}</strong>
+              <CurrencyFormat
+                      value={totalInvested > 0 ? totalInvested : 0.00}
+                      displayType={"text"}
+                      // decimalSeparator={true}
+                      decimalScale={2}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                      fixedDecimalScale={true}
+                      renderText={(value) => (
+                        <strong>{value}</strong>
+                      )}
+                    />
+                {/* <strong>$ {totalInvested ?? 0.00}</strong> */}
               </span>
 
               <span className="mb-7 d-block fs-18">Total Invested</span>

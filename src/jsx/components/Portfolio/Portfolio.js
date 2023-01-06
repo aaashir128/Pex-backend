@@ -86,7 +86,7 @@ function Portfolio(props) {
   }
 
   // activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1, 2, 3, 4];
+  let paggination = portfolio.length > 0 ? Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) : [1, 2, 3, 4];
   // let paggination = [1,2,3,4]
 
 
@@ -472,11 +472,11 @@ function Portfolio(props) {
                       if (pre.some(i => i.crypto_name == cur.crypto_name)) {
                         let curst = pre
                         let ine = pre.find(i => i.crypto_name == cur.crypto_name)
-                        let nine = { ...ine, trade: ine.trade + cur.trade, units : ine.units+(cur.trade/cur.crypto_purchase_price), crypto_purchase_price:ine.crypto_purchase_price+cur.crypto_purchase_price }
+                        let nine = { ...ine, trade: ine.trade + cur.trade, units: ine.units + (cur.trade / cur.crypto_purchase_price), crypto_purchase_price: ine.crypto_purchase_price + cur.crypto_purchase_price }
                         curst[curst.indexOf(ine)] = nine
                         pre = curst
                       } else {
-                        pre = [...pre, {crypto_symbol:cur.crypto_symbol,crypto_name:cur.crypto_name,trade:cur.trade,units:(cur.trade/cur.crypto_purchase_price),crypto_purchase_price:cur.crypto_purchase_price}]
+                        pre = [...pre, { crypto_symbol: cur.crypto_symbol, crypto_name: cur.crypto_name, trade: cur.trade, units: (cur.trade / cur.crypto_purchase_price), crypto_purchase_price: cur.crypto_purchase_price }]
                       }
                       return pre
                     }, [])?.slice(start, end)?.map((data, ind) => {
@@ -495,10 +495,10 @@ function Portfolio(props) {
                               className="d-flex align-items-center"
                               onClick={() =>
                                 props.history.push({
-                                  pathname:`/portfolio/${data.crypto_name}`,
-                                  state:{cd:coinData,pf:portfolio}
+                                  pathname: `/portfolio/${data.crypto_name}`,
+                                  state: { cd: coinData, pf: portfolio }
                                 }
-                                  
+
                                 )
                               }
                             >
@@ -510,12 +510,41 @@ function Portfolio(props) {
                               </div>
                             </div>
                           </td>
-                          <td>${data?.trade}</td>
+
+                          <td>
+                            <CurrencyFormat
+                              value={data?.trade > 0 ? data?.trade : 0.00}
+                              displayType={"text"}
+                              // decimalSeparator={true}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => (
+                                <span>{value}</span>
+                              )}
+                            />
+                            {/* ${data?.trade} */}
+                          </td>
                           <td>
                             {(data.units).toFixed(4)}
                           </td>
 
-                          <td>{(data?.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length).toFixed(2)}</td>
+                          <td>
+                          <CurrencyFormat
+                              value={(data?.crypto_purchase_price / (portfolio?.filter(i => i.crypto_name == data.crypto_name)).length)}
+                              displayType={"text"}
+                              // decimalSeparator={true}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => (
+                                <span>{value}</span>
+                              )}
+                            />
+                            {/* {(data?.crypto_purchase_price / (portfolio?.filter(i => i.crypto_name == data.crypto_name)).length)} */}
+                          </td>
                           {/* <td>
                             {!data.trade_loss_end ? (
                               <Button
@@ -575,7 +604,7 @@ function Portfolio(props) {
                             className={`${Math.sign(
                               cvalue(
                                 data?.crypto_name,
-                                data?.crypto_purchase_price/((portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length)
+                                data?.crypto_purchase_price / ((portfolio?.filter(i => i.crypto_name == data.crypto_name)).length)
                               )
                             ) === 1
                               ? "text-success"
@@ -587,14 +616,14 @@ function Portfolio(props) {
                           //     data?.crypto_purchase_price) *
                           //     (data?.trade / data?.crypto_purchase_price) >
                           //   0
-                          //     ? "text-success mb-0 "
+                          //     ? "text-success mb-0"
                           //     : "text-danger mb-0"
                           // }`}
                           >
-                            {(cvalue(
+                            ${(cvalue(
                               data?.crypto_name,
-                              data?.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length
-                            ) * (data.trade / (data.crypto_purchase_price/(portfolio?.filter(i=>i.crypto_name==data.crypto_name)).length))).toFixed(2)}
+                              data?.crypto_purchase_price / (portfolio?.filter(i => i.crypto_name == data.crypto_name)).length
+                            ) * (data.trade / (data.crypto_purchase_price / (portfolio?.filter(i => i.crypto_name == data.crypto_name)).length))).toFixed(2)}
                             {/* {(
                               (sameCoin[ind]?.quote?.USD?.price -
                                 data?.crypto_purchase_price) *

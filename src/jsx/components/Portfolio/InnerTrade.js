@@ -81,6 +81,7 @@ function InnerTrade(props) {
     const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
     const [colorCheck, setColorCheck] = useState(null);
     const [profitloss, setprofitloss] = useState(0)
+    const [parClAmount, setparClAmount] = useState(0)
     let usr = localStorage.getItem("user");
     usr = JSON.parse(usr);
 
@@ -101,7 +102,7 @@ function InnerTrade(props) {
     }
 
     // activePag.current === 0 && chageData(0, sort);
-    let paggination = Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) ?? [1, 2, 3, 4];
+    let paggination = portfolio.length > 0 ? Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) : [1, 2, 3, 4];
     // let paggination = [1,2,3,4]
 
 
@@ -129,25 +130,6 @@ function InnerTrade(props) {
     // };
 
     const closeTrade = () => {
-        // let profitLoss = sameCoin
-        //   ? (sameCoin[0] - sameCoin[2]?.crypto_purchase_price).toFixed(2)
-        //   : 0;
-
-        // let amount = 0;
-        // if (partialTrade) {
-        //   amount = buyAmount.amount;
-        //   profitLoss = (buyAmount.amount / sameCoin[2]?.trade) * profitLoss;
-        // } else {
-        //   amount = sameCoin ? sameCoin[2]?.trade : 0;
-        // }
-        // const tradeData = {
-        //   trade_id: closeId,
-        //   status: partialTrade ? "Close" : "Open",
-        //   amount: amount,
-        //   profit: profitLoss > 0 ? profitLoss : 0,
-        //   loss: profitLoss < 0 ? profitLoss : 0,
-        //   closed_price: sameCoin[0],
-        // };
         showModal('Loading...', "Closing...")
         const sale = coinData?.find(i => i?.name == selectedCoin?.crypto_name)?.price
         console.log(sale)
@@ -164,6 +146,37 @@ function InnerTrade(props) {
             console.log(e);
             showModal("Error!", `Error Occured while closing : ${e.response.data ? e.response.data : "Unknown Error Occured!"}`)
         });
+    };
+
+    const partialcloseTrade = () => {
+        showModal('Loading...', "Closing...")
+        const user = JSON.parse(localStorage.getItem('user'))
+        const token = JSON.parse(localStorage.getItem('token'))
+        const sale = coinData?.find(i => i?.name == selectedCoin?.crypto_name)?.price
+        const dat = {
+            user_id: user?.id,
+            trade_id: selectedCoin?.id,
+            partial_trade_close_amount: parClAmount,
+            crypto_sale_price: sale,
+            trade_type: "partial"
+        }
+        console.log(dat)
+        axios.post(`${baseURL}/api/activetrade/partial`, dat, { headers: { "x-auth-token": token } })
+            .then((res) => {
+                console.log(res, "res");
+                fetchPortfoliolist()
+                setPartialTrade(false)
+                setModalTradeClose(false);
+                showModal("Success", "Closed successfully!")
+                if (res?.data?.status) {
+                    // getTrades();
+
+                }
+            }).catch(e => {
+                console.log(e);
+                setPartialTrade(false)
+                showModal("Error!", `Error Occured while closing : ${e.response.data ? e.response.data : "Unknown Error Occured!"}`)
+            });
     };
 
     const increaseAmount = () => {
@@ -202,6 +215,7 @@ function InnerTrade(props) {
     };
 
     const changeAmount = (e) => {
+        setparClAmount(e.target.value * 1)
         if (isUnits) {
             setBuyAmount({
                 ...buyAmount,
@@ -395,6 +409,7 @@ function InnerTrade(props) {
 
     return (
         <>
+            {/* <i className="fas fa-arrow-left" ></i> */}
             <PageTitle activeMenu={coin} motherMenu="Home" />
             <ERModal op={op} setop={setop} head={hd} msg={msg} />
 
@@ -449,9 +464,9 @@ function InnerTrade(props) {
                                                 tabIndex={0}
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                // onClick={() => { sortDATA(portfolio, "crypto_purchase_price", "num", order) }}
+                                            // onClick={() => { sortDATA(portfolio, "crypto_purchase_price", "num", order) }}
                                             >
-                                                Price
+                                                Current
                                             </th>
                                             <th
                                                 className="sorting"
@@ -492,7 +507,7 @@ function InnerTrade(props) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {portfolio?.length > 0 && [...portfolio]?.filter(i=>i.crypto_name==coin)?.slice(start, end)?.map((data, ind) => {
+                                        {portfolio?.length > 0 && [...portfolio]?.filter(i => i.crypto_name == coin)?.slice(start, end)?.map((data, ind) => {
                                             // let coinImg = require(`../../../icons/coins/bzzone.png`);
                                             // let coinImg = require(`../../../icons/coins/${data.crypto_name}.png`);
                                             let coinImg = cryptoicons[data?.crypto_symbol];
@@ -520,15 +535,45 @@ function InnerTrade(props) {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>${data?.trade}</td>
+                                                    <td>
+                                                        ${data?.trade}
+                                                    </td>
                                                     <td>
                                                         {(data.trade / data.crypto_purchase_price).toFixed(
                                                             4
                                                         )}
                                                     </td>
 
-                                                    <td>{data?.crypto_purchase_price}</td>
-                                                    <td>{coinData.filter(i=>i?.name==data?.crypto_name)[0]?.price}</td>
+                                                    <td>
+                                                        <CurrencyFormat
+                                                            value={data?.crypto_purchase_price}
+                                                            displayType={"text"}
+                                                            // decimalSeparator={true}
+                                                            decimalScale={2}
+                                                            thousandSeparator={true}
+                                                            prefix={"$"}
+                                                            fixedDecimalScale={true}
+                                                            renderText={(value) => (
+                                                                <span>{value}</span>
+                                                            )}
+                                                        />
+                                                        {/* {data?.crypto_purchase_price} */}
+                                                    </td>
+                                                    <td>
+                                                        <CurrencyFormat
+                                                            value={coinData.filter(i => i?.name == data?.crypto_name)[0]?.price}
+                                                            displayType={"text"}
+                                                            // decimalSeparator={true}
+                                                            decimalScale={2}
+                                                            thousandSeparator={true}
+                                                            prefix={"$"}
+                                                            fixedDecimalScale={true}
+                                                            renderText={(value) => (
+                                                                <span>{value}</span>
+                                                            )}
+                                                        />
+                                                        {/* {coinData.filter(i => i?.name == data?.crypto_name)[0]?.price} */}
+                                                    </td>
                                                     <td>
                                                         {!data.stop_loss ? (
                                                             <Button
@@ -604,7 +649,7 @@ function InnerTrade(props) {
                                                     //     : "text-danger mb-0"
                                                     // }`}
                                                     >
-                                                        {(cvalue(
+                                                        ${(cvalue(
                                                             data?.crypto_name,
                                                             data?.crypto_purchase_price
                                                         ) * (data.trade / data.crypto_purchase_price)).toFixed(2)}
@@ -872,6 +917,7 @@ function InnerTrade(props) {
                                 id="val-terms"
                                 name="val-terms"
                                 // value="1"
+                                checked={partialTrade}
                                 value={partialTrade}
                                 onClick={() => setPartialTrade(!partialTrade)}
                             />
@@ -899,7 +945,7 @@ function InnerTrade(props) {
                                     </Button>
 
                                     <input
-                                        value={isUnits ? buyAmount.units : buyAmount.amount}
+                                        // value={isUnits ? buyAmount.units : buyAmount.amount}
                                         type="number"
                                         className="form-control"
                                         style={{ fontSize: "20px" }}
@@ -929,7 +975,7 @@ function InnerTrade(props) {
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
                         <Button
-                            onClick={closeTrade}
+                            onClick={partialTrade ? partialcloseTrade : closeTrade}
                             variant="danger"
                             style={{ width: "200px" }}
                         >

@@ -84,9 +84,7 @@ function Market(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(coinData?.length / sort))
-    .fill()
-    .map((_, i) => i + 1);
+  let paggination = coinData.length>0 ? Array(Math.ceil(coinData?.length / sort)).fill().map((_, i) => i + 1) : [1];
 
   const onClick = (i) => {
     activePag.current = i;
@@ -261,7 +259,7 @@ function Market(props) {
       setCoinData(data)
       timer = setTimeout(() => {
         getDatafromBackend();
-      }, 15000);
+      }, 30000);
       // setInterval(getDatafromBackend(),3000)
     } catch (error) {
       console.log(error);

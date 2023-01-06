@@ -66,8 +66,8 @@ function WatchlistDataTable(props) {
     setmsg(msg)
   }
 
-  const sortDATA = (arr,elem,type,order) => {
-    setCoinData(sortArray(arr,elem,type,order))
+  const sortDATA = (arr, elem, type, order) => {
+    setCoinData(sortArray(arr, elem, type, order))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
@@ -83,7 +83,7 @@ function WatchlistDataTable(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = Array(Math.ceil(Watchlist?.length / sort))?.fill()?.map((_, i) => i + 1) ;
+  let paggination = Watchlist.length > 0 ? Array(Math.ceil(Watchlist?.length / sort))?.fill()?.map((_, i) => i + 1) : [1];
   // let paggination = [1, 2, 3, 4]
 
   const onClick = (i) => {
@@ -179,7 +179,7 @@ function WatchlistDataTable(props) {
     // getUSerData();
     fetchData();
     fetchWatchlist();
-    return () => {clearTimeout(timer)}
+    return () => { clearTimeout(timer) }
 
     // const id = setInterval(() => {
     // let aa = localStorage.getItem("perData");
@@ -210,7 +210,7 @@ function WatchlistDataTable(props) {
       console.log(data);
       setPerCoinData(coinData)
       setCoinData(data)
-      timer = setTimeout(() => { fetchData() }, 15000)
+      timer = setTimeout(() => { fetchData() }, 30000)
       // setInterval(getDatafromBackend(),3000)
     } catch (error) {
       console.log(error);
@@ -226,7 +226,7 @@ function WatchlistDataTable(props) {
     try {
       const token = JSON.parse(localStorage.getItem('token'))
 
-      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { headers: { "x-auth-token": token },data:{coin_name: deleteCoinName} } )
+      const res = await axios.delete(`${baseURL}/api/userwatchlist/${parseUSer?.id}`, { headers: { "x-auth-token": token }, data: { coin_name: deleteCoinName } })
       console.log(res);
       setDeleteCoinName('')
       setModalCentered2(false)
@@ -383,7 +383,7 @@ function WatchlistDataTable(props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {coinData?.length > 0 && Watchlist?.length > 0 && coinData?.filter(i => Watchlist?.some(it => it.coin_name == i.name))?.slice(start,end)?.map((data, ind) => {
+                  {coinData?.length > 0 && Watchlist?.length > 0 && coinData?.filter(i => Watchlist?.some(it => it.coin_name == i.name))?.slice(start, end)?.map((data, ind) => {
                     console.log(data, " MAP DATA");
                     // let coinImg = require(`../../../../icons/coins/${data.slug}.png`);
                     // let coinImg = require(`../../../../icons/coins/bzzone.png`);
@@ -414,7 +414,19 @@ function WatchlistDataTable(props) {
                                 : { color: "black" }
                           }
                         >
-                          $ {data?.price.toFixed(2)}{" "}
+                          <CurrencyFormat
+                            value={data?.price}
+                            displayType={"text"}
+                            // decimalSeparator={true}
+                            decimalScale={2}
+                            thousandSeparator={true}
+                            prefix={"$"}
+                            fixedDecimalScale={true}
+                            renderText={(value) => (
+                              <span>{value} </span>
+                            )}
+                          />
+                          {/* $ {data?.price.toFixed(2)}{" "} */}
                           {perPrice - data?.price > 0 && (
                             <i className="fas fa-arrow-up"></i>
                           )}
@@ -426,8 +438,8 @@ function WatchlistDataTable(props) {
                           {change === "1h" ? (
                             <p
                               className={`${data?.percent_change_1h < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
+                                ? "text-danger d-inline"
+                                : "text-success d-inline"
                                 }`}
                             >
                               {parseFloat(data?.percent_change_1h).toFixed(2)}
@@ -436,8 +448,8 @@ function WatchlistDataTable(props) {
                           ) : change === "7d" ? (
                             <p
                               className={`${data?.percent_change_7d < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
+                                ? "text-danger d-inline"
+                                : "text-success d-inline"
                                 }`}
                             >
                               {parseFloat(data?.percent_change_7d).toFixed(2)}
@@ -446,8 +458,8 @@ function WatchlistDataTable(props) {
                           ) : (
                             <p
                               className={`${data?.percent_change_24h < 0
-                                  ? "text-danger d-inline"
-                                  : "text-success d-inline"
+                                ? "text-danger d-inline"
+                                : "text-success d-inline"
                                 }`}
                             >
                               {parseFloat(data?.percent_change_24h).toFixed(
