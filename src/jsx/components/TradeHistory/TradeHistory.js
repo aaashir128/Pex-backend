@@ -48,7 +48,7 @@ function TradeHistory(props) {
     const token = JSON.parse(localStorage.getItem('token'))
     axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
       console.log(res?.data, "res");
-      let userTradeHistory = res?.data?.reverse();
+      let userTradeHistory = res?.data?.length > 0 ? res?.data?.reverse() : [];
       setHistoryData(userTradeHistory);
       console.log(userTradeHistory);
     });
@@ -82,7 +82,7 @@ function TradeHistory(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(historyData,"crypto_name","string",order)}}
                       >
-                        Asset
+                        Asset  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting"
@@ -91,7 +91,7 @@ function TradeHistory(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(historyData,"open_trade","num",order)}}
                       >
-                        Amount
+                        Amount  <i class="fas fa-sort"></i>
                       </th>
 
                       <th
@@ -101,7 +101,7 @@ function TradeHistory(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(historyData,"close_trade","num",order)}}
                       >
-                        Crypto Price
+                        Crypto Price  <i class="fas fa-sort"></i>
                       </th>
 
                       <th
@@ -119,7 +119,7 @@ function TradeHistory(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(historyData,"open_at","date",order)}}
                       >
-                        Date Open
+                        Date Open  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting"
@@ -128,7 +128,7 @@ function TradeHistory(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(historyData,"close_trade","date",order)}}
                       >
-                        Date Close
+                        Date Close  <i class="fas fa-sort"></i>
                       </th>
                     </tr>
                   </thead>

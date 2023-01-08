@@ -11,12 +11,16 @@ import {
 import logo from "../../images/logo-full.png";
 import axios from "axios";
 import { baseURL } from "../../Strings/Strings";
+import ERModal from "../components/modals/ERModal";
 
 function Register(props) {
   const [email, setEmail] = useState("");
   let errorsObj = { email: "", password: "" };
   const [errors, setErrors] = useState(errorsObj);
   const [password, setPassword] = useState("");
+  const [op, setop] = useState(false)
+  const [hd, sethd] = useState("")
+  const [msg, setmsg] = useState("")
 
   const [passwordShown, setPasswordShown] = useState(false);
   const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
@@ -30,6 +34,12 @@ function Register(props) {
     passwordCheck: true,
     confirmPasswordCheck: true,
   });
+
+  const showModal = (hd,msg) => {
+    setop(true)
+    sethd(hd)
+    setmsg(msg)
+  }
 
   const onSignUp = (e) => {
     e.preventDefault();
@@ -57,6 +67,7 @@ function Register(props) {
     }
   };
   const callSignUpApi = () => {
+    showModal("Loading...","loading...")
     const params = {
       email: user.email,
       first_name: user.firstName,
@@ -71,6 +82,8 @@ function Register(props) {
       localStorage.setItem("user", JSON.stringify(res.data.user));
       props.history.push("/login");
     //   window.location.replace("/dashboard");
+    }).catch(e=>{
+      showModal("Error Occurd!",e.response.data ? e.response.data : "Unknown Error Occured!" )
     });
   };
 
@@ -172,6 +185,7 @@ function Register(props) {
 
   return (
     <div className="authincation h-100 p-meddle">
+      <ERModal op={op} setop={setop} head={hd} msg={msg} />
       <div className="container h-100">
         <div className="row justify-content-center h-100 align-items-center">
           <div className="col-md-6">

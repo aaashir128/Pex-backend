@@ -304,7 +304,7 @@ function Market(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(coinData,"name","string",order)}}
                       >
-                        Markets
+                        Markets  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting"
@@ -313,7 +313,7 @@ function Market(props) {
                         colSpan={1}
                         onClick={()=>{sortDATA(coinData,"price","num",order)}}
                       >
-                        Price
+                        Price  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting text-center"

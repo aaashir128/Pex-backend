@@ -400,7 +400,7 @@ function Portfolio(props) {
                         colSpan={1}
                         onClick={() => { sortDATA(portfolio, "crypto_name", "string", order) }}
                       >
-                        Asset
+                        Asset  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting"
@@ -409,7 +409,7 @@ function Portfolio(props) {
                         colSpan={1}
                         onClick={() => { sortDATA(portfolio, "trade", "num", order) }}
                       >
-                        Amount
+                        Amount  <i class="fas fa-sort"></i>
                       </th>
 
                       <th
@@ -427,7 +427,7 @@ function Portfolio(props) {
                         colSpan={1}
                         onClick={() => { sortDATA(portfolio, "crypto_purchase_price", "num", order) }}
                       >
-                        Open
+                        Open  <i class="fas fa-sort"></i>
                       </th>
                       {/* <th
                         className="sorting"
