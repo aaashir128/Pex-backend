@@ -32,7 +32,7 @@ function TradeHistory(props) {
   };
 
   activePag.current === 0 && chageData(0, sort);
-  let paggination = historyData.length > 0 ? Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1) : [1];
+  let paggination = historyData?.length > 0 ? Array(Math.ceil(historyData?.length / sort))?.fill()?.map((_, i) => i + 1) : [1];
   // let paggination = [1, 2, 3, 4];
 
   const onClick = (i) => {
@@ -46,11 +46,19 @@ function TradeHistory(props) {
   const getTrades = () => {
     const user = JSON.parse(localStorage.getItem('user'))
     const token = JSON.parse(localStorage.getItem('token'))
-    axios.get(`${baseURL}/api/tradehistory/${user?.id}`,{ headers: { "x-auth-token": token } }).then((res) => {
+    axios.get(`${baseURL}/api/tradehistory/${user?.id}`, { headers: { "x-auth-token": token } }).then((res) => {
       console.log(res?.data, "res");
       let userTradeHistory = res?.data?.length > 0 ? res?.data?.reverse() : [];
+      const srtElem = JSON.parse(localStorage.getItem("historyData"))
+      // console.log(srtElem);
+      srtElem ? setHistoryData(sortArray(userTradeHistory,srtElem?.elem,srtElem?.type,srtElem?.order)) : setHistoryData(userTradeHistory) 
       setHistoryData(userTradeHistory);
       console.log(userTradeHistory);
+      // if (localStorage.getItem("historyData")) {
+      //   console.log(localStorage.getItem("historyData"));
+      // } else {
+      //   console.log("not found");
+      // }
     });
   }
 
@@ -58,8 +66,8 @@ function TradeHistory(props) {
     getTrades()
   }, []);
 
-  const sortDATA = (arr,elem,type,order) => {
-    setHistoryData(sortArray(arr,elem,type,order))
+  const sortDATA = (arr, elem, type, order) => {
+    setHistoryData(sortArray(arr, elem, type, order, "historyData"))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
@@ -80,7 +88,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(historyData,"crypto_name","string",order)}}
+                        onClick={() => { sortDATA(historyData, "crypto_name", "string", order) }}
                       >
                         Asset  <i class="fas fa-sort"></i>
                       </th>
@@ -89,7 +97,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(historyData,"open_trade","num",order)}}
+                        onClick={() => { sortDATA(historyData, "open_trade", "num", order) }}
                       >
                         Amount  <i class="fas fa-sort"></i>
                       </th>
@@ -99,7 +107,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(historyData,"close_trade","num",order)}}
+                        onClick={() => { sortDATA(historyData, "close_trade", "num", order) }}
                       >
                         Crypto Price  <i class="fas fa-sort"></i>
                       </th>
@@ -117,7 +125,7 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(historyData,"open_at","date",order)}}
+                        onClick={() => { sortDATA(historyData, "open_at", "date", order) }}
                       >
                         Date Open  <i class="fas fa-sort"></i>
                       </th>
@@ -126,14 +134,14 @@ function TradeHistory(props) {
                         tabIndex={0}
                         rowSpan={1}
                         colSpan={1}
-                        onClick={()=>{sortDATA(historyData,"close_trade","date",order)}}
+                        onClick={() => { sortDATA(historyData, "close_trade", "date", order) }}
                       >
                         Date Close  <i class="fas fa-sort"></i>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    { historyData?.length > 0 && [...historyData]?.slice(start,end)?.map((data, ind) => {
+                    {historyData?.length > 0 && [...historyData]?.slice(start, end)?.map((data, ind) => {
                       let coinImg = cryptoicons[data];
                       // let coinImg = require(`../../../icons/coins/${data?.active_trade?.crypto_name}.png`);
                       //   let perPrice = perCoinData[ind]?.quote?.USD?.price;
@@ -154,39 +162,39 @@ function TradeHistory(props) {
                             </div>
                           </td>
                           <td>
-                          <CurrencyFormat
-                            value={data?.open_trade}
-                            displayType={"text"}
-                            // decimalSeparator={true}
-                            decimalScale={2}
-                            thousandSeparator={true}
-                            prefix={"$"}
-                            fixedDecimalScale={true}
-                            renderText={(value) => (
-                              <span>{value} </span>
-                            )}
-                          />
+                            <CurrencyFormat
+                              value={data?.open_trade}
+                              displayType={"text"}
+                              // decimalSeparator={true}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => (
+                                <span>{value} </span>
+                              )}
+                            />
                             {/* ${data?.open_trade} */}
                           </td>
 
                           <td>
-                          <CurrencyFormat
-                            value={data?.close_trade}
-                            displayType={"text"}
-                            // decimalSeparator={true}
-                            decimalScale={2}
-                            thousandSeparator={true}
-                            prefix={"$"}
-                            fixedDecimalScale={true}
-                            renderText={(value) => (
-                              <span>{value} </span>
-                            )}
-                          />
+                            <CurrencyFormat
+                              value={data?.close_trade}
+                              displayType={"text"}
+                              // decimalSeparator={true}
+                              decimalScale={2}
+                              thousandSeparator={true}
+                              prefix={"$"}
+                              fixedDecimalScale={true}
+                              renderText={(value) => (
+                                <span>{value} </span>
+                              )}
+                            />
                             {/* ${data?.close_trade} */}
                           </td>
 
                           <td
-                          style={data?.actual_profit > 0 ? {color:'green'} : {color:'red'} }
+                            style={data?.actual_profit > 0 ? { color: 'green' } : { color: 'red' }}
                           >${data?.actual_profit > 0 ? data?.actual_profit?.toFixed(2) : data?.actual_loss?.toFixed(2)}</td>
                           <td>
                             {moment(data?.open_at).format(

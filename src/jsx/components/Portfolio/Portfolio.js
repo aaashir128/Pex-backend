@@ -81,7 +81,7 @@ function Portfolio(props) {
   };
 
   const sortDATA = (arr, elem, type, order) => {
-    setportfolio(sortArray(arr, elem, type, order))
+    setportfolio(sortArray(arr, elem, type, order,"portfolio"))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
@@ -291,7 +291,10 @@ function Portfolio(props) {
       }
       settotalInvestment(total)
       console.log(data, total, "watch list data");
-      setportfolio(data)
+      const srtElem = JSON.parse(localStorage.getItem("portfolio"))
+      srtElem ? setportfolio(sortArray(data,srtElem?.elem,srtElem?.type,srtElem?.order)) : setportfolio(data)   
+
+      // setportfolio(data)
     } catch (error) {
       console.log(error, "watchlist error");
     }

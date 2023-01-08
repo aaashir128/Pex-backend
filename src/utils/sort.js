@@ -1,4 +1,6 @@
-const sortArray = (arr, elem, type, order) => {
+const sortArray = (arr, elem, type, order, curArr) => {
+
+    localStorage.setItem(curArr,JSON.stringify({elem:elem,type:type,order:order})) //Object.keys({arr})[0]
 
     if (order == 'ASC') {
 

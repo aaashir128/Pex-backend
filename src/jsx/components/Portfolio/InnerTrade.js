@@ -97,12 +97,12 @@ function InnerTrade(props) {
     };
 
     const sortDATA = (arr, elem, type, order) => {
-        setportfolio(sortArray(arr, elem, type, order))
+        setportfolio(sortArray(arr, elem, type, order, "portfolioInner" ))
         order == "ASC" ? setorder("DESC") : setorder("ASC")
     }
 
     // activePag.current === 0 && chageData(0, sort);
-    let paggination = portfolio.length > 0 ? Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) : [1, 2, 3, 4];
+    let paggination = portfolio?.length > 0 ? Array(Math.ceil(portfolio?.length / sort))?.fill()?.map((_, i) => i + 1) : [1, 2, 3, 4];
     // let paggination = [1,2,3,4]
 
 
@@ -320,7 +320,9 @@ function InnerTrade(props) {
             }
             settotalInvestment(total)
             console.log(data, total, "watch list data");
-            setportfolio(data)
+            const srtElem = JSON.parse(localStorage.getItem("portfolioInner"))
+            srtElem ? setportfolio(sortArray(data,srtElem?.elem,srtElem?.type,srtElem?.order)) : setportfolio(data)         
+            // setportfolio(data)
         } catch (error) {
             console.log(error, "watchlist error");
         }

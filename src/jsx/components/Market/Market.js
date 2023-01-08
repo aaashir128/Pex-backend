@@ -182,7 +182,7 @@ function Market(props) {
   }
 
   const sortDATA = (arr,elem,type,order) => {
-    setCoinData(sortArray(arr,elem,type,order))
+    setCoinData(sortArray(arr,elem,type,order,"coinData"))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
@@ -256,7 +256,9 @@ function Market(props) {
       localStorage.setItem("cur", JSON.stringify(data))
       pre.current = coinData;
       // setPerCoinData(JSON.parse( await localStorage.getItem('perviouse')))
-      setCoinData(data)
+      const srtElem = JSON.parse(localStorage.getItem("coinData"))
+      srtElem ? setCoinData(sortArray(data,srtElem?.elem,srtElem?.type,srtElem?.order)) : setCoinData(data)   
+      // setCoinData(data)
       timer = setTimeout(() => {
         getDatafromBackend();
       }, 30000);

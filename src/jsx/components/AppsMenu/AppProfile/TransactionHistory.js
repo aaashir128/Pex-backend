@@ -67,15 +67,17 @@ function TransactionHistory() {
         const nn = res?.data?.map(i => {
           return { ...i, type: "Deposit" }
         })
-        setdeposit(nn.reverse());
+        setdeposit(nn);
       }).catch(err => { console.log(err?.response?.data) });
   }, []);
   useEffect(() => {
-    setfullData([...data, ...deposit])
+    const srtElem = JSON.parse(localStorage.getItem("fullData"))
+    srtElem ? setfullData(sortArray([...data,...deposit],srtElem?.elem,srtElem?.type,srtElem?.order)) : setfullData([...data, ...deposit]) 
+    // setfullData([...data, ...deposit])
   }, [data, deposit])
 
   const sortDATA = (arr, elem, type, order) => {
-    setfullData(sortArray(arr, elem, type, order))
+    setfullData(sortArray(arr, elem, type, order,"fullData"))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
