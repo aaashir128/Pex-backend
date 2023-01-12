@@ -83,7 +83,7 @@ const ProjectSlider = ({data,totalInvested,profitLoss}) => {
                 {/* <strong>$ {data?.balance ?? 0.00}</strong> */}
               </span>
 
-              <span className="mb-7 d-block fs-18">Cash Available</span>
+              <span className="mb-7 d-block fs-18">Available</span>
             </center>
           </div>
         </div>

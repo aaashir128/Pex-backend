@@ -532,7 +532,10 @@ function InnerTrade(props) {
                                                             <img src={coinImg} width="40" height="40" />
                                                             <div className="mx-2 ">
                                                                 <p className="mb-0 inline">
-                                                                    Buy {data.crypto_name}
+                                                                    {data.crypto_name}
+                                                                </p>
+                                                                <p className="mb-0 inline">
+                                                                    {data.crypto_symbol}
                                                                 </p>
                                                             </div>
                                                         </div>

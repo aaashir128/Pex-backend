@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 /// Scroll
 import PerfectScrollbar from "react-perfect-scrollbar";
-
 /// Image
-import profile from "../../../images/user.jpg";
+import profile from "../../../images/profile12.jpg";
 import avatar from "../../../images/avatar/1.jpg";
 import { themePrimary } from '../../../css/color'
 import { Button, Card, Col, Dropdown, Modal, Nav, Tab } from "react-bootstrap";
@@ -31,6 +30,8 @@ const Header = ({ onNote }) => {
   const [op, setop] = useState(false)
   const [hd, sethd] = useState("")
   const [msg, setmsg] = useState("")
+  const [vall, setvall] = useState("")
+  const [viewCross, setviewCross] = useState(false)
   var path = window.location.pathname.split("/");
   var name = path[path.length - 1].split("-");
   var filterName = name.length >= 3 ? name.filter((n, i) => i > 0) : name;
@@ -161,14 +162,21 @@ const Header = ({ onNote }) => {
 
   const handleChange = (e) => {
     e.preventDefault();
-    const val = e.target.value
+    setvall(e.target.value)
+
+  }
+
+  useEffect(() => {
+    const val = vall
     if (val?.length > 0) {
-      const nnn = data.filter(i => i?.name?.toLowerCase()?.includes(e.target.value.toLowerCase()))
+      setviewCross(true)
+      const nnn = data.filter(i => i?.name?.toLowerCase()?.includes(val.toLowerCase()))
       setdata(nnn)
     } else {
+      setviewCross(false)
       setdata(sdata)
     }
-  }
+  }, [vall])
 
   useEffect(() => {
     const usr = localStorage.getItem("user");
@@ -435,20 +443,36 @@ const Header = ({ onNote }) => {
                   aria-expanded="false"
                 >
                   <div className="w-90 input-group search-area center">
-                    <input
-                      type="text"
-                      className={`form-control ${searchBut ? "active" : ""}`}
-                      placeholder="Search here..."
-                      onChange={(e) => { handleChange(e) }}
-                    />
-                    <span
-                      className="input-group-text"
-                      onClick={() => setSearchBut(!searchBut)}
-                    >
-                      <Link to={"#"}>
-                        <i className="flaticon-381-search-2"></i>
-                      </Link>
-                    </span>
+                    <form  >
+                      <div style={{ display: 'flex', backgroundColor: 'lightgray', borderRadius: '30px' }} >
+                        <input
+                          style={{ backgroundColor: 'transparent', border: '0px solid transparent', width: '90%' }}
+                          type="text"
+                          className={`form-control ${searchBut ? "active" : ""}`}
+                          placeholder="Search here..."
+                          onChange={(e) => { handleChange(e) }}
+                          value={vall}
+                        />
+                        <span
+                          style={viewCross ? { display:"",backgroundColor: 'transparent', width: '5%', border: '0px solid transparent' } : { display:"none",backgroundColor: 'transparent', width: '5%', border: '0px solid transparent' }}
+                          className="input-group-text"
+                          onClick={() => setSearchBut(!searchBut)}
+                        >
+                          <span to={"#"} onClick={() => { setvall("") }} >
+                            <i class="fa fa-times" style={{ fontSize: '14px' }} aria-hidden="true"></i>
+                          </span>
+                        </span>
+                        <span
+                          style={viewCross ? { display:"none",backgroundColor: 'transparent', marginLeft: '-20px', width: '5%', border: '0px solid transparent' } : { display:"",backgroundColor: 'transparent', marginLeft: '-20px', width: '5%', border: '0px solid transparent' }}
+                          className="input-group-text"
+                          onClick={() => setSearchBut(!searchBut)}
+                        >
+                          <Link to={"#"}>
+                            <i class="fa fa-search" style={{ fontSize: '14px' }} aria-hidden="true"></i>
+                          </Link>
+                        </span>
+                      </div>
+                    </form>
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu
@@ -486,7 +510,17 @@ const Header = ({ onNote }) => {
                                   </button>
                                 </h6>
                                 <small className="d-block">
-                                  {i?.symbol} | unit price : <span style={{ fontWeight: "800" }} >${i?.price}</span>
+                                  {i?.symbol} | unit price : <span style={{ fontWeight: "800" }} >
+                                    <CurrencyFormat
+                                      value={i?.price}
+                                      displayType={"text"}
+                                      decimalScale={2}
+                                      thousandSeparator={true}
+                                      prefix={"$"}
+                                      fixedDecimalScale={true}
+                                      renderText={(value) => <p>{value}</p>}
+                                    />
+                                  </span>
                                 </small>
                               </div>
                             </div>
@@ -549,7 +583,7 @@ const Header = ({ onNote }) => {
                     16
                   </span>
                 </Dropdown.Toggle>
-                <Dropdown.Menu
+                {/* <Dropdown.Menu
                   align="right"
                   className="mt-2 dropdown-menu dropdown-menu-end"
                 >
@@ -652,7 +686,7 @@ const Header = ({ onNote }) => {
                   <Link className="all-notification" to="#">
                     See all notifications <i className="ti-arrow-right" />
                   </Link>
-                </Dropdown.Menu>
+                </Dropdown.Menu> */}
               </Dropdown>
 
               <Dropdown as="li" className="nav-item dropdown header-profile">

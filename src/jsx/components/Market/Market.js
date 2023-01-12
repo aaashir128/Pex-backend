@@ -496,13 +496,51 @@ function Market(props) {
                               Buy Now
                             </button>
                           </td>
-                          {/* <td>
-                            <div className="d-flex align-items-center">
-                              <i className="fa fa-circle text-success me-1"></i>
-                              Listed
-                            </div>
-                          </td> */}
-                          <td className="">
+
+                          <td>
+                            <button
+                              type="button"
+                              className="btn"
+                              style={{
+                                background: "black",
+                                color: "white",
+                                padding: "5px 10px",
+                                borderRadius: "7px",
+                              }}
+                              onClick={async () => {
+                                console.log(
+                                  "PArse USer",
+                                  parseUSer.id,
+                                  token
+                                );
+                                console.log("Coin", data.name);
+
+                                await axios
+                                  .post(
+                                    `${baseURL}/api/userwatchlist`,
+                                    {
+                                      user_id: parseUSer.id,
+                                      coin_name: data.name,
+                                    },
+                                    { headers: { "x-auth-token": token } }
+                                  )
+                                  .then((res) => {
+                                    console.log(
+                                      "Successfully Add Coin",
+                                      res
+                                    );
+                                    showModal("Success!","Added to watch list successfully!")
+                                  })
+                                  .catch((err) => {
+                                    console.log(err);
+                                    showModal("Error!","Error occured while adding to watchlist : "+(err.response.data ? err.response.data : "Unknow Error Occured"))
+                                  });
+                              }}
+                            >
+                              Add To Watchlist
+                            </button>
+                          </td>
+                          {/* <td className="">
                             <Dropdown>
                               <Dropdown.Toggle
                                 variant="primary"
@@ -512,9 +550,7 @@ function Market(props) {
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                 <Dropdown.Item
-                                  // onClick={() =>
-                                  //   changeStatus(req?.id, "Approved")
-                                  // }
+                                
                                   onClick={async () => {
                                     console.log(
                                       "PArse USer",
@@ -547,18 +583,9 @@ function Market(props) {
                                 >
                                   Add To WatchList
                                 </Dropdown.Item>
-                                {/* <Dropdown.Item
-                                  // onClick={() => {
-                                  //   setActiveId(req?.id);
-                                  //   setModalCentered(true);
-                                  // }}
-                                  onClick={removeFromWatchList}
-                                >
-                                  Remove From WatchList
-                                </Dropdown.Item> */}
                               </Dropdown.Menu>
                             </Dropdown>
-                          </td>
+                          </td> */}
                         </tr>
                       );
                     })}

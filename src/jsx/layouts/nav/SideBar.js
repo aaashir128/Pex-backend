@@ -14,7 +14,7 @@ class MM extends Component {
     this.$el = this.el;
     this.mm = new Metismenu(this.$el);
   }
-  componentWillUnmount() {}
+  componentWillUnmount() { }
   render() {
     return (
       <div className="mm-wrapper">
@@ -63,15 +63,15 @@ const SideBar = () => {
   path = path[path.length - 1];
   /// Active menu
   let deshBoard = [
-      "dashboard",
-      "dashboard-dark",
-      "kanban",
-      "clients",
-      "project-details",
-      "messages",
-      "latest-activity",
-      "task",
-    ],
+    "dashboard",
+    "dashboard-dark",
+    "kanban",
+    "clients",
+    "project-details",
+    "messages",
+    "latest-activity",
+    "task",
+  ],
     app = [
       "app-profile",
       "post-details",
@@ -171,15 +171,14 @@ const SideBar = () => {
     ];
   return (
     <div
-      className={`dlabnav ${iconHover} ${
-        sidebarposition.value === "fixed" &&
-        sidebarLayout.value === "horizontal" &&
-        headerposition.value === "static"
+      className={`dlabnav ${iconHover} ${sidebarposition.value === "fixed" &&
+          sidebarLayout.value === "horizontal" &&
+          headerposition.value === "static"
           ? hideOnScroll > 120
             ? "fixed"
             : ""
           : ""
-      }`}
+        }`}
     >
       <PerfectScrollbar className="dlabnav-scroll">
         <MM className="metismenu" id="menu">
@@ -211,6 +210,13 @@ const SideBar = () => {
           </li>
           <ul></ul>
 
+          <li className={`${market.includes(path) ? "mm-active" : ""}`}>
+            <Link to="market" className="ai-icon">
+              <i className="fas fa-poll"></i>
+              <span className="nav-text">Trade</span>
+            </Link>
+          </li>
+
           <li className={`${app.includes(path) ? "mm-active" : ""}`}>
             <Link className="ai-icon" to="/app-profile">
               {/* <i className="fas fa-coins"></i> */}
@@ -219,79 +225,7 @@ const SideBar = () => {
               <span className="nav-text">WatchList</span>
             </Link>
           </li>
-          {/* <ul>
-            <li className={`${shop.includes(path) ? "mm-active" : ""}`}>
-              <ul className={`${shop.includes(path) ? "mm-show" : ""}`}>
-                <li>
-                  <Link
-                    className={`${
-                      path === "ecom-product-grid" ? "mm-active" : ""
-                    }`}
-                    to="/ecom-product-grid"
-                  >
-                    Product Grid
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${
-                      path === "ecom-product-list" ? "mm-active" : ""
-                    }`}
-                    to="/ecom-product-list"
-                  >
-                    Product List
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${
-                      path === "ecom-product-detail" ? "mm-active" : ""
-                    }`}
-                    to="/ecom-product-detail"
-                  >
-                    Product Details
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${
-                      path === "ecom-product-order" ? "mm-active" : ""
-                    }`}
-                    to="/ecom-product-order"
-                  >
-                    Order
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${path === "ecom-checkout" ? "mm-active" : ""}`}
-                    to="/ecom-checkout"
-                  >
-                    Checkout
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${path === "ecom-invoice" ? "mm-active" : ""}`}
-                    to="/ecom-invoice"
-                  >
-                    Invoice
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`${
-                      path === "ecom-customers" ? "mm-active" : ""
-                    }`}
-                    to="/ecom-customers"
-                  >
-                    Customers
-                  </Link>
-                </li>
-              </ul>
-            </li>
-          </ul> */}
-          {/* </li> */}
+
 
           {/* li for Watchlist */}
           <li className={`${portfolio.includes(path) ? "mm-active" : ""}`}>
@@ -300,22 +234,10 @@ const SideBar = () => {
               <span className="nav-text">Portfolio</span>
             </Link>
           </li>
-          <li className={`${market.includes(path) ? "mm-active" : ""}`}>
-            <Link to="market" className="ai-icon">
-              <i className="fas fa-poll"></i>
-              <span className="nav-text">Market</span>
-            </Link>
-          </li>
           <li className={`${deposit.includes(path) ? "mm-active" : ""}`}>
             <Link className="ai-icon" to="/deposit">
               <i className="fas fa-wallet"></i>
               <span className="nav-text">Deposit</span>
-            </Link>
-          </li>
-          <li className={`${withdrawl.includes(path) ? "mm-active" : ""}`}>
-            <Link className="ai-icon" to="/withdrawl">
-              <i className="fas fa-money-bill-alt"></i>
-              <span className="nav-text">Withdrawal</span>
             </Link>
           </li>
           <li className={`${tradeHistory.includes(path) ? "mm-active" : ""}`}>
@@ -326,16 +248,20 @@ const SideBar = () => {
           </li>
 
           <li
-            className={`${
-              transactionHistory.includes(path) ? "mm-active" : ""
-            }`}
+            className={`${transactionHistory.includes(path) ? "mm-active" : ""
+              }`}
           >
             <Link to="transaction-history" className="ai-icon">
               <i className="fas fa-history"></i>
               <span className="nav-text">Transaction History</span>
             </Link>
           </li>
-
+          <li className={`${withdrawl.includes(path) ? "mm-active" : ""}`}>
+            <Link className="ai-icon" to="/withdrawl">
+              <i className="fas fa-money-bill-alt"></i>
+              <span className="nav-text">Withdrawal</span>
+            </Link>
+          </li>
           <li className={`${discover.includes(path) ? "mm-active" : ""}`}>
             <Link to="discover" className="ai-icon">
               <i className="far fa-compass"></i>

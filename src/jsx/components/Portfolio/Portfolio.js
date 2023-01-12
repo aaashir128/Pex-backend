@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import PageTitle from "../../layouts/PageTitle";
 import cryptoicons from '../../../icons/cryptoIcons/cryptoImg'
+import './portfolio.css'
 import {
   Button,
   Card,
@@ -81,7 +82,7 @@ function Portfolio(props) {
   };
 
   const sortDATA = (arr, elem, type, order) => {
-    setportfolio(sortArray(arr, elem, type, order,"portfolio"))
+    setportfolio(sortArray(arr, elem, type, order, "portfolio"))
     order == "ASC" ? setorder("DESC") : setorder("ASC")
   }
 
@@ -292,7 +293,7 @@ function Portfolio(props) {
       settotalInvestment(total)
       console.log(data, total, "watch list data");
       const srtElem = JSON.parse(localStorage.getItem("portfolio"))
-      srtElem ? setportfolio(sortArray(data,srtElem?.elem,srtElem?.type,srtElem?.order)) : setportfolio(data)   
+      srtElem ? setportfolio(sortArray(data, srtElem?.elem, srtElem?.type, srtElem?.order)) : setportfolio(data)
 
       // setportfolio(data)
     } catch (error) {
@@ -493,7 +494,7 @@ function Portfolio(props) {
                           role="row"
                           className="even market-trbg"
                         >
-                          <td className="sorting_1">
+                          <td className="sorting_1 assetContainer">
                             <div
                               className="d-flex align-items-center"
                               onClick={() =>
@@ -508,7 +509,10 @@ function Portfolio(props) {
                               <img src={coinImg} width="40" height="40" />
                               <div className="mx-2 ">
                                 <p className="mb-0 inline">
-                                  Buy {data.crypto_name}
+                                  {data.crypto_name}
+                                </p>
+                                <p className="mb-0 inline">
+                                  {data.crypto_symbol}
                                 </p>
                               </div>
                             </div>
@@ -534,7 +538,7 @@ function Portfolio(props) {
                           </td>
 
                           <td>
-                          <CurrencyFormat
+                            <CurrencyFormat
                               value={(data?.crypto_purchase_price / (portfolio?.filter(i => i.crypto_name == data.crypto_name)).length)}
                               displayType={"text"}
                               // decimalSeparator={true}
@@ -1142,20 +1146,39 @@ function Portfolio(props) {
         <Row className="p-4 ">
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                ${wallet?.balance}
-              </h4>
+              <CurrencyFormat
+                value={wallet?.balance}
+                displayType={"text"}
+                decimalScale={2}
+                thousandSeparator={true}
+                prefix={"$"}
+                fixedDecimalScale={true}
+                renderText={(value) => <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                  {value}
+                </h4>
+                }
+              />
+
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                Cash Available
+                Available
               </p>
               {/* <h5 className=" display-4">+</h5> */}
             </div>
           </Col>
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
-                ${totalInvestment}
-              </h4>
+              <CurrencyFormat
+                value={totalInvestment}
+                displayType={"text"}
+                decimalScale={2}
+                thousandSeparator={true}
+                prefix={"$"}
+                fixedDecimalScale={true}
+                renderText={(value) => <h4 className="mb-0 " style={{ fontSize: "1.4rem" }}>
+                  {value}
+                </h4>
+                }
+              />
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Total Invested
               </p>
@@ -1164,20 +1187,37 @@ function Portfolio(props) {
           </Col>
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className={"mb-0 " + (profitloss > 0 ? "text-success" : "text-danger")} style={{ fontSize: "1.4rem" }}>
-                ${profitloss.toFixed(2)}
-              </h4>
+              <CurrencyFormat
+                value={profitloss}
+                displayType={"text"}
+                decimalScale={2}
+                thousandSeparator={true}
+                prefix={"$"}
+                fixedDecimalScale={true}
+                renderText={(value) => <h4 className={"mb-0 " + (profitloss > 0 ? "text-success" : "text-danger")} style={{ fontSize: "1.4rem" }}>
+                  {value}
+                </h4>
+                }
+              />
               <p className="mb-0" style={{ fontSize: "1.4rem" }}>
                 Profit/Loss
               </p>
-              {/* <h5 className=" display-4">=</h5> */}
             </div>
           </Col>
           <Col lg={3} className="">
             <div className="text-center">
-              <h4 className="mb-0" style={{ fontSize: "1.4rem" }}>
-                ${(wallet?.balance + totalInvestment)?.toFixed(2)}
-              </h4>
+              <CurrencyFormat
+                value={wallet?.balance + totalInvestment}
+                displayType={"text"}
+                decimalScale={2}
+                thousandSeparator={true}
+                prefix={"$"}
+                fixedDecimalScale={true}
+                renderText={(value) => <h4 className="mb-0" style={{ fontSize: "1.4rem" }}>
+                  {value}
+                </h4>
+                }
+              />
               <p className="mb-0 " style={{ fontSize: "1.4rem" }}>
                 Portfolio Value
               </p>
