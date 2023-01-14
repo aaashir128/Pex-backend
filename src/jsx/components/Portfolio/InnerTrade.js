@@ -57,6 +57,7 @@ function InnerTrade(props) {
     // }, [cd, pf])
 
 
+    const [modalCentered, setModalCentered] = useState(false)
     const [order, setorder] = useState("ASC")
     const [op, setop] = useState(false)
     const [hd, sethd] = useState("")
@@ -97,7 +98,7 @@ function InnerTrade(props) {
     };
 
     const sortDATA = (arr, elem, type, order) => {
-        setportfolio(sortArray(arr, elem, type, order, "portfolioInner" ))
+        setportfolio(sortArray(arr, elem, type, order, "portfolioInner"))
         order == "ASC" ? setorder("DESC") : setorder("ASC")
     }
 
@@ -308,6 +309,27 @@ function InnerTrade(props) {
         setSameCoin([filter[0]?.price, img, data]);
     };
 
+    const updateTrade = async () => {
+        // if(profitEnd == 0 && lossEnd==0){
+        //     return showModal("Error!","Atleast one change required")
+        // }
+        try {
+            showModal("Updating...", `Updating the trade...`)
+            const token = JSON.parse(localStorage.getItem('token'))
+            const user = JSON.parse(localStorage.getItem('user'))
+            console.log(lossEnd,profitEnd," ;ljksfhskljdhdf;lkga;lksjhaslhkl");
+            const { data } = await axios.put(`${baseURL}/api/activetrade/${closeId}`, { take_profit: profitEnd, stop_loss: lossEnd }, {headers: { "x-auth-token": token }})
+            fetchPortfoliolist()
+            setModalCentered(false)
+            setProfitEnd(0)
+            setLossEnd(0)
+            setop(false)
+        } catch (e) {
+            console.log(e);
+            showModal("Error!", `Error Occured : ${e?.response?.data ? e?.response?.data : "Unknown Error Occured!"}`)
+        }
+    }
+
     const fetchPortfoliolist = async () => {
         try {
             const token = JSON.parse(await localStorage.getItem('token'))
@@ -321,7 +343,7 @@ function InnerTrade(props) {
             settotalInvestment(total)
             console.log(data, total, "watch list data");
             const srtElem = JSON.parse(localStorage.getItem("portfolioInner"))
-            srtElem ? setportfolio(sortArray(data,srtElem?.elem,srtElem?.type,srtElem?.order)) : setportfolio(data)         
+            srtElem ? setportfolio(sortArray(data, srtElem?.elem, srtElem?.type, srtElem?.order)) : setportfolio(data)
             // setportfolio(data)
         } catch (error) {
             console.log(error, "watchlist error");
@@ -412,7 +434,8 @@ function InnerTrade(props) {
     return (
         <>
             {/* <i className="fas fa-arrow-left" ></i> */}
-            <PageTitle activeMenu={coin} motherMenu="Home" />
+            <button style={{border:'none',backgroundColor:'transparent'}} onClick={()=>{props.history.push('/portfolio')}} ><i className="fa fa-arrow-left" ></i> Back</button>
+            <PageTitle activeMenu={coin} motherMenu="Home / Portfio" />
             <ERModal op={op} setop={setop} head={hd} msg={msg} />
 
 
@@ -585,9 +608,9 @@ function InnerTrade(props) {
                                                                 //   className="me-4"
                                                                 variant="outline-light btn-square"
                                                                 onClick={() => {
-                                                                    setModalTradeEdit(true);
+                                                                    setModalCentered(true);
                                                                     setCloseId(data?.id);
-                                                                    setSelectedCoin({ coinImg, data });
+                                                                    setSelectedCoin({ coinImg, data:data });
                                                                 }}
                                                             >
                                                                 ...
@@ -597,7 +620,7 @@ function InnerTrade(props) {
                                                                 //   className="me-4"
                                                                 variant="outline-light btn-square"
                                                                 onClick={() => {
-                                                                    setModalTradeEdit(true);
+                                                                    setModalCentered(true);
                                                                     setCloseId(data?.id);
                                                                     setSelectedCoin({ coinImg, data });
                                                                 }}
@@ -612,9 +635,9 @@ function InnerTrade(props) {
                                                                 //   className="me-4"
                                                                 variant="outline-light btn-square"
                                                                 onClick={() => {
-                                                                    setModalTradeEdit(true);
+                                                                    setModalCentered(true);
                                                                     setCloseId(data?.id);
-                                                                    setSelectedCoin({ coinImg, data });
+                                                                    setSelectedCoin({ coinImg, data:data });
                                                                 }}
                                                             >
                                                                 ...
@@ -624,7 +647,7 @@ function InnerTrade(props) {
                                                                 //   className="me-4"
                                                                 variant="outline-light btn-square"
                                                                 onClick={() => {
-                                                                    setModalTradeEdit(true);
+                                                                    setModalCentered(true);
                                                                     setCloseId(data?.id);
                                                                     setSelectedCoin({ coinImg, data });
                                                                 }}
@@ -1217,6 +1240,230 @@ function InnerTrade(props) {
                     </Col>
                 </Row>
             </Card>
+
+            <Modal className="fade" show={modalCentered} centered>
+                <Modal.Header style={{ backgroundColor: themePrimary }}>
+                    <Modal.Title className="text-white text-uppercase">
+                        Buy {selectedCoin?.data?.crypto_name}
+                    </Modal.Title>
+                    <Button
+                        onClick={() => setModalCentered(false)}
+                        variant=""
+                        className="btn-close"
+                    ></Button>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="d-flex align-items-center">
+                        <img src={selectedCoin?.coinImg} width="40" height="40" />
+                        <div className="mx-2">
+                            <div className=" d-flex">
+                                <p className="mb-0 ">BUY</p>
+                                <h5 className="mb-0 px-1">{selectedCoin?.data?.crypto_symbol}</h5>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <h3 className="mb-0">
+                                    {/* ${parseFloat(selectedCoin?.data?.price).toFixed(2)} */}
+                                    <CurrencyFormat
+                                        value={selectedCoin?.data?.crypto_purchase_price}
+                                        displayType={"text"}
+                                        decimalScale={2}
+                                        thousandSeparator={true}
+                                        prefix={"$"}
+                                        fixedDecimalScale={true}
+                                        renderText={(value) => <p>{value}</p>}
+                                    />
+                                </h3>
+                                {/* <small
+                                    className={
+                                        selectedCoin?.data?.percent_change_24h > 0
+                                            ? "text-success mb-0 px-1"
+                                            : "text-danger mb-0 px-1"
+                                    }
+                                >
+                                    (
+                                    {parseFloat(
+                                        selectedCoin?.data?.percent_change_24h
+                                    ).toFixed(2)}
+                                    % )
+                                </small> */}
+                            </div>
+                            <small>PRICES BY PRIME CRYPTO EXCHANGE</small>
+                        </div>
+                    </div>
+                    {/* <div
+                        className="d-flex align-items-center justify-content-between"
+                        style={{ marginTop: "64px" }}
+                    >
+                        <div className="mb-3" style={{ flex: 0.2 }}>
+                            <h5 className="d-flex justify-content-center align-items-center">
+                                {isUnits ? "UNITS" : "AMOUNT"}
+                            </h5>
+                        </div>
+
+                        <div className="input-group mb-3" style={{ flex: 0.5 }}>
+                            <Button
+                                className="text-primary"
+                                variant="dark light"
+                                onClick={decreaseAmount}
+                            >
+                                -
+                            </Button>
+
+                            <input
+                                value={isUnits ? buyAmount.units : buyAmount.amount}
+                                type="number"
+                                className="form-control"
+                                style={{ fontSize: "20px" }}
+                                onChange={(e) => changeAmount(e)}
+                            />
+                            <Button
+                                className="text-primary"
+                                variant="dark light"
+                                onClick={increaseAmount}
+                            >
+                                +
+                            </Button>
+                        </div>
+
+                        <div style={{ flex: 0.2 }}>
+                            <div
+                                role="button"
+                                className="p-2 mb-3 bg-light rounded d-flex align-items-center justify-content-around"
+                                onClick={() => setIsUnits(!isUnits)}
+                            >
+                                <i className="fas fa-exchange-alt"></i>
+                                <h4 className="mb-0">{!isUnits ? "UNITS" : "AMOUNT"}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-center">
+                        {!isUnits ? (
+                            <small>{parseFloat(buyAmount.units).toFixed(2)} UNITS</small>
+                        ) : (
+                            <small>
+                                ${parseFloat(buyAmount.amount).toFixed(2)} ESTIMATED MARGIN
+                            </small>
+                        )}
+                    </div> */}
+
+                    <Col xl={12}>
+                        <Card>
+                            <Card.Body>
+                                {/* <!-- Nav tabs --> */}
+                                <div className="default-tab">
+                                    <Tab.Container
+                                        defaultActiveKey={tabData[0].name.toLowerCase()}
+                                    >
+                                        <Nav
+                                            as="ul"
+                                            className="nav-tabs justify-content-around"
+                                        >
+                                            {tabData.map((data, i) => (
+                                                <Nav.Item
+                                                    as="li"
+                                                    key={i}
+                                                    className="justify-content-between"
+                                                >
+                                                    <Nav.Link eventKey={data.name.toLowerCase()}>
+                                                        {/* <i className={`la la-${data.icon} me-2`} /> */}
+
+                                                        {data.name}
+                                                    </Nav.Link>
+                                                </Nav.Item>
+                                            ))}
+                                        </Nav>
+                                        <Tab.Content className="pt-4">
+                                            {tabData.map((data, i) => (
+                                                <Tab.Pane
+                                                    eventKey={data.name.toLowerCase()}
+                                                    key={i}
+                                                >
+                                                    <div
+                                                        className="d-flex flex-column align-items-center"
+                                                        style={{ marginTop: "32px" }}
+                                                    >
+                                                        <div className="mb-3" style={{ flex: 0.2 }}>
+                                                            <h5 className="d-flex justify-content-center align-items-center">
+                                                                AMOUNT
+                                                            </h5>
+                                                        </div>
+
+                                                        <div
+                                                            className="input-group mb-3"
+                                                            style={{ flex: 0.5 }}
+                                                        >
+                                                            <Button
+                                                                className="text-primary"
+                                                                variant="dark light"
+                                                                onClick={() => {
+                                                                    data.name == "STOP LOSS"
+                                                                        ? setLossEnd(lossEnd - 1)
+                                                                        : setProfitEnd(profitEnd - 1);
+                                                                }}
+                                                            >
+                                                                -
+                                                            </Button>
+                                                            {data.name == "STOP LOSS" ? (
+                                                                <input
+                                                                    value={lossEnd}
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    style={{ fontSize: "20px" }}
+                                                                    onChange={(e) => {
+                                                                        setLossEnd(e.target.value);
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <input
+                                                                    value={profitEnd}
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    style={{ fontSize: "20px" }}
+                                                                    onChange={(e) => {
+                                                                        setProfitEnd(e.target.value);
+                                                                    }}
+                                                                />
+                                                            )}
+                                                            <Button
+                                                                className="text-primary"
+                                                                variant="dark light"
+                                                                onClick={() => {
+                                                                    data.name == "STOP LOSS"
+                                                                        ? setLossEnd(lossEnd + 1)
+                                                                        : setProfitEnd(profitEnd + 1);
+                                                                }}
+                                                            >
+                                                                +
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </Tab.Pane>
+                                            ))}
+                                        </Tab.Content>
+                                    </Tab.Container>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                    <div
+                        className="d-flex justify-content-center"
+                        style={{ marginTop: "64px" }}
+                    >
+                        <h3>YOU ARE BUYING THE UNDERLYING ASSET</h3>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="justify-content-center">
+                    <Button
+                        onClick={()=>{updateTrade()}}
+                        // onClick={() => setModalCentered(false)}
+                        variant="primary"
+                        style={{ width: "200px" }}
+                    >
+                        Update Trade
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             {/* </div> */}
             {/* </div> */}
         </>

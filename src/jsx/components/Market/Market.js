@@ -64,7 +64,7 @@ function Market(props) {
   const [modalCentered, setModalCentered] = useState(false);
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [isUnits, setIsUnits] = useState(false);
-  const [buyAmount, setBuyAmount] = useState({ units: 1, amount: 1000 });
+  const [buyAmount, setBuyAmount] = useState({ units: 0, amount: 0 });
   const [slAmount, setSlAmount] = useState(0);
   const [tpAmount, setTpAmount] = useState(0);
   const [order, setorder] = useState("ASC")
@@ -289,7 +289,7 @@ function Market(props) {
   return (
     <>
       <ERModal op={op} setop={setop} head={hd} msg={msg} />
-      <PageTitle activeMenu="Market" motherMenu="Home" />
+      <PageTitle activeMenu="Trade" motherMenu="Home" />
 
       <div className="col-12">
         <div className="card">

@@ -404,7 +404,7 @@ function Portfolio(props) {
                         colSpan={1}
                         onClick={() => { sortDATA(portfolio, "crypto_name", "string", order) }}
                       >
-                        Asset  <i class="fas fa-sort"></i>
+                        Available Asset  <i class="fas fa-sort"></i>
                       </th>
                       <th
                         className="sorting"

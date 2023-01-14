@@ -119,6 +119,8 @@ import WithdrawalRequests from "./components/AdminScreen/WithdrawalRequests";
 import TransactionHistoryScreen from "./components/Transaction history Screen/TransactionHistoryScreen";
 import DiscoverScreen from "./components/Discover Screen/DiscoverScreen";
 import InnerTrade from "./components/Portfolio/InnerTrade";
+import Profile from "./components/Profile/Profile";
+import Notify from "./components/Notify/Notify";
 
 const Markup = () => {
   let { coin } = useParams();
@@ -129,6 +131,7 @@ const Markup = () => {
     { url: "manage-coins", component: ManageCoins },
     { url: "deposit-requests", component: DepositRequest },
     { url: "withdrawal-requests", component: WithdrawalRequests },
+    { url: "notify", component: Notify },
     { url: "pl-management", component: ProfitLossManagement },
     { url: "commission-settings", component: CommissionSettings },
 
@@ -163,6 +166,7 @@ const Markup = () => {
 
     /// Apps
     { url: "app-profile", component: AppProfile },
+    { url: "profile", component: Profile },
     { url: "admin-dashboard", component: AdminDashboard },
     { url: "deposit-history", component: DepositHistory },
 

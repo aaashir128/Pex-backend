@@ -64,6 +64,7 @@ const AdminSideBar = () => {
   /// Active menu
   let deshBoard = ["dashboard"],
     withdrawalRequests = ["withdrawal-requests"],
+    notify = ["notify"],
     depositRequests = ["deposit-requests"],
     deposit = ["deposit"],
     userManagement = ["user-management"],
@@ -445,6 +446,16 @@ const AdminSideBar = () => {
             <Link className="ai-icon" to="/withdrawal-requests">
               <i className="fas fa-dollar-sign"></i>
               <span className="nav-text">Withdrawal Requests</span>
+            </Link>
+          </li>
+          <li
+            className={`${
+              notify.includes(path) ? "mm-active" : ""
+            }`}
+          >
+            <Link className="ai-icon" to="/notify">
+              <i className="fas fa-bell"></i>
+              <span className="nav-text">Send Notification</span>
             </Link>
           </li>
           <li className={`${plManagement.includes(path) ? "mm-active" : ""}`}>

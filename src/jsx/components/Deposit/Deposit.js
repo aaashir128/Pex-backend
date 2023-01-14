@@ -35,14 +35,14 @@ function Deposit(props) {
         })
         .then((res) => {
           console.log(res, "res");
-          toast.success("✔️ Deposit Request Initiated!", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
+          // toast.success("✔️ Deposit Request Initiated!", {
+          //   position: "top-right",
+          //   autoClose: 5000,
+          //   hideProgressBar: false,
+          //   closeOnClick: true,
+          //   pauseOnHover: true,
+          //   draggable: true,
+          // });
           showModal("Request Sent!","✔️ Deposit Request Initiated!")
           // props.history.push("/dashboard");
         }).catch(e=>{

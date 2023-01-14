@@ -120,7 +120,21 @@ const ProjectSlider = ({data,totalInvested,profitLoss}) => {
             </div>
             <center>
               <span className="mb-3 d-block fs-22">
-                <strong className={profitLoss>0?"text-success":profitLoss<0?"text-danger":""} >$ {profitLoss?.toFixed(2)}</strong>
+                <strong className={profitLoss>0?"text-success":profitLoss<0?"text-danger":""} >
+                <CurrencyFormat
+                      value={profitLoss > 0 ? profitLoss : 0.00}
+                      displayType={"text"}
+                      // decimalSeparator={true}
+                      decimalScale={2}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                      fixedDecimalScale={true}
+                      renderText={(value) => (
+                        <strong>{value}</strong>
+                      )}
+                    />
+                  {/* $ {profitLoss?.toFixed(2)} */}
+                  </strong>
               </span>
 
               <span className="mb-7 d-block fs-18">Profit/Loss</span>

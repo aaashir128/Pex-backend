@@ -8,7 +8,7 @@ const AppProfile = () => {
 
   return (
     <Fragment>
-      <PageTitle activeMenu="Coins" motherMenu="Watchlist" />
+      <PageTitle activeMenu="Watchlist" motherMenu="Home" />
 
       <div className="row">
         <div className="col-12">
